@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/loob?characterEncoding=UTF-8&useUnicode=true&connectionTimeZone=LOCAL&forceConnectionTimeZoneToSession=true
+    username: root
+    password: 123456
+mybatis:
+  configuration:
+    # mybatis开启驼峰字段名解析为 _ 符号
+    map-underscore-to-camel-case: true
+  # mapper的xml路径
+  mapper-locations: classpath:mapper/*.xml
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        web:
+          reactive:
+            function:
+              client: info
+    com:
+      meal: debug
+server:
+  port: 9001
