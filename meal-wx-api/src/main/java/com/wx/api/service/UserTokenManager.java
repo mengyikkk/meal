@@ -1,6 +1,7 @@
 package com.wx.api.service;
 
 
+import com.wx.api.annotation.LoginUser;
 import com.wx.api.util.JwtHelper;
 
 /**

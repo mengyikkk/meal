@@ -12,9 +12,9 @@ import java.util.*;
 
 public class JwtHelper {
 	// 秘钥
-	static final String SECRET = "X-meal-TOKEN";
+	static final String SECRET = "X-MEAL-TOKEN";
 	// 签名是有谁生成
-	static final String ISSUSER = "meal";
+	static final String ISSUSER = "MEAL";
 	// 签名的主题
 	static final String SUBJECT = "this is meal token";
 	// 签名的观众
