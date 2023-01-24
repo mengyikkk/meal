@@ -31,6 +31,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.meal</groupId>
+                <artifactId>meal-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.meal</groupId>
+                <artifactId>meal-wx-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- 单元测试 -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -45,6 +55,11 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>1.2.1</version>
             </dependency>
             <!-- mybatis支持 -->
             <dependency>
@@ -100,7 +115,11 @@
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>1.2.5</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>2.7.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

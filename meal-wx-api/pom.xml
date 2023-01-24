@@ -20,7 +20,6 @@
         <dependency>
             <groupId>com.meal</groupId>
             <artifactId>meal-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -42,15 +41,7 @@
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
         <!-- 反应式http client支持 -->
         <dependency>
             <groupId>io.projectreactor.netty</groupId>
@@ -66,16 +57,9 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-miniapp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.meal</groupId>
-            <artifactId>meal-common</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
