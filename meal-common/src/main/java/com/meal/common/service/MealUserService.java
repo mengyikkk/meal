@@ -16,7 +16,12 @@ public class MealUserService {
     public MealUser queryByOid(String openId) {
         MealUserExample example = new MealUserExample();
         example.createCriteria().andWxOpenidEqualTo(openId).andDeletedEqualTo(false);
-        return this.mealUserMapper.selectByExample(example).get(0);
+        return this.mealUserMapper.selectOneByExample(example);
+    }
+    public MealUser queryByMobile(String mobile) {
+        MealUserExample example = new MealUserExample();
+        example.createCriteria().andMobileEqualTo(mobile).andDeletedEqualTo(false);
+        return this.mealUserMapper.selectOneByExample(example);
     }
     public void add(MealUser user) {
         user.setAddTime(LocalDateTime.now());

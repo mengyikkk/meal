@@ -5,7 +5,44 @@ import java.util.Objects;
 import java.util.Optional;
 
 public enum ResponseCode implements StateMapping<Integer> {
+    AUTH_INVALID_ACCOUNT ( 700),
+    AUTH_CAPTCHA_UNSUPPORT ( 701),
+    AUTH_CAPTCHA_FREQUENCY ( 702),
+    AUTH_CAPTCHA_UNMATCH ( 703),
+    AUTH_NAME_REGISTERED ( 704),
+    AUTH_MOBILE_REGISTERED ( 705),
+    AUTH_MOBILE_UNREGISTERED ( 706),
+    AUTH_INVALID_MOBILE ( 707),
+    AUTH_OPENID_UNACCESS ( 708),
+    AUTH_OPENID_BINDED ( 709),
 
+    GOODS_UNSHELVE ( 710),
+    GOODS_NO_STOCK ( 711),
+    GOODS_UNKNOWN ( 712),
+    GOODS_INVALID ( 713),
+
+    ORDER_UNKNOWN ( 720),
+    ORDER_INVALID ( 721),
+    ORDER_CHECKOUT_FAIL ( 722),
+    publORDER_CANCEL_FAIL ( 723),
+    publORDER_PAY_FAIL ( 724),
+    // 订单当前状态下不支持用户的操作，例如商品未发货状态用户执行确认收货是不可能的。
+    ORDER_INVALID_OPERATION ( 725),
+    ORDER_COMMENTED ( 726),
+    ORDER_COMMENT_EXPIRED ( 727),
+
+    GROUPON_EXPIRED ( 730),
+    GROUPON_OFFLINE ( 731),
+    GROUPON_FULL ( 732),
+    GROUPON_JOIN ( 733),
+
+    COUPON_EXCEED_LIMIT ( 740),
+    COUPON_RECEIVE_FAIL( 741),
+    COUPON_CODE_INVALID( 742),
+
+    AFTERSALE_UNALLOWED ( 750),
+    AFTERSALE_INVALID_AMOUNT ( 751),
+    AFTERSALE_INVALID_STATUS ( 752),
     /** 成功 */
     SUCCESS(0),
 
@@ -122,6 +159,8 @@ public enum ResponseCode implements StateMapping<Integer> {
     // 第三方API使用
     /** 参数错误 */
     PARAMETER_ERROR(7001),
+    AUTH_MOBILE_REGISTERED(700),
+    AUTH_INVALID_MOBILE(706),
 
     /** 订单状态错误 */
     ORDER_STATE_ERROR(7011),
