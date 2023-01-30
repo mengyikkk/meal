@@ -149,4 +149,6 @@ public interface MealUserMapper {
      * @mbg.generated
      */
     int logicalDeleteByPrimaryKey(Integer id);
+
+    boolean hasMobile(@Param("mobile") String mobile);
 }

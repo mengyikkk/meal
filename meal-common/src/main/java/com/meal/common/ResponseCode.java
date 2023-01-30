@@ -159,8 +159,6 @@ public enum ResponseCode implements StateMapping<Integer> {
     // 第三方API使用
     /** 参数错误 */
     PARAMETER_ERROR(7001),
-    AUTH_MOBILE_REGISTERED(700),
-    AUTH_INVALID_MOBILE(706),
 
     /** 订单状态错误 */
     ORDER_STATE_ERROR(7011),
