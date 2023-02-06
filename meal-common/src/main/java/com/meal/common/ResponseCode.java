@@ -8,7 +8,9 @@ public enum ResponseCode implements StateMapping<Integer> {
     AUTH_INVALID_ACCOUNT ( 700),
     AUTH_CAPTCHA_UNSUPPORT ( 701),
     AUTH_CAPTCHA_FREQUENCY ( 702),
+    /**短信验证码不匹配*/
     AUTH_CAPTCHA_UNMATCH ( 703),
+    AUTH_CAPTCHA_NULL( 7031),
     AUTH_NAME_REGISTERED ( 704),
     AUTH_MOBILE_REGISTERED ( 705),
     AUTH_MOBILE_UNREGISTERED ( 706),

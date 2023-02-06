@@ -10,6 +10,7 @@ import com.meal.common.service.MealUserService;
 import com.meal.common.utils.IpUtil;
 import com.meal.common.utils.ResultUtils;
 import com.meal.common.utils.TokenUtils;
+import com.wx.api.model.LoginVo;
 import com.wx.api.model.WxRegisterVo;
 import com.wx.api.dto.UserInfo;
 import com.wx.api.dto.WxLoginInfo;
@@ -80,6 +81,10 @@ public class WxAuthController {
         return  this.wxAuthService.register(vo,request);
     }
 
+    @PostMapping("/login")
+    public Result<?>login(@RequestBody LoginVo vo, HttpServletRequest request){
+        return  this.wxAuthService.login(vo,request);
+    }
 
 
 

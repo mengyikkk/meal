@@ -10,6 +10,7 @@ public class SecurityContents {
             //后端登录接口
             "/user/login",
             "/wx/auth/register",
+            "/wx/auth/login",
             //swagger相关
             "/favicon.ico",
             "/swagger-ui.html",
