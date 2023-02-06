@@ -8,25 +8,18 @@ import com.meal.common.dto.MealUser;
 import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.IpUtil;
-import com.meal.common.utils.RegexUtil;
 import com.meal.common.utils.ResultUtils;
-import com.meal.common.utils.bcrypt.BCryptPasswordEncoder;
-import com.wx.api.model.WxRegisterReturnVo;
+import com.meal.common.utils.TokenUtils;
 import com.wx.api.model.WxRegisterVo;
 import com.wx.api.dto.UserInfo;
 import com.wx.api.dto.WxLoginInfo;
-import com.wx.api.service.UserTokenManager;
+import com.wx.api.service.WxAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -40,82 +33,55 @@ public class WxAuthController {
     @Resource
     private MealUserService mealUserService;
 
-    @Resource
-    private Validator validator;
+//    @Resource
+//    private NotifyService notifyService;
     @Resource
     private MealUserMapper mealUserMapper;
 
+    @Resource
+    private WxAuthService wxAuthService;
+
+//    @PostMapping("/captcha")
+//    public Result<?> captcha(@LoginUser Integer userId,@RequestBody CaptchaVo vo) {
+//        if(userId == null){
+//            return ResultUtils.unknown();
+//        }
+//        String phoneNumber = vo.getMobile();
+//        String captchaType = vo.getType();
+//        if (StringUtils.isBlank(phoneNumber)) {
+//            return ResultUtils.unknown();
+//        }
+//        if (!RegexUtil.isMobileSimple(phoneNumber)) {
+//            return ResultUtils.code(ResponseCode.AUTH_INVALID_MOBILE);
+//        }
+//        if (StringUtils.isEmpty(captchaType)) {
+//            return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
+//        }
+//
+//        if (!notifyService.isSmsEnable()) {
+//            return ResultUtils.code(ResponseCode.AUTH_CAPTCHA_UNSUPPORT);
+//        }
+//        String code = CharUtil.getRandomNum(6);
+//        boolean successful = CaptchaCodeManager.addToCache(phoneNumber, code);
+//        if (!successful) {
+//            return ResultUtils.code(ResponseCode.AUTH_CAPTCHA_FREQUENCY);
+//        }
+//        notifyService.notifySmsTemplate(phoneNumber, NotifyType.CAPTCHA, new String[]{code});
+//        return ResultUtils.success();
+//    }
     /**
      * 目前用手机号当用户名
      * @param vo
      * @param request
      * @return
      */
-    @PostMapping("register")
-    public Object register(@RequestBody WxRegisterVo vo, HttpServletRequest request) {
-        {
-            Set<ConstraintViolation<WxRegisterVo>> violations = this.validator.validate(vo);
-            if (!violations.isEmpty()) {
-                this.logger.warn("Service-Store[trade][block]:param.  request: {}, violation: {}",
-                        vo, violations);
-                return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
-            }
-        }
-        var mobile =vo.getMobile();
-        var password = vo.getPassword();
-        // 如果是小程序注册，则必须非空
-        // 其他情况，可以为空
-        String wxCode = vo.getWxCode();
-        var user = new MealUser();
-        if (mealUserService.hasByMobile(mobile)){
-            return ResultUtils.code(ResponseCode.AUTH_MOBILE_REGISTERED);
-        }
-        if (!RegexUtil.isMobileSimple(mobile)) {
-            return ResultUtils.code(ResponseCode.AUTH_INVALID_MOBILE);
-        }
-        //todo验证码校验
-        String openId = "";
-        // 非空，则是小程序注册
-        // 继续验证openid
-        if (Objects.nonNull(wxCode)) {
-            try {
-                WxMaJscode2SessionResult result = this.wxService.getUserService().getSessionInfo(wxCode);
-                openId = result.getOpenid();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResultUtils.code(ResponseCode.AUTH_OPENID_UNACCESS);
-            }
-            var checkUser = this.mealUserService.queryByOid(openId);
-            String checkPassword = checkUser.getPassword();
-            if (!checkPassword.equals(openId)) {
-                return ResultUtils.code(ResponseCode.AUTH_OPENID_BINDED);
-            }
-        }
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(password);
-        user.setUsername(mobile);
-        user.setPassword(encodedPassword);
-        user.setMobile(mobile);
-        user.setWxOpenid(openId);
-        user.setAvatar("https://yanxuan.nosdn.127.net/80841d741d7fa3073e0ae27bf487339f.jpg?imageView&quality=90&thumbnail=64x64");
-        user.setNickname(vo.getUsername());
-        user.setGender((byte) 0);
-        user.setUserLevel((byte) 0);
-        user.setStatus((byte) 0);
-        user.setLastLoginTime(LocalDateTime.now());
-        user.setLastLoginIp(IpUtil.getIpAddr(request));
-        if (this.mealUserMapper.insertSelective(user)<1){
-            return ResultUtils.code(ResponseCode.TIME_OUT);
-        }
-        var result = new WxRegisterReturnVo();
-        UserInfo userInfo = new UserInfo();
-        userInfo.setNickName(user.getNickname());
-        userInfo.setAvatarUrl(user.getAvatar());
-        result.setToken(UserTokenManager.generateToken(user.getId()));
-        result.setUserInfo(userInfo);
-        // token
-        return ResultUtils.success(result);
+    @PostMapping("/register")
+    public Result<?> register(@RequestBody WxRegisterVo vo, HttpServletRequest request) {
+        return  this.wxAuthService.register(vo,request);
     }
+
+
+
 
     @PostMapping("/loginByWx")
     public Result<?> loginByWx(@RequestBody WxLoginInfo wxLoginInfo, HttpServletRequest request) {
@@ -162,10 +128,10 @@ public class WxAuthController {
             }
         }
         // token
-        String token = UserTokenManager.generateToken(user.getId());
+//        String token = TokenUtils.generateToken(user.getId());
         Map<Object, Object> result = new HashMap<Object, Object>();
-        result.put("token", token);
-        result.put("userInfo", userInfo);
+//        result.put("token", token);
+//        result.put("userInfo", userInfo);
         return  ResultUtils.success(result);
     }
 }

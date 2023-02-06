@@ -1,0 +1,13 @@
+POST http://localhost:9001/wx/auth/register
+Content-Type: application/json
+
+{
+  "code": "123456",
+  "username":"15566320836",
+  "nickname":"ebi不要",
+  "password": "12345678",
+  "mobile": "15566320836"
+}
+###
+GET  http://localhost:9001/wx/auth
+Authorization: {{token}}

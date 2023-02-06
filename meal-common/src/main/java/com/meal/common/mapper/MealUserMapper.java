@@ -1,7 +1,7 @@
 package com.meal.common.mapper;
 
-import com.meal.common.dto.MealUser;
-import com.meal.common.dto.MealUserExample;
+import com.meal.common.dto.*;
+
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -151,4 +151,17 @@ public interface MealUserMapper {
     int logicalDeleteByPrimaryKey(Integer id);
 
     boolean hasMobile(@Param("mobile") String mobile);
+
+    List<MealRole> findRoles(@Param("userId") Integer userId);
+
+    List<MealMenu> findMenus(@Param("userId") Integer userId);
+
+    List<MealMenu> findChildrenMenu(@Param("id") Long id, @Param("userId") Integer userId);
+
+    /**
+     * 根据用户ID查询权限数据
+     * @param userId
+     * @return
+     */
+    List<MealPermission> findPermissions(@Param("userId") Integer userId);
 }

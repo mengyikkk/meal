@@ -10,9 +10,28 @@ spring:
     url:  jdbc:mysql://localhost:3306/meal?characterEncoding=UTF-8&useUnicode=true&connectionTimeZone=LOCAL&forceConnectionTimeZoneToSession=true
     username: root
     password: 123456
+  # redis相关配置
+  redis:
+    # 配置主机
+    host: 127.0.0.1
+    # 配置使用的数据库
+    database: 0
+    # 指定端口
+    port: 6379
+
 mybatis:
   configuration:
     # mybatis开启驼峰字段名解析为 _ 符号
     map-underscore-to-camel-case: true
   # mapper的xml路径
   mapper-locations: classpath:mapper/*.xml
+# jwt配置
+jwt:
+  # 请求头
+  tokenHeader: Authorization
+  # 签名加盐
+  secret: meal_e_b
+  # jwt过期时间
+  expiration: 1800000
+  # token头部
+  tokenHead: 'Bearer '

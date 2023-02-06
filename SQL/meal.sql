@@ -17,12 +17,61 @@ CREATE TABLE `meal_user` (
                                  `wx_openid` varchar(63) NOT NULL DEFAULT '' COMMENT '微信登录openid',
                                  `session_key` varchar(100) NOT NULL DEFAULT '' COMMENT '微信登录会话KEY',
                                  `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '0 可用, 1 禁用, 2 注销',
+                                 `admin` tinyint(1) NULL DEFAULT 0 COMMENT '是否是管理员',
                                  `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间' ON UPDATE CURRENT_TIMESTAMP,
                                  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
                                  PRIMARY KEY (`id`),
                                  UNIQUE KEY `user_name` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+
+DROP TABLE IF EXISTS `meal_menu`;
+CREATE TABLE `meal_menu`  (
+                             `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                             `path` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单路径',
+                             `icon` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单图标',
+                             `title` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单名称',
+                             `component` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单组件',
+                             `parent_id` bigint(20) NULL DEFAULT NULL COMMENT '父级菜单',
+                             `status` tinyint(1) NULL DEFAULT 0 COMMENT '显示状态(0不显示、1显示)',
+                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `meal_permission`;
+CREATE TABLE `meal_permission`  (
+                                   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                   `label` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限标签',
+                                   `code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据权限标签值',
+                                   `status` tinyint(1) NULL DEFAULT 0 COMMENT '显示状态(0不显示、1显示)',
+                                   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `meal_role`;
+CREATE TABLE `meal_role`  (
+                             `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                             `label` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色描述',
+                             `code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色对应的标签值',
+                             `status` tinyint(1) NULL DEFAULT 0 COMMENT '显示状态(0不显示、1显示)',
+                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `roles_menus`;
+CREATE TABLE `roles_menus`  (
+                                `role_id` bigint(20) NULL DEFAULT NULL COMMENT '角色ID',
+                                `menu_id` bigint(20) NULL DEFAULT NULL COMMENT '菜单权限ID'
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `roles_permissions`;
+CREATE TABLE `roles_permissions`  (
+                                      `role_id` bigint(20) NULL DEFAULT NULL COMMENT '角色ID',
+                                      `permission_id` bigint(20) NULL DEFAULT NULL COMMENT '数据权限ID'
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `user_roles`;
+CREATE TABLE `user_roles` (
+                              `user_id` bigint DEFAULT NULL COMMENT '用户ID',
+                              `role_id` bigint DEFAULT NULL COMMENT '角色ID'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 
 DROP TABLE IF EXISTS `meal_shop`;

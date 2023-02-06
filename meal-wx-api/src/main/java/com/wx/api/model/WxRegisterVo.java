@@ -7,11 +7,11 @@ public class WxRegisterVo {
     private String username;
     @NotBlank
     private String password;
+    private String nickname;
     @NotBlank
     private String mobile;
     @NotBlank
     private String code;
-    @NotBlank
     private String wxCode;
 
     public String getUsername() {
@@ -56,6 +56,15 @@ public class WxRegisterVo {
 
     public WxRegisterVo setWxCode(String wxCode) {
         this.wxCode = wxCode;
+        return this;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public WxRegisterVo setNickname(String nickname) {
+        this.nickname = nickname;
         return this;
     }
 }

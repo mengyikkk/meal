@@ -1,4 +1,3 @@
-
 logging:
   level:
     root: info
@@ -12,12 +11,43 @@ logging:
       meal: debug
 meal:
   wx:
-  miniapp:
-    configs:
-        appid: #微信小程序的appid
-        secret: #微信小程序的Secret
-        token: #微信小程序消息服务器配置的token
-        aesKey: #微信小程序消息服务器配置的EncodingAESKey
-        msgDataFormat: JSON
+    miniapp:
+      configs:
+          appid: #微信小程序的appid
+          secret: #微信小程序的Secret
+          token: #微信小程序消息服务器配置的token
+          aesKey: #微信小程序消息服务器配置的EncodingAESKey
+          msgDataFormat: JSON
+  notify:
+    mail:
+      # 邮件通知配置,邮箱一般用于接收业务通知例如收到新的订单，sendto 定义邮件接收者，通常为商城运营人员
+      enable: false
+      host: smtp.exmail.qq.com
+      username: ex@ex.com.cn
+      password: XXXXXXXXXXXXX
+      sendfrom: ex@ex.com.cn
+      sendto: ex@qq.com
+      port: 465
+    # 短消息模版通知配置
+    # 短信息用于通知客户，例如发货短信通知，注意配置格式；template-name，template-templateId 请参考 NotifyType 枚举值
+    sms:
+      enable: false
+      # 如果是腾讯云短信，则设置active的值tencent
+      # 如果是阿里云短信，则设置active的值aliyun
+      active: aliyun
+      sign: meal
+      template:
+        # - name: paySucceed
+        #   templateId: 156349
+        # - name: captcha
+        #   templateId: 156433
+        # - name: ship
+        #   templateId: 158002
+        # - name: refund
+      #   templateId: 159447
+      aliyun:
+        regionId: xxx
+        accessKeyId: xxx
+        accessKeySecret: xxx
 server:
   port: 9001

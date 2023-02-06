@@ -18,8 +18,11 @@ public class MealUserService {
         example.createCriteria().andWxOpenidEqualTo(openId).andDeletedEqualTo(false);
         return this.mealUserMapper.selectOneByExample(example);
     }
-    public Boolean hasByMobile(String mobile) {
-        return this.mealUserMapper.hasMobile(mobile);
+
+    public MealUser queryByMobile(String mobile)  {
+        MealUserExample example = new MealUserExample();
+        example.createCriteria().andMobileEqualTo(mobile).andDeletedEqualTo(false);
+        return this.mealUserMapper.selectOneByExample(example);
     }
     public void add(MealUser user) {
         user.setAddTime(LocalDateTime.now());

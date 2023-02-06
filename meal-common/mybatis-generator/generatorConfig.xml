@@ -56,11 +56,21 @@
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.meal.common.mapper"
                              targetProject="src/main/java"/>
         <!--表名-->
-        <table tableName="meal_user">
+        <table tableName="user_roles">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
-        <table tableName="meal_shop">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
+<!--        <table tableName="meal_shop">-->
+<!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="meal_menu">-->
+<!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="meal_permission">-->
+<!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="roles_menus">-->
+<!--        </table>-->
+<!--        <table tableName="roles_permissions">-->
+<!--        </table>-->
     </context>
 </generatorConfiguration>
