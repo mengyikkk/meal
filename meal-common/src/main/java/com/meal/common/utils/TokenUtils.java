@@ -43,7 +43,7 @@ public   class TokenUtils {
         Map<String, Object> map = new HashMap<>(2);
         map.put("username", details.getUsername());
         map.put("created", new Date());
-        return new TokenVo().setToken(generateJwt(map)).setRefresh(generateRefreshToken(map)).setExpire(expiration);
+        return new TokenVo().setToken(generateJwt(map)).setRefresh(generateRefreshToken(map)).setExpire(refreshExpiration);
     }
 
 
@@ -108,6 +108,6 @@ public   class TokenUtils {
     public TokenVo refreshToken(String token) {
         Claims claims = this.getTokenBody(token);
         claims.setExpiration(new Date());
-        return new TokenVo().setExpire(expiration).setToken(this.generateJwt(claims)).setRefresh(generateRefreshToken(claims));
+        return new TokenVo().setExpire(expiration).setToken(this.generateJwt(claims));
     }
 }

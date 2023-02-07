@@ -1,5 +1,8 @@
 package com.meal.common.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(value= JsonInclude.Include.NON_NULL)
 public class TokenVo {
     private  String token;
 
