@@ -42,34 +42,7 @@ public class WxAuthController {
     @Resource
     private WxAuthService wxAuthService;
 
-//    @PostMapping("/captcha")
-//    public Result<?> captcha(@LoginUser Integer userId,@RequestBody CaptchaVo vo) {
-//        if(userId == null){
-//            return ResultUtils.unknown();
-//        }
-//        String phoneNumber = vo.getMobile();
-//        String captchaType = vo.getType();
-//        if (StringUtils.isBlank(phoneNumber)) {
-//            return ResultUtils.unknown();
-//        }
-//        if (!RegexUtil.isMobileSimple(phoneNumber)) {
-//            return ResultUtils.code(ResponseCode.AUTH_INVALID_MOBILE);
-//        }
-//        if (StringUtils.isEmpty(captchaType)) {
-//            return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
-//        }
-//
-//        if (!notifyService.isSmsEnable()) {
-//            return ResultUtils.code(ResponseCode.AUTH_CAPTCHA_UNSUPPORT);
-//        }
-//        String code = CharUtil.getRandomNum(6);
-//        boolean successful = CaptchaCodeManager.addToCache(phoneNumber, code);
-//        if (!successful) {
-//            return ResultUtils.code(ResponseCode.AUTH_CAPTCHA_FREQUENCY);
-//        }
-//        notifyService.notifySmsTemplate(phoneNumber, NotifyType.CAPTCHA, new String[]{code});
-//        return ResultUtils.success();
-//    }
+
     /**
      * 目前用手机号当用户名
      * @param vo
@@ -82,11 +55,15 @@ public class WxAuthController {
     }
 
     @PostMapping("/login")
-    public Result<?>login(@RequestBody LoginVo vo, HttpServletRequest request){
+    public Result<?> login(@RequestBody LoginVo vo, HttpServletRequest request){
         return  this.wxAuthService.login(vo,request);
     }
 
+    @PostMapping("/sms")
+    public Result<?> sms(String phoneNumber){
+        return  this.wxAuthService.sms(phoneNumber);
 
+    }
 
     @PostMapping("/loginByWx")
     public Result<?> loginByWx(@RequestBody WxLoginInfo wxLoginInfo, HttpServletRequest request) {

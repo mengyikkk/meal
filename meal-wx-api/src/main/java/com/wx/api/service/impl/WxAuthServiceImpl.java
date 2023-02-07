@@ -4,12 +4,12 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
+import com.meal.common.config.MealProperties;
 import com.meal.common.dto.MealUser;
 import com.meal.common.enums.LoginTypeEnum;
 import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.*;
-import com.meal.common.utils.bcrypt.BCryptPasswordEncoder;
 import com.wx.api.dto.UserInfo;
 import com.wx.api.dto.UserToken;
 import com.wx.api.model.LoginVo;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 @Service
 public class WxAuthServiceImpl implements WxAuthService {
@@ -57,6 +59,10 @@ public class WxAuthServiceImpl implements WxAuthService {
 
     @Resource
     private UserDetailsService userDetailsService;
+//    @Resource
+//    private SmsUtils smsUtils;
+    @Resource
+    private MealProperties mealProperties;
 
     @Resource
     private PasswordEncoder passwordEncoder;
@@ -171,6 +177,15 @@ public class WxAuthServiceImpl implements WxAuthService {
         }
         this.logger.info("登录成功，在security对象中存入{}登陆者信息",vo.getPhoneNumber());
         return ResultUtils.success(new TokenVo().setToken(tokenUtils.generateToken(user)));
+    }
+
+    @Override
+    public Result<?> sms(String phoneNumber) {
+        Random random = new Random();
+        int code = 100000 + random.nextInt(899999);
+//        smsUtils.sendSms(phoneNumber,"12",code);
+        redisUtils.setValueTime(phoneNumber + "sms", code, 5);
+        return ResultUtils.success("验证码发送成功！");
     }
 
     private void LastLogIn(MealUser user,HttpServletRequest request){
