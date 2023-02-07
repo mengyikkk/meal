@@ -23,8 +23,6 @@ import javax.annotation.Resource;
 
 /**
  * 权限基本配置
- * @author ajie
- * @createTime 2021年07月23日 21:53:00
  */
 @Configuration
 @EnableWebSecurity
