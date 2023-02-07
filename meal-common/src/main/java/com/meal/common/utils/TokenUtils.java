@@ -1,5 +1,6 @@
 package com.meal.common.utils;
 
+import com.meal.common.config.TokenVo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,20 +27,23 @@ public   class TokenUtils {
     private  String secret;
 
     @Value("${jwt.expiration}")
-    private  long expiration;
+    private  Long expiration;
+
+    @Value("${jwt.refreshExpiration}")
+    private  Long refreshExpiration;
 
     /**
      * 传入用户登录信息，生成token
      * @param details
      * @return
      */
-    public String generateToken(UserDetails details) {
+    public TokenVo generateToken(UserDetails details) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         Map<String, Object> map = new HashMap<>(2);
         map.put("username", details.getUsername());
         map.put("created", new Date());
-        return genrateJwt(map);
+        return new TokenVo().setToken(generateJwt(map)).setRefresh(generateRefreshToken(map)).setExpire(expiration);
     }
 
 
@@ -48,14 +52,20 @@ public   class TokenUtils {
      * @param map
      * @return
      */
-    private  String genrateJwt(Map<String, Object> map) {
+    private  String generateJwt(Map<String, Object> map) {
         return Jwts.builder()
                 .setClaims(map)
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
                 .compact();
     }
-
+    private  String generateRefreshToken(Map<String, Object> map) {
+        return Jwts.builder()
+                .setClaims(map)
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration * 1000))
+                .compact();
+    }
     /**
      * 根据token获取荷载信息
      * @param token
@@ -95,9 +105,9 @@ public   class TokenUtils {
      * @param token
      * @return
      */
-    public String refreshToken(String token) {
+    public TokenVo refreshToken(String token) {
         Claims claims = this.getTokenBody(token);
         claims.setExpiration(new Date());
-        return this.genrateJwt(claims);
+        return new TokenVo().setExpire(expiration).setToken(this.generateJwt(claims)).setRefresh(generateRefreshToken(claims));
     }
 }

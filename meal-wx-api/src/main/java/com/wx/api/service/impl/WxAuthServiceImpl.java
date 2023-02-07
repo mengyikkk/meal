@@ -11,16 +11,15 @@ import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.*;
 import com.wx.api.dto.UserInfo;
-import com.wx.api.dto.UserToken;
 import com.wx.api.model.LoginVo;
-import com.wx.api.model.TokenVo;
+import com.meal.common.config.TokenVo;
 import com.wx.api.model.WxRegisterReturnVo;
 import com.wx.api.model.WxRegisterVo;
 import com.wx.api.service.WxAuthService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,7 +40,8 @@ public class WxAuthServiceImpl implements WxAuthService {
     private final Logger logger = LoggerFactory.getLogger(WxAuthServiceImpl.class);
     //    @Resource
     private WxMaService wxService;
-
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
     @Resource
     private MealUserService mealUserService;
 
@@ -59,8 +59,7 @@ public class WxAuthServiceImpl implements WxAuthService {
 
     @Resource
     private UserDetailsService userDetailsService;
-//    @Resource
-//    private SmsUtils smsUtils;
+
     @Resource
     private MealProperties mealProperties;
 
@@ -176,16 +175,31 @@ public class WxAuthServiceImpl implements WxAuthService {
             return  ResultUtils.unknown();
         }
         this.logger.info("登录成功，在security对象中存入{}登陆者信息",vo.getPhoneNumber());
-        return ResultUtils.success(new TokenVo().setToken(tokenUtils.generateToken(user)));
+        return ResultUtils.success(tokenUtils.generateToken(user));
     }
 
     @Override
     public Result<?> sms(String phoneNumber) {
         Random random = new Random();
         int code = 100000 + random.nextInt(899999);
-//        smsUtils.sendSms(phoneNumber,"12",code);
-        redisUtils.setValueTime(phoneNumber + "sms", code, 5);
+        SmsUtils.sendSms(phoneNumber,"12",code, mealProperties.getSms());
+        redisUtils.setValueTime(phoneNumber + "sms", code, 10);
         return ResultUtils.success("验证码发送成功！");
+    }
+
+    @Override
+    public Result<?> refresh(String token) {
+        //2. 判断token是否存在
+        if (null != token && token.startsWith(tokenHead)) {
+            //拿到token主体
+            token = token.substring(tokenHead.length());
+        }else{
+            return  ResultUtils.message(ResponseCode.PARAMETER_ERROR,"无效参数");
+        }
+        if (!tokenUtils.isExpiration(token)) {
+            return ResultUtils.success(tokenUtils.refreshToken(token));
+        }
+        return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, "登录过期，请重新登录！");
     }
 
     private void LastLogIn(MealUser user,HttpServletRequest request){

@@ -11,4 +11,5 @@ public interface WxAuthService {
      Result<?> register(WxRegisterVo vo, HttpServletRequest request);
      Result<?> login(LoginVo vo, HttpServletRequest request);
      Result<?> sms(String phoneNumber);
+     Result<?> refresh(String token);
 }

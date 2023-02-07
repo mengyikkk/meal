@@ -32,7 +32,9 @@ jwt:
   # 签名加盐
   secret: meal_e_b
   # jwt过期时间
-  expiration: 1800000
+  expiration: 18000
+  # jwt刷新时间
+  refreshExpiration: 604800
   # token头部
   tokenHead: 'Bearer '
 meal:

@@ -9,6 +9,7 @@ import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.IpUtil;
 import com.meal.common.utils.ResultUtils;
+import com.meal.common.utils.SmsUtils;
 import com.meal.common.utils.TokenUtils;
 import com.wx.api.model.LoginVo;
 import com.wx.api.model.WxRegisterVo;
@@ -34,8 +35,6 @@ public class WxAuthController {
     @Resource
     private MealUserService mealUserService;
 
-//    @Resource
-//    private NotifyService notifyService;
     @Resource
     private MealUserMapper mealUserMapper;
 
@@ -62,7 +61,14 @@ public class WxAuthController {
     @PostMapping("/sms")
     public Result<?> sms(String phoneNumber){
         return  this.wxAuthService.sms(phoneNumber);
-
+    }
+    @PostMapping("/refresh")
+    public Result<?> refresh(@RequestHeader("${jwt.tokenHeader}") String token){
+        return  this.wxAuthService.refresh(token);
+    }
+    @GetMapping
+    public  String test(){
+        return  "123";
     }
 
     @PostMapping("/loginByWx")

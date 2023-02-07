@@ -11,6 +11,7 @@ public class SecurityContents {
             "/user/login",
             "/wx/auth/register",
             "/wx/auth/login",
+            "/wx/auth/refresh",
             //swagger相关
             "/favicon.ico",
             "/swagger-ui.html",

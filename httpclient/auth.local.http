@@ -19,5 +19,10 @@ Content-Type: application/json
   "type": "1"
 }
 ###
+
+POST http://localhost:9001/wx/auth/refresh
+Authorization:  {{token}}
+
+###
 GET  http://localhost:9001/wx/auth
 Authorization: {{token}}

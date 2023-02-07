@@ -1,4 +1,4 @@
-package com.wx.api.model;
+package com.meal.common.config;
 
 public class TokenVo {
     private  String token;
