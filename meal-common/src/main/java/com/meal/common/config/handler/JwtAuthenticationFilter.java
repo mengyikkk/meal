@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.annotation.Resource;
@@ -52,9 +53,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //1. 获取token
         String header = request.getHeader(tokenHeader);
         //2. 判断token是否存在
-        if (null != header && header.startsWith(tokenHead)) {
+        if (StringUtils.hasText(header)) {
             //拿到token主体
-            String token = header.substring(tokenHead.length());
+            String token = header;
+            if (header.startsWith(tokenHead)){
+                token= header.substring(tokenHead.length());
+            }
             //根据token获取用户名
             String username = tokenUtils.getUsernameByToken(token);
             //3. token存在，但是没有登录信息

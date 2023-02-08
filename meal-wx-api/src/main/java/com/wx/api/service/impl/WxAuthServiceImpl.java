@@ -190,9 +190,9 @@ public class WxAuthServiceImpl implements WxAuthService {
     @Override
     public Result<?> refresh(String token) {
         //2. 判断token是否存在
-        if (null != token && token.startsWith(tokenHead)) {
+        if (org.springframework.util.StringUtils.hasText(token)) {
             //拿到token主体
-            token = token.substring(tokenHead.length());
+            if (token.startsWith(tokenHead)) token = token.substring(tokenHead.length());
         }else{
             return  ResultUtils.message(ResponseCode.PARAMETER_ERROR,"无效参数");
         }

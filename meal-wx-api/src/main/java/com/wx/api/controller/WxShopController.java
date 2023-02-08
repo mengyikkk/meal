@@ -2,9 +2,10 @@ package com.wx.api.controller;
 
 import com.meal.common.Result;
 import com.meal.common.config.SecurityConfig;
+import com.meal.common.utils.SecurityUtils;
 import com.wx.api.service.WxShopService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -17,13 +18,14 @@ import java.util.List;
 @RequestMapping("/wx/shop")
 @Validated
 public class WxShopController {
-    private final Log logger = LogFactory.getLog(WxShopController.class);
+    private final Logger logger = LoggerFactory.getLogger(WxShopController.class);
 
     @Resource
     private WxShopService wxShopService;
     @PostMapping("/list")
     public Result<?> list(@RequestParam(defaultValue = "1") Integer page,
                        @RequestParam(defaultValue = "10") Integer limit) {
+        this.logger.info("user:{},查询店铺",SecurityUtils.getUserId());
         return this.wxShopService.shop(page,limit);
     }
 }

@@ -5,6 +5,7 @@ import com.meal.common.dto.MealMenu;
 import com.meal.common.dto.MealUser;
 import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.service.MealUserService;
+import com.meal.common.utils.JsonUtils;
 import com.meal.common.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +41,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         MealUser user;
         if (redisUtils.haskey("userInfo_" + username)) {
             //缓存中存在用户信息，直接从redis中取
-            user = (MealUser) redisUtils.getValue("userInfo_" + username);
+            user =(MealUser) redisUtils.getValue("userInfo_" + username);
             redisUtils.expire("userInfo_" + username, 5);
         } else {
             user = mealUserService.queryByMobile(username);

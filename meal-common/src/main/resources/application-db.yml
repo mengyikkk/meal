@@ -18,7 +18,8 @@ spring:
     database: 0
     # 指定端口
     port: 6379
-
+#    # 密码
+#    password: 123456
 mybatis:
   configuration:
     # mybatis开启驼峰字段名解析为 _ 符号
