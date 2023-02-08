@@ -1,5 +1,7 @@
 package com.wx.api.dto;
 
+import com.meal.common.dto.UserInfo;
+
 public class WxLoginInfo {
     private String code;
     private UserInfo userInfo;

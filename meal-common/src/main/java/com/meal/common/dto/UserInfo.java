@@ -1,4 +1,4 @@
-package com.wx.api.dto;
+package com.meal.common.dto;
 
 public class UserInfo {
     private String nickName;

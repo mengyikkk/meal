@@ -1,4 +1,4 @@
-package com.wx.api.model;
+package com.meal.common.model;
 
 import javax.validation.constraints.NotBlank;
 

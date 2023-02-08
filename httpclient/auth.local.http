@@ -27,5 +27,10 @@ Authorization:  {{token}}
 GET  http://localhost:9001/wx/auth
 Authorization: {{token}}
 ###
-POST http://localhost:9001/wx/shop/list?page=1&limit=10
+POST http://localhost:9001/wx/shop/list
 Authorization:  {{token}}
+Content-Type: application/json
+
+{
+  "shopName":"制造商"
+}

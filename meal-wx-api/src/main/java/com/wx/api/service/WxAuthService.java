@@ -1,9 +1,8 @@
 package com.wx.api.service;
 
 import com.meal.common.Result;
-import com.wx.api.model.LoginVo;
-import com.wx.api.model.WxRegisterVo;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.meal.common.model.LoginVo;
+import com.meal.common.model.WxRegisterVo;
 
 import javax.servlet.http.HttpServletRequest;
 

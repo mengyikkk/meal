@@ -1,8 +1,8 @@
-package com.wx.api.model;
+package com.meal.common.model;
 
 
 import com.meal.common.config.TokenVo;
-import com.wx.api.dto.UserInfo;
+import com.meal.common.dto.UserInfo;
 
 public class WxRegisterReturnVo {
     private UserInfo userInfo;

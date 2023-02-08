@@ -3,6 +3,8 @@ package com.meal.common.mapper;
 import com.meal.common.dto.MealShop;
 import com.meal.common.dto.MealShopExample;
 import java.util.List;
+
+import com.meal.common.model.ShopRequestVo;
 import org.apache.ibatis.annotations.Param;
 
 public interface MealShopMapper {
@@ -149,4 +151,6 @@ public interface MealShopMapper {
      * @mbg.generated
      */
     int logicalDeleteByPrimaryKey(Integer id);
+
+    List<MealShop> findMany(@Param("request") ShopRequestVo request, @Param("limit") Integer limit, @Param("offset") Long offset);
 }
