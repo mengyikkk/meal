@@ -22,7 +22,7 @@ public class MealUser implements UserDetails , Serializable {
     public MealUser() {
     }
 
-    public MealUser(Integer id, String username, String password, Byte gender, LocalDate birthday, LocalDateTime lastLoginTime, String lastLoginIp, Byte userLevel, String nickname, String mobile, String avatar, String wxOpenid, String sessionKey, Byte status, Boolean admin, LocalDateTime addTime, LocalDateTime updateTime, Boolean deleted, List<MealRole> roles, List<MealPermission> permissions, List<MealMenu> menus) {
+    public MealUser(Long id, String username, String password, Byte gender, LocalDate birthday, LocalDateTime lastLoginTime, String lastLoginIp, Byte userLevel, String nickname, String mobile, String avatar, String wxOpenid, String sessionKey, Byte status, Boolean admin, LocalDateTime addTime, LocalDateTime updateTime, Boolean deleted, List<MealRole> roles, List<MealPermission> permissions, List<MealMenu> menus) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -70,7 +70,7 @@ public class MealUser implements UserDetails , Serializable {
      *
      * @mbg.generated
      */
-    private Integer id;
+    private Long id;
 
     /**
      *
@@ -242,7 +242,7 @@ public class MealUser implements UserDetails , Serializable {
      *
      * @mbg.generated
      */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -254,7 +254,7 @@ public class MealUser implements UserDetails , Serializable {
      *
      * @mbg.generated
      */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

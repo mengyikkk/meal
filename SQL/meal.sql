@@ -3,7 +3,7 @@ CREATE DATABASE meal DEFAULT CHARACTER SET UTF8MB4 COLLATE UTF8MB4_UNICODE_CI;
 DROP TABLE IF EXISTS `meal_user`;
 
 CREATE TABLE `meal_user` (
-                                 `id` int(11) NOT NULL AUTO_INCREMENT,
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT,
                                  `username` varchar(63) NOT NULL COMMENT '用户名称',
                                  `password` varchar(63) NOT NULL DEFAULT '' COMMENT '用户密码',
                                  `gender` tinyint(3) NOT NULL DEFAULT '0' COMMENT '性别：0 未知， 1男， 1 女',
@@ -77,7 +77,7 @@ CREATE TABLE `user_roles` (
 DROP TABLE IF EXISTS `meal_shop`;
 
 CREATE TABLE `meal_shop` (
-                                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                                  `id` bigint(20) NOT NULL AUTO_INCREMENT,
                                   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '商铺名称',
                                   `desc` varchar(255) NOT NULL DEFAULT '' COMMENT '商铺简介',
                                   `pic_url` varchar(255) NOT NULL DEFAULT '' COMMENT '商铺图片',
@@ -92,31 +92,32 @@ CREATE TABLE `meal_shop` (
 DROP TABLE IF EXISTS `meal_search_history`;
 
 CREATE TABLE `meal_search_history` (
-                                           `id` int(11) NOT NULL AUTO_INCREMENT,
-                                           `user_id` int(11) NOT NULL COMMENT '用户表的用户ID',
+                                           `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                           `user_id` bigint(20) NOT NULL COMMENT '用户表的用户ID',
                                            `keyword` varchar(63) NOT NULL COMMENT '搜索关键字',
                                            `from` varchar(63) NOT NULL DEFAULT '' COMMENT '搜索来源',
                                            `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                            `update_time` datetime DEFAULT NULL COMMENT '更新时间' ON UPDATE CURRENT_TIMESTAMP,
-                                           `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
                                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='搜索历史表';
 
 DROP TABLE IF EXISTS `meal_goods`;
 
 CREATE TABLE `meal_goods` (
-                                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                                  `id` bigint(20) NOT NULL AUTO_INCREMENT,
                                   `goods_sn` varchar(63) NOT NULL DEFAULT '' COMMENT '商品编号',
                                   `name` varchar(127) NOT NULL DEFAULT '' COMMENT '商品名称',
-                                  `category_id` int(11) DEFAULT '0' COMMENT '商品所属类目ID',
-                                  `shop_id` int(11) DEFAULT '0' COMMENT '商铺id',
+                                  `category_id` bigint(20) DEFAULT '0' COMMENT '商品所属类目ID',
+                                  `shop_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '商铺id',
                                   `keywords` varchar(255) DEFAULT '' COMMENT '商品关键字，采用逗号间隔',
                                   `brief` varchar(255) DEFAULT '' COMMENT '商品简介',
                                   `is_on_sale` tinyint(1) DEFAULT '1' COMMENT '是否上架',
-                                  `is_time_on_sale` varchar(255) DEFAULT '1' COMMENT '1,早餐2,午餐 3,晚餐' '0,全时段供应',
-                                  `sort_order` smallint(4) DEFAULT '100',
+                                  `is_time_on_sale` int(11) DEFAULT 0 COMMENT '1,早餐2,午餐 3,晚餐 0,全时段供应',
+                                  `sort_order` bigint(20) DEFAULT '100',
                                   `pic_url` varchar(255) DEFAULT NULL COMMENT '商品页面商品图片',
                                   `unit` varchar(31) DEFAULT '’份‘' COMMENT '商品单位，例如件、盒',
+                                  `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '商品货品价格(原价)',
+                                  `number` bigint(20) NOT NULL DEFAULT '0' COMMENT '商品货品数量',
                                   `retail_price` decimal(10,2) DEFAULT '0.00' COMMENT '零售价格',
                                   `detail` text COMMENT '商品详细介绍，是富文本格式',
                                   `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
@@ -130,35 +131,62 @@ CREATE TABLE `meal_goods` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1181004 DEFAULT CHARSET=utf8mb4 COMMENT='商品基本信息表';
 
 
-DROP TABLE IF EXISTS `meal_goods_product`;
+DROP TABLE IF EXISTS `meal_little_calamity`;
 
-CREATE TABLE `meal_goods_product` (
-                                          `id` int(11) NOT NULL AUTO_INCREMENT,
-                                          `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品表的商品ID',
+CREATE TABLE `meal_little_calamity` (
+                                          `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                          `goods_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '0 对应 普通小料,1对应限定商品小料',
+                                          `pic_url` varchar(255) DEFAULT NULL COMMENT '商品页面商品图片',
+                                          `shop_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '0全店铺小料 商铺限定id',
+                                          `number` bigint(20) NOT NULL DEFAULT '0' COMMENT '商品货品数量',
+                                          `brief` varchar(255) DEFAULT '' COMMENT '商品简介',
+                                          `sort_order` bigint(20) DEFAULT '100',
+                                          `retail_price` decimal(10,2) DEFAULT '0.00' COMMENT '零售价格',
+                                          `unit` varchar(31) DEFAULT '’份‘' COMMENT '商品单位，例如件、盒',
+                                          `is_on_sale` tinyint(1) DEFAULT '1' COMMENT '是否上架',
                                           `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '商品货品价格(原价)',
-                                          `number` int(11) NOT NULL DEFAULT '0' COMMENT '商品货品数量',
-                                          `url` varchar(125) DEFAULT NULL COMMENT '商品货品图片',
+                                          `is_time_on_sale` int(11) DEFAULT 0 COMMENT '1,早餐2,午餐 3,晚餐 0,全时段供应',
+                                          `detail` text COMMENT '商品详细介绍，是富文本格式',
                                           `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                           `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
                                           `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
                                           PRIMARY KEY (`id`),
-                                          KEY `goods_id` (`goods_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8mb4 COMMENT='商品货品表';
+                                          KEY `goods_id` (`goods_id`),
+                                          KEY `shop_id` (`shop_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8mb4 COMMENT='商品小料表';
 
 
 DROP TABLE IF EXISTS `meal_cart`;
 
 CREATE TABLE `meal_cart` (
-                                 `id` int(11) NOT NULL AUTO_INCREMENT,
-                                 `user_id` int(11) DEFAULT NULL COMMENT '用户表的用户ID',
-                                 `goods_id` int(11) DEFAULT NULL COMMENT '商品表的商品ID',
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                 `user_id` bigint(20) DEFAULT NULL COMMENT '用户表的用户ID',
+                                 `goods_id` bigint(20) DEFAULT NULL COMMENT '商品表的商品ID',
                                  `goods_sn` varchar(63) DEFAULT NULL COMMENT '商品编号',
-                                 `goods_is_time` int(11) DEFAULT NULL COMMENT '商品时间到期提示',
+                                 `goods_is_time` tinyint(1) DEFAULT '1' COMMENT '商品时间到期提示',
                                  `goods_name` varchar(127) DEFAULT NULL COMMENT '商品名称',
-                                 `number` int(11) DEFAULT 1 COMMENT '商品货品的数量',
+                                 `number` bigint(20) DEFAULT 1 COMMENT '商品货品的数量',
                                  `checked` tinyint(1) DEFAULT '1' COMMENT '购物车中商品是否选择状态',
                                  `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
                                  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
                                  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='购物车商品表';
+
+DROP TABLE IF EXISTS `meal_category`;
+
+CREATE TABLE `meal_category` (
+                                     `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                     `name` varchar(63) NOT NULL DEFAULT '' COMMENT '类目名称',
+                                     `keywords` varchar(1023) NOT NULL DEFAULT '' COMMENT '类目关键字，以JSON数组格式',
+                                     `desc` varchar(255) DEFAULT '' COMMENT '类目广告语介绍',
+                                     `pid` int(11) NOT NULL DEFAULT '0' COMMENT '父类目ID',
+                                     `icon_url` varchar(255) DEFAULT '' COMMENT '类目图标',
+                                     `pic_url` varchar(255) DEFAULT '' COMMENT '类目图片',
+                                     `sort_order` tinyint(3) DEFAULT '50' COMMENT '排序',
+                                     `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                     `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                     PRIMARY KEY (`id`),
+                                     KEY `parent_id` (`pid`)
+) ENGINE=InnoDB AUTO_INCREMENT=1036007 DEFAULT CHARSET=utf8mb4 COMMENT='类目表';

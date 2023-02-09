@@ -7,6 +7,7 @@ import com.meal.common.model.ShopResponseVo;
 import com.meal.common.utils.BeanCopyUtils;
 import com.meal.common.utils.ResultUtils;
 import com.meal.common.model.ShopRequestVo;
+import com.meal.common.utils.SecurityUtils;
 import com.wx.api.service.WxShopService;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,13 @@ import java.util.Objects;
 public class WxShopServiceImpl implements WxShopService {
     @Resource
     private MealShopMapper mealShopMapper;
-
     @Override
     public Result<?> shop(ShopRequestVo request) {
         var example = new MealShopExample();
         example.createCriteria().andDeletedEqualTo(Boolean.FALSE);
         var count=this.mealShopMapper.countByExample(example);
         if (count==0){
-            return ResultUtils.success();
+            return ResultUtils.successWithEntities(null,count);
         }
         long offset = 0;
         Integer limit = null;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 public class ShopResponseVo {
-    private Integer id;
+    private Long id;
 
     /**
      *
@@ -53,11 +53,11 @@ public class ShopResponseVo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime addTime;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public ShopResponseVo setId(Integer id) {
+    public ShopResponseVo setId(Long id) {
         this.id = id;
         return this;
     }

@@ -43,7 +43,7 @@ public   class TokenUtils {
         Map<String, Object> map = new HashMap<>(2);
         map.put("username", details.getUsername());
         map.put("created", new Date());
-        return new TokenVo().setToken(generateJwt(map)).setRefresh(generateRefreshToken(map)).setExpire(refreshExpiration);
+        return new TokenVo().setToken(generateJwt(map)).setRefresh(generateRefreshToken(map)).setExpire(expiration);
     }
 
 

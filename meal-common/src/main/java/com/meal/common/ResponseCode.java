@@ -51,6 +51,9 @@ public enum ResponseCode implements StateMapping<Integer> {
 
     /** 服务器已经成功接受请求，但不会立即返回。或许会在某个时间回调客户端 */
     ASYNC_CALLBACK(2010),
+    /** 店铺找不到 */
+    SHOP_FIND_ERR0(3100),
+
 
     /** 当前帐户同时被登录了两次 */
     OTHER_TOKEN_EXISTS(2040),

@@ -28,7 +28,7 @@ public class MealShop {
      *
      * @mbg.generated
      */
-    private Integer id;
+    private Long id;
 
     /**
      *
@@ -101,7 +101,7 @@ public class MealShop {
      *
      * @mbg.generated
      */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -113,7 +113,7 @@ public class MealShop {
      *
      * @mbg.generated
      */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

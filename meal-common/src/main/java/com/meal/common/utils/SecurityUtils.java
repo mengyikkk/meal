@@ -26,7 +26,7 @@ public final class SecurityUtils {
      *
      * @return
      */
-    public static Integer getUserId() {
+    public static Long getUserId() {
         return getUser().getId();
     }
 
