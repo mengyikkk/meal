@@ -197,3 +197,9 @@ VALUES (1001000, 'MUJI商铺',
         'http://yanxuan.nosdn.127.net/66e2cb956a9dd1efc7732bea278e901e.png', 6,  '2018-02-01 00:00:00',
         '2018-02-01 00:00:00', 0);
 UNLOCK TABLES;
+
+LOCK TABLES `meal_goods` WRITE;
+INSERT INTO meal.meal_goods (id, goods_sn, name, category_id, shop_id, keywords, brief, is_on_sale, is_time_on_sale, sort_order, pic_url, unit, price, number, retail_price, detail, add_time, update_time, deleted) VALUES (1181004, 'meng-test', 'swtich', 0, 1001000, 'swtich', '这是一个牛逼的商品', 1, 0, 1, '11', '盒', 1000.00, 3, 1100.00, '1212', '2023-02-12 01:26:49', '2023-02-12 01:26:53', 0);
+INSERT INTO meal.meal_goods (id, goods_sn, name, category_id, shop_id, keywords, brief, is_on_sale, is_time_on_sale, sort_order, pic_url, unit, price, number, retail_price, detail, add_time, update_time, deleted) VALUES (1181005, 'meng-12', 'swtich123', 0, 1001000, 'swtich', '这是一个牛逼的商品', 1, 0, 1, '11', '盒', 1000.00, 3, 1100.00, '1212', '2023-02-12 01:26:49', '2023-02-12 01:26:53', 0);
+INSERT INTO meal.meal_goods (id, goods_sn, name, category_id, shop_id, keywords, brief, is_on_sale, is_time_on_sale, sort_order, pic_url, unit, price, number, retail_price, detail, add_time, update_time, deleted) VALUES (1181006, 'meng-2212', '牛子', 0, 1001000, 'swtich', '这是一个牛逼的商品', 1, 0, 1, '11', '盒', 1000.00, 3, 1100.00, '1212', '2023-02-12 01:26:49', '2023-02-12 01:26:53', 0);
+UNLOCK TABLES;

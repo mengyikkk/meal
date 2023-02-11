@@ -34,3 +34,12 @@ Content-Type: application/json
 {
   "shopName":"制造商"
 }
+
+###
+POST http://localhost:9001/wx/goods
+Authorization:  {{token}}
+Content-Type: application/json
+
+{
+  "shopId":1001000
+}

@@ -52,11 +52,11 @@ public class WxGoodsResponseVo {
         return this;
     }
 
-    public Boolean getOnSale() {
+    public Boolean getIsOnSale() {
         return isOnSale;
     }
 
-    public WxGoodsResponseVo setOnSale(Boolean onSale) {
+    public WxGoodsResponseVo setIsOnSale(Boolean onSale) {
         isOnSale = onSale;
         return this;
     }
