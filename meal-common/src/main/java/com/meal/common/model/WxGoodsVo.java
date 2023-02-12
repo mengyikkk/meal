@@ -16,6 +16,7 @@ public class WxGoodsVo {
     private Boolean isOnSale;
 
     private Integer isTimeOnSale;
+    private Integer sortOrder;
 
     private Integer page;
     private Integer limit;
@@ -72,6 +73,15 @@ public class WxGoodsVo {
 
     public WxGoodsVo setIsTimeOnSale(Integer isTimeOnSale) {
         this.isTimeOnSale = isTimeOnSale;
+        return this;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public WxGoodsVo setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
         return this;
     }
 

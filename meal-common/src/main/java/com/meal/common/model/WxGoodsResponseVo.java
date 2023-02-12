@@ -16,6 +16,7 @@ public class WxGoodsResponseVo {
     private Integer isTimeOnSale;
 
     private String picUrl;
+    private Long sortOrder;
 
     private String unit;
 
@@ -112,6 +113,15 @@ public class WxGoodsResponseVo {
 
     public WxGoodsResponseVo setDetail(String detail) {
         this.detail = detail;
+        return this;
+    }
+
+    public Long getSortOrder() {
+        return sortOrder;
+    }
+
+    public WxGoodsResponseVo setSortOrder(Long sortOrder) {
+        this.sortOrder = sortOrder;
         return this;
     }
 }

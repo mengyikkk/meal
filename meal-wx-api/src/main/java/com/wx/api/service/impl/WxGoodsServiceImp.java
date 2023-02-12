@@ -53,6 +53,7 @@ public class WxGoodsServiceImp implements WxGoodsService {
         var criteria = example.createCriteria();
         criteria.andDeletedEqualTo(Boolean.FALSE);
         criteria.andShopIdIn(List.of(shop.getId(), 0L));
+        this.process(criteria, vo);
         var count = this.mealGoodsMapper.countByExample(example);
         if (count == 0) {
             return ResultUtils.successWithEntities(null, count);

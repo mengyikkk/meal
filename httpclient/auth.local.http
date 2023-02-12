@@ -32,7 +32,9 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "shopName":"制造商"
+  "shopName":"制造商",
+  "page": 1,
+  "limit": 10
 }
 
 ###
@@ -41,5 +43,15 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "shopId":1001000
+  "shopId":1001000,
+  "page": 1,
+  "limit": 10
 }
+//{
+//  "shopId":1001000,
+//  "goodsSn":"xiaopang_10"
+//}
+//{
+//  "shopId":1001000,
+//  "isOnSale": true
+//}

@@ -734,7 +734,8 @@
     </update>
     <select id="findMany" resultType="com.meal.common.dto.MealGoods">
         select
-        <include refid="Base_Column_List"/>  ,
+        <include refid="Base_Column_List"/>
+        ,
         <include refid="Blob_Column_List"/>
         FROM meal_goods
         <if test="request != null">
@@ -743,12 +744,14 @@
             from meal_goods
             WHERE deleted = 0
             <if test="request.goodsName != null">AND `name` LIKE CONCAT('%',#{goodsName}, '%')</if>
-            AND shop_id =0
+            AND (shop_id =0
             <if test="request.shopId != null">OR shop_id = #{request.shopId}</if>
+            )
             <if test="request.goodsSn != null">AND goods_sn = #{request.goodsSn}</if>
             <if test="request.categoryId != null">AND category_id = #{request.categoryId}</if>
             <if test="request.isOnSale != null">AND is_on_sale = #{request.isOnSale}</if>
             <if test="request.categoryId != null">AND is_time_on_sale = #{request.isTimeOnSale}</if>
+            order by sort_order asc
             <if test="limit != null">
                 <if test="offset != null">
                     limit ${offset},${limit}
@@ -759,6 +762,6 @@
             </if>
             ) as lim using(id)
         </if>
-        WHERE deleted = 0 order by sort_order asc
+        WHERE deleted = 0
     </select>
 </mapper>
