@@ -53,6 +53,7 @@ public enum ResponseCode implements StateMapping<Integer> {
     ASYNC_CALLBACK(2010),
     /** 店铺找不到 */
     SHOP_FIND_ERR0(3100),
+    GOOD_FIND_ERR0(3101),
 
 
     /** 当前帐户同时被登录了两次 */

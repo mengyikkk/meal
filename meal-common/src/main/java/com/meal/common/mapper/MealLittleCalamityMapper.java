@@ -1,8 +1,12 @@
 package com.meal.common.mapper;
 
+import com.meal.common.dto.MealGoods;
 import com.meal.common.dto.MealLittleCalamity;
 import com.meal.common.dto.MealLittleCalamityExample;
 import java.util.List;
+
+import com.meal.common.model.WxGoodsVo;
+import com.meal.common.model.WxLittleCalamityVo;
 import org.apache.ibatis.annotations.Param;
 
 public interface MealLittleCalamityMapper {
@@ -181,4 +185,6 @@ public interface MealLittleCalamityMapper {
      * @mbg.generated
      */
     int logicalDeleteByPrimaryKey(Long id);
+
+    List<MealLittleCalamity> findMany(@Param("request") WxLittleCalamityVo request, @Param("limit") Integer limit, @Param("offset") Long offset);
 }
