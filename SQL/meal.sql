@@ -137,6 +137,7 @@ CREATE TABLE `meal_little_calamity` (
                                           `id` bigint(20) NOT NULL AUTO_INCREMENT,
                                           `goods_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '0 对应 普通小料,1对应限定商品小料',
                                           `pic_url` varchar(255) DEFAULT NULL COMMENT '商品页面商品图片',
+                                          `name`   varchar(31) DEFAULT '' COMMENT '小料名称',
                                           `shop_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '0全店铺小料 商铺限定id',
                                           `number` bigint(20) NOT NULL DEFAULT '0' COMMENT '商品货品数量',
                                           `brief` varchar(255) DEFAULT '' COMMENT '商品简介',

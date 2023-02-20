@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 public class WxLittleCalamityVo {
 
     private Long littleCalamityId;
-    private Long goodId;
+    private Long goodsId;
     @NotNull
     private Long shopId;
 
@@ -31,14 +31,15 @@ public class WxLittleCalamityVo {
         return this;
     }
 
-    public Long getGoodId() {
-        return goodId;
+    public Long getGoodsId() {
+        return goodsId;
     }
 
-    public WxLittleCalamityVo setGoodId(Long goodId) {
-        this.goodId = goodId;
+    public WxLittleCalamityVo setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
         return this;
     }
+
 
 
     public Long getShopId() {

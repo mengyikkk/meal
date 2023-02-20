@@ -7,9 +7,9 @@ pagehelper:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url:  jdbc:mysql://localhost:3306/meal?characterEncoding=UTF-8&useUnicode=true&connectionTimeZone=LOCAL&forceConnectionTimeZoneToSession=true
+    url:  jdbc:mysql://119.23.237.39:3306/meal?characterEncoding=UTF-8&useUnicode=trueGMT&serverTimezone=GMT
     username: root
-    password: 123456
+    password: qqww1122
   # redis相关配置
   redis:
     # 配置主机

@@ -20,4 +20,8 @@ public class WxGoodsController {
         return  this.wxGoodsService.goodsList(vo);
     }
 
+    @PostMapping("/little")
+    public Result<?> littleList(@RequestBody WxLittleCalamityVo vo){
+        return  this.wxGoodsService.littleCalamityList(vo);
+    }
 }

@@ -10,6 +10,7 @@ import com.meal.common.mapper.MealLittleCalamityMapper;
 import com.meal.common.mapper.MealShopMapper;
 import com.meal.common.model.WxGoodsResponseVo;
 import com.meal.common.model.WxGoodsVo;
+import com.meal.common.model.WxLittleCalamityResponseVo;
 import com.meal.common.model.WxLittleCalamityVo;
 import com.meal.common.utils.BeanCopyUtils;
 import com.meal.common.utils.ResultUtils;
@@ -91,8 +92,8 @@ public class WxGoodsServiceImp implements WxGoodsService {
                     SecurityUtils.getUserId(), vo);
             return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
         }
-        if (Objects.nonNull(vo.getGoodId())){
-            var good =this.mealGoodsMapper.selectByPrimaryKeyWithLogicalDelete(vo.getGoodId(),Boolean.FALSE);
+        if (Objects.nonNull(vo.getGoodsId())){
+            var good =this.mealGoodsMapper.selectByPrimaryKeyWithLogicalDelete(vo.getGoodsId(),Boolean.FALSE);
             if (Objects.isNull(good)){
                 this.logger.warn("Service-Product[littleCalamityList][block]:good. uid: {}, request: {}",
                         SecurityUtils.getUserId(), vo);
@@ -115,7 +116,7 @@ public class WxGoodsServiceImp implements WxGoodsService {
             offset = ((long) (vo.getPage() - 1) * limit);
         }
         var list = this.mealLittleCalamityMapper.findMany(vo, limit, offset);
-        return null;
+        return ResultUtils.successWithEntities(BeanCopyUtils.copyBeanList(list, WxLittleCalamityResponseVo.class), count);
     }
 
     private void process(MealGoodsExample.Criteria criteria, WxGoodsVo vo) {
@@ -140,8 +141,11 @@ public class WxGoodsServiceImp implements WxGoodsService {
         }
     }
     private void littleCalamityProcess(MealLittleCalamityExample.Criteria criteria, WxLittleCalamityVo vo) {
-        if (Objects.nonNull(vo.getGoodId())) {
-            criteria.andGoodsIdIn(List.of(0L,vo.getGoodId()));
+        if (Objects.nonNull(vo.getGoodsId())) {
+            criteria.andGoodsIdIn(List.of(0L,vo.getGoodsId()));
+        }
+        if (Objects.nonNull(vo.getGoodsName())){
+            criteria.andNameLike("%"+vo.getGoodsName()+"%");
         }
         if (Objects.nonNull(vo.getIsOnSale())) {
             criteria.andIsOnSaleEqualTo(vo.getIsOnSale());

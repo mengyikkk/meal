@@ -1,11 +1,9 @@
 package com.meal.common.mapper;
 
-import com.meal.common.dto.MealGoods;
 import com.meal.common.dto.MealLittleCalamity;
 import com.meal.common.dto.MealLittleCalamityExample;
 import java.util.List;
 
-import com.meal.common.model.WxGoodsVo;
 import com.meal.common.model.WxLittleCalamityVo;
 import org.apache.ibatis.annotations.Param;
 
