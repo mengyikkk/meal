@@ -6,6 +6,7 @@ public class ShoppingCartVo {
 
     private  String goodsSn;
 
+    private  Boolean checked;
 
     private  Long number;
 
@@ -34,6 +35,15 @@ public class ShoppingCartVo {
 
     public ShoppingCartVo setNumber(Long number) {
         this.number = number;
+        return this;
+    }
+
+    public Boolean getChecked() {
+        return checked;
+    }
+
+    public ShoppingCartVo setChecked(Boolean checked) {
+        this.checked = checked;
         return this;
     }
 }

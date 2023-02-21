@@ -1,11 +1,12 @@
 package com.meal.common.transaction;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
 public interface TransactionExecutor {
 
     /**

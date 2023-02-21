@@ -162,6 +162,7 @@ DROP TABLE IF EXISTS `meal_cart`;
 CREATE TABLE `meal_cart` (
                                  `id` bigint(20) NOT NULL AUTO_INCREMENT,
                                  `user_id` bigint(20) DEFAULT NULL COMMENT '用户表的用户ID',
+                                 `shop_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '商铺id',
                                  `goods_id` bigint(20) DEFAULT NULL COMMENT '商品表的商品ID',
                                  `goods_sn` varchar(63) DEFAULT NULL COMMENT '商品编号',
                                  `goods_is_time` tinyint(1) DEFAULT '1' COMMENT '商品时间到期提示',

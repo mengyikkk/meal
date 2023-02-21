@@ -10,7 +10,6 @@ import org.springframework.transaction.TransactionManager;
 
 @Configuration
 @AutoConfigureAfter(TransactionAutoConfiguration.class)
-@ConditionalOnBean(TransactionManager.class)
 public class TransactionExecutorAutoConfiguration {
 
     @Bean
