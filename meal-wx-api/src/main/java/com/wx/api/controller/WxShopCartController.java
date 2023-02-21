@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/cart")
+@RequestMapping("/wx/cart")
 public class WxShopCartController {
 
     @Resource
@@ -31,7 +31,7 @@ public class WxShopCartController {
         return wxCartService.selectShoppingCartList(SecurityUtils.getUserId(), shopId);
     }
 
-    @PostMapping
+    @PostMapping("/delete")
     public Result<?> delete(@RequestParam Long shopId) {
         return wxCartService.deleteShoppingCartList(SecurityUtils.getUserId(), shopId);
     }

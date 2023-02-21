@@ -57,3 +57,37 @@ Content-Type: application/json
   "page": 1,
   "limit": 10
 }
+###
+POST http://localhost:9001/wx/cart/add
+Authorization:  {{token}}
+Content-Type: application/json
+
+{
+  "shopId": 1046003,
+  "goods": [
+    {
+      "goodsId": "1181004",
+      "goodsSn": "1181004",
+      "checked": "true",
+      "number":"1"
+    },
+    {
+      "goodsId": "1181005",
+      "goodsSn": "1181005",
+      "checked": "true",
+      "number":"1"
+    },
+    {
+      "goodsId": "1181006",
+      "goodsSn": "1181006",
+      "checked": "true",
+      "number":"1"
+    }
+  ]
+}
+###
+GET  http://localhost:9001/wx/cart/amount?shopId=1046003
+Authorization: {{token}}
+###
+GET  http://localhost:9001/wx/cart?shopId=1046003
+Authorization: {{token}}

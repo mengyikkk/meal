@@ -20,7 +20,7 @@ public  final class MapperUtils {
     }
     public static Map<Long, MealGoods> goodsMapByShop(MealGoodsMapper mealGoodsMapper,Long shopId){
         var example  = new MealGoodsExample();
-        example.createCriteria().andShopIdIn(List.of(0L,shopId)).andDeletedNotEqualTo(MealGoods.Deleted.IS_DELETED.value());
+        example.createCriteria().andShopIdIn(List.of(0L,shopId)).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value());
         return  mealGoodsMapper.selectByExample(example).stream().collect(Collectors.toMap(MealGoods::getId, Function.identity()));
     }
 }
