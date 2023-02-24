@@ -72,6 +72,15 @@ Content-Type: application/json
       "number":"1"
     },
     {
+      "goodsId": "1181004",
+      "goodsSn": "1181004",
+      "checked": "true",
+      "number":"0",
+      "calamityId": 251,
+      "calamityName": "蒜蓉酱油",
+      "calamityNumber": 2
+    },
+    {
       "goodsId": "1181005",
       "goodsSn": "1181005",
       "checked": "true",
@@ -90,4 +99,7 @@ GET  http://localhost:9001/wx/cart/amount?shopId=1046003
 Authorization: {{token}}
 ###
 GET  http://localhost:9001/wx/cart?shopId=1046003
+Authorization: {{token}}
+###
+POST  http://localhost:9001/wx/cart/delete?shopId=1046003
 Authorization: {{token}}

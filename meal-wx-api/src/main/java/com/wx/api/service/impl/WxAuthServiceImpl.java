@@ -6,6 +6,7 @@ import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.config.MealProperties;
 import com.meal.common.dto.MealUser;
+import com.meal.common.dto.MealUserExample;
 import com.meal.common.enums.LoginTypeEnum;
 import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.service.MealUserService;
@@ -81,9 +82,9 @@ public class WxAuthServiceImpl implements WxAuthService {
         // 其他情况，可以为空
         String wxCode = vo.getWxCode();
         var user = new MealUser();
-//        if (mealUserService.hasByMobile(mobile)){
-//            return ResultUtils.code(ResponseCode.AUTH_MOBILE_REGISTERED);
-//        }
+        if (Objects.nonNull(mealUserService.queryByMobile(mobile))){
+            return ResultUtils.code(ResponseCode.AUTH_MOBILE_REGISTERED);
+        }
         if (!RegexUtil.isMobileSimple(mobile)) {
             return ResultUtils.code(ResponseCode.AUTH_INVALID_MOBILE);
         }
@@ -122,8 +123,17 @@ public class WxAuthServiceImpl implements WxAuthService {
         user.setUserLevel((byte) 0);
         user.setStatus((byte) 0);
         this.LastLogIn(user,request);
-        if (this.mealUserMapper.insertSelective(user)<1){
-            return ResultUtils.code(ResponseCode.TIME_OUT);
+        var example = new MealUserExample();
+        example.createCriteria().andMobileEqualTo(mobile);
+        var oldUser =this.mealUserMapper.selectByExample(example);
+        if (Objects.nonNull(oldUser)){
+            if ( this.mealUserMapper.updateByExampleSelective(user,example)<1){
+                return ResultUtils.code(ResponseCode.TIME_OUT);
+            }
+        }else {
+            if (this.mealUserMapper.insertSelective(user) < 1) {
+                return ResultUtils.code(ResponseCode.TIME_OUT);
+            }
         }
         var result = new WxRegisterReturnVo();
         UserInfo userInfo = new UserInfo();

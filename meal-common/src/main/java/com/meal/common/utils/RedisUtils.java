@@ -51,7 +51,7 @@ public class RedisUtils {
     public boolean setValueTime(String key, Object value, long time) {
         try {
             if (time > 0) {
-                redisTemplate.opsForValue().set(key, value, time, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(key, value, time, TimeUnit.HOURS);
             } else {
                 redisTemplate.opsForValue().set(key, value);
             }

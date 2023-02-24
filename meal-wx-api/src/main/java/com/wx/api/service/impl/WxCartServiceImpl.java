@@ -4,10 +4,13 @@ import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.dto.MealCart;
 import com.meal.common.dto.MealCartExample;
+import com.meal.common.dto.MealLittleCalamity;
 import com.meal.common.mapper.MealCartMapper;
 import com.meal.common.mapper.MealGoodsMapper;
+import com.meal.common.mapper.MealLittleCalamityMapper;
 import com.meal.common.mapper.MealShopMapper;
 import com.meal.common.model.WxGoodsVo;
+import com.meal.common.model.WxShopCartCalamitySonVo;
 import com.meal.common.model.WxShopCartResponseVo;
 import com.meal.common.model.WxShoppingCartVo;
 import com.meal.common.transaction.TransactionExecutor;
@@ -37,6 +40,8 @@ public class WxCartServiceImpl implements WxCartService {
     private MealGoodsMapper mealGoodsMapper;
     @Resource
     private MealShopMapper mealShopMapper;
+    @Resource
+    private MealLittleCalamityMapper mealLittleCalamityMapper;
 
     @Resource
     private TransactionExecutor transactionExecutor;
@@ -68,7 +73,7 @@ public class WxCartServiceImpl implements WxCartService {
             mealCartMapper.deleteByExample(example);
             return 1;
         });
-        var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shoppingCartVo.getShopId());
+        var goodsByShopMap = MapperUtils.goodsMapAllByShop(mealGoodsMapper, shoppingCartVo.getShopId());
         var products = shoppingCartVo.getGoods();
         Collections.reverse(products);
         products.forEach(e -> {
@@ -81,6 +86,9 @@ public class WxCartServiceImpl implements WxCartService {
                     //todo 有可能空指针 和前端判断一下 消息共同事宜 决定
                     cart.setGoodsName(goodsByShopMap.get(e.getGoodsId()).getName());
                     cart.setUserId(uid);
+                    cart.setCalamityNumber(e.getCalamityNumber());
+                    cart.setCalamityName(e.getCalamityName());
+                    cart.setCalamityId(e.getCalamityId());
                     cart.setAddTime(LocalDateTime.now());
                     cart.setUpdateTime(LocalDateTime.now());
                     functions.add(nothing ->
@@ -104,9 +112,7 @@ public class WxCartServiceImpl implements WxCartService {
                 return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
             }
         }
-        var example = new MealCartExample();
-        example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
-        return ResultUtils.success(this.mealCartMapper.countByExample(example));
+        return ResultUtils.success(this.count(uid,shopId));
     }
 
     @Override
@@ -122,7 +128,12 @@ public class WxCartServiceImpl implements WxCartService {
         var example = new MealCartExample();
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shopId);
-        var result = this.mealCartMapper.selectByExample(example).stream().map(e -> {
+        List<MealCart> mealCarts = this.mealCartMapper.selectByExample(example);
+        var calamityGoodsMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCarts.stream()
+                .filter(e->Objects.isNull(e.getCalamityId())).map(MealCart::getGoodsId).collect(Collectors.toList()), shopId);
+        var calamityMap = mealCarts.stream().filter(e -> Objects.nonNull(e.getCalamityId()))
+                .collect(Collectors.toMap(MealCart::getGoodsId, Function.identity()));
+        var result = mealCarts.stream().filter(e -> Objects.isNull(e.getCalamityId())).map(e -> {
             var vo = new WxShopCartResponseVo();
             var product = goodsByShopMap.getOrDefault(e.getGoodsId(), null);
             if (Objects.isNull(product)) {
@@ -130,14 +141,29 @@ public class WxCartServiceImpl implements WxCartService {
                 vo.setGoodsName(e.getGoodsName());
             } else {
                 vo.setErrStatus(Boolean.FALSE);
+                vo.setUnit(product.getUnit());
                 vo.setGoodsName(product.getName());
+            }
+            var calamity = calamityMap.getOrDefault(e.getGoodsId(), null);
+            if (Objects.nonNull(calamity)) {
+                var calamityVo = new WxShopCartCalamitySonVo()
+                        .setCalamityId(calamity.getCalamityId())
+                        .setCalamityName(calamity.getCalamityName()).setCalamityNumber(calamity.getCalamityNumber());
+                var calamityGoods = calamityGoodsMap.getOrDefault(calamity.getCalamityId(), null);
+                if (Objects.isNull(calamityGoods)) {
+                    calamityVo.setErrStatus(Boolean.TRUE);
+                } else {
+                    calamityVo.setCalamityUnit(calamityGoods.getUnit());
+                    calamityVo.setErrStatus(Boolean.FALSE);
+                }
+                vo.setCalamityVo(calamityVo);
             }
             vo.setGoodsId(e.getGoodsId()).setGoodsName(e.getGoodsName())
                     .setGoodsIsTime(e.getGoodsIsTime()).setChecked(e.getChecked())
                     .setGoodsName(e.getGoodsName()).setNumber(e.getNumber()).setGoodsSn(e.getGoodsSn());
             return vo;
         }).collect(Collectors.toList());
-        return ResultUtils.success(result);
+        return ResultUtils.successWithEntities(result,this.count(uid,shopId));
     }
 
     @Override
@@ -150,11 +176,17 @@ public class WxCartServiceImpl implements WxCartService {
                 return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
             }
         }
+        this.logger.info("[WxCartServiceImpl][deleteShoppingCartList]:store. uid: {} 清空购物车, ",uid);
         var example = new MealCartExample();
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
-        if(this.mealCartMapper.deleteByExample(example)<1){
-            return  ResultUtils.unknown();
+        if (this.mealCartMapper.deleteByExample(example) < 1) {
+            return ResultUtils.unknown();
         }
         return ResultUtils.success();
+    }
+    private long count(Long uid, Long shopId){
+        var example = new MealCartExample();
+        example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED).andCalamityIdIsNull();
+        return this.mealCartMapper.countByExample(example);
     }
 }
