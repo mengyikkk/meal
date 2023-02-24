@@ -41,6 +41,8 @@ public class WxShopCartResponseVo {
      */
     private Long number;
 
+    private  String url;
+
     private String unit;
 
     /**
@@ -134,6 +136,15 @@ public class WxShopCartResponseVo {
 
     public WxShopCartResponseVo setUnit(String unit) {
         this.unit = unit;
+        return this;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public WxShopCartResponseVo setUrl(String url) {
+        this.url = url;
         return this;
     }
 }

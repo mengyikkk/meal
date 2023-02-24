@@ -142,6 +142,7 @@ public class WxCartServiceImpl implements WxCartService {
             } else {
                 vo.setErrStatus(Boolean.FALSE);
                 vo.setUnit(product.getUnit());
+                vo.setUrl(product.getPicUrl());
                 vo.setGoodsName(product.getName());
             }
             var calamity = calamityMap.getOrDefault(e.getGoodsId(), null);
@@ -154,6 +155,7 @@ public class WxCartServiceImpl implements WxCartService {
                     calamityVo.setErrStatus(Boolean.TRUE);
                 } else {
                     calamityVo.setCalamityUnit(calamityGoods.getUnit());
+                    calamityVo.setCalamityUrl(calamityGoods.getPicUrl());
                     calamityVo.setErrStatus(Boolean.FALSE);
                 }
                 vo.setCalamityVo(calamityVo);

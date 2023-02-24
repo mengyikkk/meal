@@ -9,6 +9,8 @@ public class WxShopCartCalamitySonVo {
 
     private  String calamityUnit;
 
+    private  String calamityUrl;
+
     private Boolean errStatus;
 
 
@@ -54,6 +56,15 @@ public class WxShopCartCalamitySonVo {
 
     public WxShopCartCalamitySonVo setErrStatus(Boolean errStatus) {
         this.errStatus = errStatus;
+        return this;
+    }
+
+    public String getCalamityUrl() {
+        return calamityUrl;
+    }
+
+    public WxShopCartCalamitySonVo setCalamityUrl(String calamityUrl) {
+        this.calamityUrl = calamityUrl;
         return this;
     }
 }
