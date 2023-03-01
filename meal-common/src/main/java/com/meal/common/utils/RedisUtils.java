@@ -11,14 +11,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * redis的工具类
- * @author ajie
- * @createTime 2021年08月08日 21:22:00
  */
 @Component
 public class RedisUtils {
 
     private  final Logger  logger = LoggerFactory.getLogger(RedisUtils.class);
-    @Resource
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     /**

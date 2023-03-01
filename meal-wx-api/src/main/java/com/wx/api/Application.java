@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication(scanBasePackages="com.*",exclude = { DataSourceAutoConfiguration.class })
+@SpringBootApplication(scanBasePackages="com.*")
 @MapperScan("com.meal.common.mapper")
 @EnableTransactionManagement
 @EnableConfigurationProperties(MealProperties.class)
