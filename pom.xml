@@ -19,6 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <pugin-maven-compiler.version>3.8.1</pugin-maven-compiler.version>
         <mysql.version>8.0.27</mysql.version>
+        <druid.version>1.2.11</druid.version>
         <junit.version>5.7.2</junit.version>
         <spring-boot.version>2.5.4</spring-boot.version>
         <mybatis-spring-boot.version>2.2.0</mybatis-spring-boot.version>
@@ -183,6 +184,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
                 <version>2.9.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
