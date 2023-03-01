@@ -1,7 +1,6 @@
 package com.meal.common.config;
 
 
-import com.meal.common.config.contents.SecurityContents;
 import com.meal.common.config.handler.JwtAccessDeniedHandler;
 import com.meal.common.config.handler.JwtAuthenticationEntryPoint;
 import com.meal.common.config.handler.JwtAuthenticationFilter;
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -47,11 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * @param web
      * @throws Exception
      */
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
-            .mvcMatchers(SecurityContents.WHITE_LIST);
-    }
+
 
     /**
      * Security的核心配置
@@ -65,7 +59,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //2. 关闭session
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         //3. 请求都需要进行认证之后才能访问，除白名单以外的资源
-        http.authorizeRequests().anyRequest().authenticated();
+        http.authorizeRequests().antMatchers( "/wx/auth/register",
+                "/wx/auth/login",
+                "/wx/auth/refresh").anonymous()
+                // 除上面外的所有请求全部需要鉴权认证
+                .anyRequest().authenticated()
+                .and()
+                .headers().frameOptions().disable();
         //4. 关闭缓存
         http.headers().cacheControl();
         //5. token过滤器，校验token
