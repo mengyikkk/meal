@@ -1,5 +1,6 @@
 package com.meal.common.dto;
 
+
 public class UserInfo {
     private String nickName;
     private String avatarUrl;

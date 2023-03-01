@@ -9,6 +9,10 @@ public class SecurityContents {
     public static final String[] WHITE_LIST = {
             //后端登录接口
             "/user/login",
+            "/swagger**/**",
+            "/webjars/**",
+            "/v2/**",
+            "/doc.html",
             "/wx/auth/register",
             "/wx/auth/login",
             "/wx/auth/refresh",

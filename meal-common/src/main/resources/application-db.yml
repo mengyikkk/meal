@@ -10,6 +10,8 @@ spring:
     url:  jdbc:mysql://119.23.237.39:3306/meal?characterEncoding=UTF-8&useUnicode=trueGMT&serverTimezone=GMT
     username: root
     password: qqww1122
+  druid:
+   validationQuery: SELECT 1 FROM DUAL
   # redis相关配置
   redis:
     # 配置主机

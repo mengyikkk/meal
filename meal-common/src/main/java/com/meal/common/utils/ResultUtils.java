@@ -4,13 +4,13 @@ package com.meal.common.utils;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public final class ResultUtils {
     private ResultUtils() {}
-
     private static class SimpleResult<E> implements Result<E> {
         private final ResponseCode code;
         private final String description;

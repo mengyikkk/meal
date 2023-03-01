@@ -6,6 +6,7 @@ import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.dto.MealUser;
 import com.meal.common.mapper.MealUserMapper;
+import com.meal.common.model.WxRegisterReturnVo;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.IpUtil;
 import com.meal.common.utils.ResultUtils;
@@ -17,12 +18,10 @@ import com.wx.api.service.WxAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
-
 @RestController
 @RequestMapping("/wx/auth")
 public class WxAuthController {
@@ -47,7 +46,7 @@ public class WxAuthController {
      * @return
      */
     @PostMapping("/register")
-    public Result<?> register(@RequestBody WxRegisterVo vo, HttpServletRequest request) {
+    public Result<WxRegisterReturnVo> register(@RequestBody WxRegisterVo vo, HttpServletRequest request) {
         return  this.wxAuthService.register(vo,request);
     }
 
@@ -64,10 +63,7 @@ public class WxAuthController {
     public Result<?> refresh(@RequestHeader("${jwt.tokenHeader}") String token){
         return  this.wxAuthService.refresh(token);
     }
-    @GetMapping
-    public  String test(){
-        return  "123";
-    }
+
 
     @PostMapping("/loginByWx")
     public Result<?> loginByWx(@RequestBody WxLoginInfo wxLoginInfo, HttpServletRequest request) {

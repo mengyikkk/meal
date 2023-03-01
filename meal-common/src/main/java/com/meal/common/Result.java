@@ -1,15 +1,16 @@
 package com.meal.common;
 
+
+
 public interface Result<E> {
 
     /**
      * 标识状态,用于标识失败或成功时的更进一级的描述
      * @return 标识状态
      */
-    ResponseCode code();
+     ResponseCode code();
 
     boolean success();
-
     String description();
 
     /**

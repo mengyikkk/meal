@@ -1,7 +1,7 @@
 package com.meal.common.model;
 
-import javax.validation.constraints.NotBlank;
 
+import javax.validation.constraints.NotBlank;
 public class WxRegisterVo {
     @NotBlank
     private String username;

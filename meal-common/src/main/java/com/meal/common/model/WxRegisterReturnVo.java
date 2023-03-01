@@ -6,7 +6,6 @@ import com.meal.common.dto.UserInfo;
 
 public class WxRegisterReturnVo {
     private UserInfo userInfo;
-
     private TokenVo token;
 
     public UserInfo getUserInfo() {

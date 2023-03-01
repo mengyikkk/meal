@@ -8,6 +8,7 @@ import com.meal.common.service.MealUserService;
 import com.meal.common.utils.JsonUtils;
 import com.meal.common.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,6 +33,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Resource
     private RedisUtils redisUtils;
 
+    @Value("${jwt.expiration}")
+    private  Long expiration;
     @Resource
     private  MealUserMapper mealUserMapper;
 
@@ -42,7 +45,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         if (redisUtils.haskey("userInfo_" + username)) {
             //缓存中存在用户信息，直接从redis中取
             user =(MealUser) redisUtils.getValue("userInfo_" + username);
-            redisUtils.expire("userInfo_" + username, 5);
+            redisUtils.expire("userInfo_" + username, expiration);
         } else {
             user = mealUserService.queryByMobile(username);
             if (null == user) {
@@ -67,7 +70,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 menus.forEach(item -> item.setChildren(mealUserMapper.findChildrenMenu(item.getId(), user.getId())));
                 user.setMenus(menus);
             }
-            redisUtils.setValueTime("userInfo_" + username, user, 5);
+            redisUtils.setValueTime("userInfo_" + username, user, expiration);
         }
         return user;
     }

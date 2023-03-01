@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +67,8 @@ public class WxAuthServiceImpl implements WxAuthService {
     @Resource
     private PasswordEncoder passwordEncoder;
     @Override
-    public Result<?> register(WxRegisterVo vo, HttpServletRequest request)  {
+    @Transactional
+    public Result<WxRegisterReturnVo> register(WxRegisterVo vo, HttpServletRequest request)  {
         {
             Set<ConstraintViolation<WxRegisterVo>> violations = this.validator.validate(vo);
             if (!violations.isEmpty()) {
@@ -125,7 +127,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         this.LastLogIn(user,request);
         var example = new MealUserExample();
         example.createCriteria().andMobileEqualTo(mobile);
-        var oldUser =this.mealUserMapper.selectByExample(example);
+        var oldUser =this.mealUserMapper.selectOneByExample(example);
         if (Objects.nonNull(oldUser)){
             if ( this.mealUserMapper.updateByExampleSelective(user,example)<1){
                 return ResultUtils.code(ResponseCode.TIME_OUT);
@@ -138,6 +140,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         var result = new WxRegisterReturnVo();
         UserInfo userInfo = new UserInfo();
         userInfo.setNickName(user.getNickname());
+        userInfo.setGender(user.getGender());
         userInfo.setAvatarUrl(user.getAvatar());
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
