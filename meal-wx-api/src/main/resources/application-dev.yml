@@ -10,7 +10,6 @@ logging:
     com:
       meal: debug
 
-
 #meal:
 #  wx:
 #    miniapp:

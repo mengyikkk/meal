@@ -56,14 +56,14 @@ public   class TokenUtils {
         return Jwts.builder()
                 .setClaims(map)
                 .signWith(SignatureAlgorithm.HS512, secret)
-                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000000))
                 .compact();
     }
     private  String generateRefreshToken(Map<String, Object> map) {
         return Jwts.builder()
                 .setClaims(map)
                 .signWith(SignatureAlgorithm.HS512, secret)
-                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration * 1000000))
                 .compact();
     }
     /**

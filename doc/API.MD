@@ -174,7 +174,7 @@
     Authorization:  token
     ```
     - `token`: string。--此时token是refresh token
-4. 店铺一览
+4. 店铺一览  支持店铺id 单独查询 支持店铺名模糊查询 
    
     ```http request
     POST http://localhost:9001/wx/shop/list
@@ -226,3 +226,327 @@
     - `desc`: string。--描述
     - `picUrl`:string --店铺url
     - `addTime`: date。--店铺创建时间
+
+5. 商品一览 分页(目前商品一览 只是单纯商品一览 没有覆盖某个商品的小料信息 后续可增加) 支持 商品id查询 商品名模糊查询 有效商品查询 贩卖时间段查询
+
+    ```http request
+    POST http://localhost:9001/wx/goods
+    Authorization:  {{token}}
+    Content-Type: application/json
+    ```
+   request:
+   ```json
+   {
+   "shopId":1046003,
+   "isOnSale": true,
+   "goodsSn": "1181004",
+   "goodsName": "蛋肠粉",
+   "goodsId": "1",
+   "isTimeOnSale": 1,
+   "page": 1,
+   "limit": 10
+   }
+    ```
+   - `shopId`: integer。--店铺id (必填)
+   - `isOnSale`: boolean。 --是否贩卖  单独查询时可用(选填)
+   - `goodsName`: string。--商品名  单独查询时可用(选填) 支持模糊查询
+   - `goodsId`: int。--商品id   单独查询时可用(选填)
+   - `goodsSn`: string。--商品编号   单独查询时可用(选填)
+   - `isTimeOnSale`: int。--时间段贩卖标识位. 1,早餐2,午餐 3,晚餐 0,全时段供应
+   - `page`: int。--页数 (选填)
+   - `limit`:int --分割 (选填)
+     response:
+
+   ```json
+   {
+   "code": 200,
+   "description": null,
+   "result": [
+   {
+   "id": 1181004,
+   "goodsSn": "1181004",
+   "name": "蛋肠粉",
+   "isOnSale": true,
+   "isTimeOnSale": 1,
+   "picUrl": null,
+   "sortOrder": 10,
+   "unit": "份",
+   "retailPrice": 7.00,
+   "addTime": "2023-02-16 13:05:06",
+   "detail": "蛋肠粉"
+   },
+   {
+   "id": 1181005,
+   "goodsSn": "1181005",
+   "name": "肉肠粉",
+   "isOnSale": true,
+   "isTimeOnSale": 1,
+   "picUrl": null,
+   "sortOrder": 20,
+   "unit": "份",
+   "retailPrice": 7.00,
+   "addTime": "2023-02-16 13:07:06",
+   "detail": "肉肠粉"
+   }
+   ],
+   "records": 2
+   }
+   ```
+   - `id`: integer。-- 商品id
+   - `isOnSale`: boolean。 --是否贩卖   是
+   - `name`: string。--商品名 
+   - `goodsSn`: string。--商品编号   
+   - `picUrl`: string。--商品图片url 
+   - `sortOrder`: integer。--排序   
+   - `unit`: string。--单位   
+   - `retailPrice`: integer。--卖价   
+   - `isTimeOnSale`: int。--时间段贩卖标识位. 1,早餐2,午餐 3,晚餐 0,全时段供应
+6. 小料一览 (分页  支持小料id查询 某个商品id的特定小料查询 , 是否贩卖查询 ,时间段查询)
+
+    ```http request
+    POST http://localhost:9001/wx/goods/little
+    Authorization:  {{token}}
+    Content-Type: application/json
+    ```
+   request:
+   ```json
+   {
+   "shopId":1046003,
+   "littleCalamityId": 1,
+   "isOnSale": true,
+   "goodsName": "蛋肠粉",
+   "goodsId": "1",
+   "isTimeOnSale": 1,
+   "page": 1,
+   "limit": 10
+   }
+    ```
+   - `shopId`: integer。--店铺id (必填)
+   - `littleCalamityId`: integer。--小料id  单独查询时可用(选填)
+   - `isOnSale`: boolean。 --是否贩卖  单独查询时可用(选填)
+   - `goodsName`: string。--小料名  单独查询时可用(选填) 支持模糊查询
+   - `goodsId`: int。--商品id   单独查询时可用(选填)
+   - `isTimeOnSale`: int。--时间段贩卖标识位. 1,早餐2,午餐 3,晚餐 0,全时段供应
+   - `page`: int。--页数
+   - `limit`:int --分割
+     response:
+
+   ```json
+   {
+   "code": 200,
+   "description": null,
+   "result": [
+   {
+   "id": 253,
+   "name": "萝卜干",
+   "goodsId": 0,
+   "picUrl": null,
+   "shopId": 1046003,
+   "brief": "萝卜干",
+   "unit": "’份‘",
+   "retailPrice": 0.00,
+   "isTimeOnSale": 1,
+   "isOnSale": true
+   },
+   {
+   "id": 254,
+   "name": "xo酱",
+   "goodsId": 0,
+   "picUrl": null,
+   "shopId": 1046003,
+   "brief": "xo酱",
+   "unit": "’份‘",
+   "retailPrice": 0.00,
+   "isTimeOnSale": 1,
+   "isOnSale": true
+   }
+   ],
+   "records": 4
+   }
+   ```
+   - `id`: integer。-- 小料id
+   - `name`: string。--商品名
+   - `brief`: string。--详细
+   - `isOnSale`: boolean。 --是否贩卖  
+   - `goodsId`: string。--商品编号
+   - `picUrl`: string。--商品url
+   - `unit`: string。--单位
+   - `retailPrice`: integer。--卖价
+   - `isTimeOnSale`: int。--时间段贩卖标识位. 1,早餐2,午餐 3,晚餐 0,全时段供应
+
+7. 购物车一览
+
+    ```http request
+   GET  http://localhost:9001/wx/cart?shopId=1046003
+   Authorization: {{token}}
+    ```
+   request:
+   - `shopId`: integer。--店铺id (必填)
+    
+   response:
+
+   ```json
+   {
+   "code": 200,
+   "description": null,
+   "result": [
+   {
+   "goodsId": 1181006,
+   "goodsSn": "1181006",
+   "goodsIsTime": true,
+   "goodsName": "炒粉",
+   "number": 1,
+   "url": null,
+   "unit": null,
+   "checked": true,
+   "errStatus": true
+   },
+   {
+   "goodsId": 1181005,
+   "goodsSn": "1181005",
+   "goodsIsTime": true,
+   "goodsName": "肉肠粉",
+   "number": 1,
+   "url": null,
+   "unit": "份",
+   "checked": true,
+   "errStatus": false
+   },
+   {
+   "goodsId": 1181004,
+   "goodsSn": "1181004",
+   "goodsIsTime": true,
+   "goodsName": "蛋肠粉",
+   "number": 1,
+   "url": null,
+   "unit": "份",
+   "checked": true,
+   "calamityVo": {
+   "calamityId": 251,
+   "calamityName": "蒜蓉酱油",
+   "calamityNumber": 2,
+   "calamityUnit": "’份‘",
+   "calamityUrl": null,
+   "errStatus": false
+   },
+   "errStatus": false
+   }
+   ],
+   "records": 3
+   }
+   ```
+   - `id`: integer。-- 小料id
+   - `name`: string。--商品名
+   - `brief`: string。--详细
+   - `isOnSale`: boolean。 --是否贩卖
+   - `goodsId`: string。--商品id
+   - `goodsIsTime`: boolean。-- 商品到期提示flag 可忽略
+   - `goodsSn`: string。--商品编号
+   - `url`: string。--商品url
+   - `number`: int。--商品数量
+   - `unit`: string。--单位
+   - `checked`: boolean。-- 商品选择flag  
+   - `retailPrice`: decimal。--卖价 (单价)
+   - `calamityVo.calamityId`: int。--小料ID
+   - `calamityVo.calamityName`: string。--小料名
+   - `calamityVo.calamityNumber`: int。--小料数量
+   - `calamityVo.calamityUnit`: string。--单位
+   - `calamityVo.calamityUrl`: string。--小料图片url
+   - `calamityVo.retailPrice`: decimal。--小料价格(单价)
+   - `calamityVo.errStatus`: boolean。--小料失效flag
+
+8. 购物车 单子数量
+    ```http request
+   GET  http://localhost:9001/wx/cart?shopId=1046003
+   Authorization: {{token}}
+    ```
+   request:
+   - `shopId`: integer。--店铺id (必填)
+   response:
+
+   ```json
+   
+   {
+   "code": 200,
+   "description": null,
+   "result": 3,
+   "records": null
+   }
+   ```
+   - `result`: integer。-- 单数
+9. 增加购物车和更新购物车(每次把购物车的所有条数都带过来)//目前逻辑每次先清空购物车 然后再全部新增进去
+   ```http request
+   POST http://localhost:9001/wx/cart/add
+   Authorization:  {{token}}
+   Content-Type: application/json
+    ```
+   request:
+   ```json
+   {
+   "shopId": 1046003,
+   "goods": [
+   {
+   "goodsId": "1181004",
+   "goodsSn": "1181004",
+   "checked": "true",
+   "number":"1"
+   },
+   {
+   "goodsId": "1181004",
+   "goodsSn": "1181004",
+   "checked": "true",
+   "number":"0",
+   "calamityId": 251,
+   "calamityName": "蒜蓉酱油",
+   "calamityNumber": 2
+   },
+   {
+   "goodsId": "1181005",
+   "goodsSn": "1181005",
+   "checked": "true",
+   "number":"1"
+   },
+   {
+   "goodsId": "1181006",
+   "goodsSn": "1181006",
+   "checked": "true",
+   "number":"1"
+   }
+   ]
+   }
+      ```
+   - `shopId`: integer。--店铺id (必填)
+   - `goods.goodsId`: integer。--商品id 
+   - `goods.goodsSn`: string。--商品编号 
+   - `goods.checked`: boolean。--选择flag
+   - `goods.number`: integer。--数量 
+   - `goods.calamityId`: integer。--小料ID 
+   - `goods.calamityName`: string。--小料name
+   - `goods.calamityNumber`: integer。--小料数量
+     response:
+
+   ```json
+   {
+   "code": 200,
+   "description": null,
+   "result": null,
+   "records": null
+   }
+   ```
+10. 清空购物车
+   ```http request
+   POST  http://localhost:9001/wx/cart/delete?shopId=1046003
+   Authorization: {{token}}
+   ```
+   request:
+   - `shopId`: integer。--店铺id (必填)
+   response:
+  
+    ```json
+   {
+   "code": 200,
+   "description": null,
+   "result": 3,
+   "records": null
+   }
+   ```

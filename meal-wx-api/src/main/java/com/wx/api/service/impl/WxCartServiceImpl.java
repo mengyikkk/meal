@@ -127,6 +127,9 @@ public class WxCartServiceImpl implements WxCartService {
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shopId);
         List<MealCart> mealCarts = this.mealCartMapper.selectByExample(example);
+        if (mealCarts.isEmpty()){
+            return  ResultUtils.success();
+        }
         var calamityGoodsMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCarts.stream()
                 .filter(e->Objects.isNull(e.getCalamityId())).map(MealCart::getGoodsId).collect(Collectors.toList()), shopId);
         var calamityMap = mealCarts.stream().filter(e -> Objects.nonNull(e.getCalamityId()))
