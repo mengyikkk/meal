@@ -59,21 +59,8 @@
 <!--        <table tableName="meal_goods">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>-->
-        <table tableName="meal_cart">
+        <table tableName="meal_category">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
-<!--        <table tableName="meal_shop">-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
-<!--        </table>-->
-<!--        <table tableName="meal_menu">-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
-<!--        </table>-->
-<!--        <table tableName="meal_permission">-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
-<!--        </table>-->
-<!--        <table tableName="roles_menus">-->
-<!--        </table>-->
-<!--        <table tableName="roles_permissions">-->
-<!--        </table>-->
     </context>
 </generatorConfiguration>

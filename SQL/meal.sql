@@ -183,6 +183,7 @@ DROP TABLE IF EXISTS `meal_category`;
 CREATE TABLE `meal_category` (
                                      `id` bigint(20) NOT NULL AUTO_INCREMENT,
                                      `name` varchar(63) NOT NULL DEFAULT '' COMMENT '类目名称',
+                                     `shop_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '商铺id',
                                      `keywords` varchar(1023) NOT NULL DEFAULT '' COMMENT '类目关键字，以JSON数组格式',
                                      `desc` varchar(255) DEFAULT '' COMMENT '类目广告语介绍',
                                      `pid` int(11) NOT NULL DEFAULT '0' COMMENT '父类目ID',

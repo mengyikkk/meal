@@ -43,6 +43,7 @@ Content-Type: application/json
 
 {
   "shopId":1046003,
+  "categoryId": 1036008,
   "page": 1,
   "limit": 10
 }
@@ -102,4 +103,8 @@ GET  http://localhost:9001/wx/cart?shopId=1046003
 Authorization: {{token}}
 ###
 POST  http://localhost:9001/wx/cart/delete?shopId=1046003
+Authorization: {{token}}
+
+###
+GET  http://localhost:9001/wx/category?shopId=1046003
 Authorization: {{token}}

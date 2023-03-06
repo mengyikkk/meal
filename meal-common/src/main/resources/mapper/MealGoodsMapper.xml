@@ -750,7 +750,7 @@
             <if test="request.goodsSn != null">AND goods_sn = #{request.goodsSn}</if>
             <if test="request.categoryId != null">AND category_id = #{request.categoryId}</if>
             <if test="request.isOnSale != null">AND is_on_sale = #{request.isOnSale}</if>
-            <if test="request.categoryId != null">AND is_time_on_sale = #{request.isTimeOnSale}</if>
+            <if test="request.isTimeOnSale != null">AND is_time_on_sale = #{request.isTimeOnSale}</if>
             order by sort_order asc
             <if test="limit != null">
                 <if test="offset != null">

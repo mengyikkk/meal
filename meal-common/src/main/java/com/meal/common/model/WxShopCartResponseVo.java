@@ -2,6 +2,8 @@ package com.meal.common.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.math.BigDecimal;
+
 public class WxShopCartResponseVo {
     private Long goodsId;
 
@@ -53,6 +55,8 @@ public class WxShopCartResponseVo {
      * @mbg.generated
      */
     private Boolean checked;
+
+    private BigDecimal price;
     @JsonInclude(value= JsonInclude.Include.NON_NULL)
     private  WxShopCartCalamitySonVo calamityVo;
 
@@ -145,6 +149,15 @@ public class WxShopCartResponseVo {
 
     public WxShopCartResponseVo setUrl(String url) {
         this.url = url;
+        return this;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public WxShopCartResponseVo setPrice(BigDecimal price) {
+        this.price = price;
         return this;
     }
 }

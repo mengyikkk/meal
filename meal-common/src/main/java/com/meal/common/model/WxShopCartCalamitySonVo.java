@@ -1,5 +1,7 @@
 package com.meal.common.model;
 
+import java.math.BigDecimal;
+
 public class WxShopCartCalamitySonVo {
     private Long calamityId;
 
@@ -12,6 +14,8 @@ public class WxShopCartCalamitySonVo {
     private  String calamityUrl;
 
     private Boolean errStatus;
+
+    private BigDecimal calamityPrice;
 
 
     public Long getCalamityId() {
@@ -65,6 +69,15 @@ public class WxShopCartCalamitySonVo {
 
     public WxShopCartCalamitySonVo setCalamityUrl(String calamityUrl) {
         this.calamityUrl = calamityUrl;
+        return this;
+    }
+
+    public BigDecimal getCalamityPrice() {
+        return calamityPrice;
+    }
+
+    public WxShopCartCalamitySonVo setCalamityPrice(BigDecimal calamityPrice) {
+        this.calamityPrice = calamityPrice;
         return this;
     }
 }
