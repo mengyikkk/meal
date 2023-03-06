@@ -3,12 +3,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>meal</artifactId>
+        <artifactId>meal-web</artifactId>
         <groupId>com.meal</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>meal-wx-api</artifactId>
 
     <properties>
@@ -20,6 +19,7 @@
         <dependency>
             <groupId>com.meal</groupId>
             <artifactId>meal-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -75,6 +75,7 @@
             <classifier>osx-aarch_64</classifier>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>

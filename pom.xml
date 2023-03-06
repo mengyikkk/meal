@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.meal</groupId>
-    <artifactId>meal</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>meal-web</artifactId>
     <version>1.0.0</version>
+
     <modules>
         <module>meal-wx-api</module>
         <module>meal-common</module>
     </modules>
-
+    <packaging>pom</packaging>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -32,16 +32,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.meal</groupId>
-                <artifactId>meal-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.meal</groupId>
-                <artifactId>meal-wx-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <!-- 单元测试 -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

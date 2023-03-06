@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 ###
 
-POST http://localhost:9001/wx/auth/login
+POST http://112.74.165.81:8080/wx/auth/login
 Content-Type: application/json
 
 {
