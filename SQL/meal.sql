@@ -196,3 +196,18 @@ CREATE TABLE `meal_category` (
                                      PRIMARY KEY (`id`),
                                      KEY `parent_id` (`pid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1036007 DEFAULT CHARSET=utf8mb4 COMMENT='类目表';
+
+DROP TABLE IF EXISTS `meal_banner`;
+
+CREATE TABLE `meal_banner` (
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                 `shop_id` bigint(20)  COMMENT '商铺id',
+                                 `banner_url` varchar(255) DEFAULT '' COMMENT 'banner图标',
+                                 `name` varchar(63) NOT NULL DEFAULT '' COMMENT '名称',
+                                 `order_num` tinyint(5) DEFAULT '50' COMMENT '排序',
+                                 `desc` varchar(255) DEFAULT '' COMMENT 'banner语介绍',
+                                 `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                 PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1036007 DEFAULT CHARSET=utf8mb4 COMMENT='banner';
