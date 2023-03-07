@@ -31,10 +31,7 @@ POST http://localhost:9001/wx/shop/list
 Authorization:  {{token}}
 Content-Type: application/json
 
-{
-  "page": 1,
-  "limit": 10
-}
+
 
 ###
 POST http://localhost:9001/wx/goods
