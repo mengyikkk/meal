@@ -5,13 +5,13 @@ import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.config.MealProperties;
-import com.meal.common.dto.MealUser;
-import com.meal.common.dto.MealUserExample;
+import com.meal.common.dto.*;
 import com.meal.common.enums.LoginTypeEnum;
+import com.meal.common.mapper.MealShopMapper;
 import com.meal.common.mapper.MealUserMapper;
+import com.meal.common.mapper.MealUserShopMapper;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.*;
-import com.meal.common.dto.UserInfo;
 import com.meal.common.model.LoginVo;
 import com.meal.common.model.WxRegisterReturnVo;
 import com.meal.common.model.WxRegisterVo;
@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+
 @Service
 public class WxAuthServiceImpl implements WxAuthService {
 
@@ -52,7 +53,7 @@ public class WxAuthServiceImpl implements WxAuthService {
     private Validator validator;
 
     @Resource
-    private  TokenUtils tokenUtils;
+    private TokenUtils tokenUtils;
     @Resource
     private MealUserMapper mealUserMapper;
     @Resource
@@ -65,26 +66,32 @@ public class WxAuthServiceImpl implements WxAuthService {
     private MealProperties mealProperties;
 
     @Resource
+    private MealShopMapper mealShopMapper;
+
+    @Resource
+    private MealUserShopMapper mealUserShopMapper;
+
+    @Resource
     private PasswordEncoder passwordEncoder;
+
     @Override
     @Transactional
-    public Result<WxRegisterReturnVo> register(WxRegisterVo vo, HttpServletRequest request)  {
+    public Result<WxRegisterReturnVo> register(WxRegisterVo vo, HttpServletRequest request) {
         {
             Set<ConstraintViolation<WxRegisterVo>> violations = this.validator.validate(vo);
             if (!violations.isEmpty()) {
-                this.logger.warn("Service-Store[register][block]:param.  request: {}, violation: {}",
-                        vo, violations);
+                this.logger.warn("Service-Store[register][block]:param.  request: {}, violation: {}", vo, violations);
                 return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
             }
         }
-        var mobile =vo.getMobile();
+        var mobile = vo.getMobile();
         var password = vo.getPassword();
 
         // 如果是小程序注册，则必须非空
         // 其他情况，可以为空
         String wxCode = vo.getWxCode();
         var user = new MealUser();
-        if (Objects.nonNull(mealUserService.queryByMobile(mobile))){
+        if (Objects.nonNull(mealUserService.queryByMobile(mobile))) {
             return ResultUtils.code(ResponseCode.AUTH_MOBILE_REGISTERED);
         }
         if (!RegexUtil.isMobileSimple(mobile)) {
@@ -124,15 +131,15 @@ public class WxAuthServiceImpl implements WxAuthService {
         user.setGender((byte) 0);
         user.setUserLevel((byte) 0);
         user.setStatus((byte) 0);
-        this.LastLogIn(user,request);
+        this.LastLogIn(user, request);
         var example = new MealUserExample();
         example.createCriteria().andMobileEqualTo(mobile);
-        var oldUser =this.mealUserMapper.selectOneByExample(example);
-        if (Objects.nonNull(oldUser)){
-            if ( this.mealUserMapper.updateByExampleSelective(user,example)<1){
+        var oldUser = this.mealUserMapper.selectOneByExample(example);
+        if (Objects.nonNull(oldUser)) {
+            if (this.mealUserMapper.updateByExampleSelective(user, example) < 1) {
                 return ResultUtils.code(ResponseCode.TIME_OUT);
             }
-        }else {
+        } else {
             if (this.mealUserMapper.insertSelective(user) < 1) {
                 return ResultUtils.code(ResponseCode.TIME_OUT);
             }
@@ -153,40 +160,39 @@ public class WxAuthServiceImpl implements WxAuthService {
         {
             Set<ConstraintViolation<LoginVo>> violations = this.validator.validate(vo);
             if (!violations.isEmpty()) {
-                this.logger.warn("Service-Store[login][block]:param.  request: {}, violation: {}",
-                        vo, violations);
+                this.logger.warn("Service-Store[login][block]:param.  request: {}, violation: {}", vo, violations);
                 return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
             }
         }
         UserDetails userDetails;
-        if (LoginTypeEnum.MOBILE.is(vo.getType())){
-            if (StringUtils.isBlank(vo.getCode())){
-                return  ResultUtils.message(ResponseCode.AUTH_CAPTCHA_NULL,"验证码为空");
+        if (LoginTypeEnum.MOBILE.is(vo.getType())) {
+            if (StringUtils.isBlank(vo.getCode())) {
+                return ResultUtils.message(ResponseCode.AUTH_CAPTCHA_NULL, "验证码为空");
             }
             // 验证码对比
             var code = this.redisUtils.getValue(vo.getPhoneNumber() + "sms").toString();
-            if (!vo.getCode().equals(code)){
-                return  ResultUtils.message(ResponseCode.AUTH_CAPTCHA_UNMATCH,"验证码不匹配");
+            if (!vo.getCode().equals(code)) {
+                return ResultUtils.message(ResponseCode.AUTH_CAPTCHA_UNMATCH, "验证码不匹配");
             }
             userDetails = userDetailsService.loadUserByUsername(vo.getPhoneNumber());
-        }else{
-            if (StringUtils.isBlank(vo.getPassword())){
-                return  ResultUtils.message(ResponseCode.ACCOUNT_NOT_EXISTS,"密码不存在，请重新输入！");
+        } else {
+            if (StringUtils.isBlank(vo.getPassword())) {
+                return ResultUtils.message(ResponseCode.ACCOUNT_NOT_EXISTS, "密码不存在，请重新输入！");
             }
             userDetails = userDetailsService.loadUserByUsername(vo.getPhoneNumber());
             if (!passwordEncoder.matches(MD5Utils.md5(vo.getPassword()), userDetails.getPassword())) {
-                return ResultUtils.message(ResponseCode.ACCOUNT_NOT_EXISTS,"账号或密码错误，请重新输入！");
+                return ResultUtils.message(ResponseCode.ACCOUNT_NOT_EXISTS, "账号或密码错误，请重新输入！");
             }
         }
         if (!userDetails.isEnabled()) {
-            return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL,("该账号未启用，请联系管理员！"));
+            return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, ("该账号未启用，请联系管理员！"));
         }
         var user = this.mealUserService.queryByMobile(vo.getPhoneNumber());
-        this.LastLogIn(user,request);
-        if ( this.mealUserMapper.updateByPrimaryKey(user)<1){
-            return  ResultUtils.unknown();
+        this.LastLogIn(user, request);
+        if (this.mealUserMapper.updateByPrimaryKey(user) < 1) {
+            return ResultUtils.unknown();
         }
-        this.logger.info("登录成功，在security对象中存入{}登陆者信息",vo.getPhoneNumber());
+        this.logger.info("登录成功，在security对象中存入{}登陆者信息", vo.getPhoneNumber());
         return ResultUtils.success(tokenUtils.generateToken(user));
     }
 
@@ -194,7 +200,7 @@ public class WxAuthServiceImpl implements WxAuthService {
     public Result<?> sms(String phoneNumber) {
         Random random = new Random();
         int code = 100000 + random.nextInt(899999);
-        SmsUtils.sendSms(phoneNumber,"12",code, mealProperties.getSms());
+        SmsUtils.sendSms(phoneNumber, "12", code, mealProperties.getSms());
         redisUtils.setValueTime(phoneNumber + "sms", code, 10);
         return ResultUtils.success("验证码发送成功！");
     }
@@ -205,8 +211,8 @@ public class WxAuthServiceImpl implements WxAuthService {
         if (org.springframework.util.StringUtils.hasText(token)) {
             //拿到token主体
             if (token.startsWith(tokenHead)) token = token.substring(tokenHead.length());
-        }else{
-            return  ResultUtils.message(ResponseCode.PARAMETER_ERROR,"无效参数");
+        } else {
+            return ResultUtils.message(ResponseCode.PARAMETER_ERROR, "无效参数");
         }
         if (!tokenUtils.isExpiration(token)) {
             return ResultUtils.success(tokenUtils.refreshToken(token));
@@ -214,7 +220,36 @@ public class WxAuthServiceImpl implements WxAuthService {
         return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, "登录过期，请重新登录！");
     }
 
-    private void LastLogIn(MealUser user,HttpServletRequest request){
+    @Override
+    public Result<?> bind(Long shopId) {
+        {
+            var shop = this.mealShopMapper.selectByPrimaryKeyWithLogicalDelete(shopId, Boolean.FALSE);
+            if (Objects.isNull(shop)) {
+                this.logger.warn("Service-bind[list][block]:store. uid: {}, request: {}", SecurityUtils.getUserId(), shopId);
+                return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
+            }
+        }
+        var userId = SecurityUtils.getUserId();
+        var example = new MealUserShopExample();
+        example.createCriteria().andLogicalDeleted(Boolean.TRUE).andUserIdEqualTo(userId);
+        var model = this.mealUserShopMapper.selectOneByExample(example);
+        if (Objects.nonNull(model)) {
+            model.setShopId(shopId);
+            if (this.mealUserShopMapper.updateByPrimaryKeySelective(model) < 1) {
+                return ResultUtils.code(ResponseCode.UNKNOWN);
+            }
+        } else {
+            model = new MealUserShop();
+            model.setUserId(userId);
+            model.setShopId(shopId);
+            if (this.mealUserShopMapper.insertSelective(model) < 1) {
+                return ResultUtils.code(ResponseCode.UNKNOWN);
+            }
+        }
+        return ResultUtils.success(shopId);
+    }
+
+    private void LastLogIn(MealUser user, HttpServletRequest request) {
         user.setLastLoginTime(LocalDateTime.now());
         user.setLastLoginIp(IpUtil.getIpAddr(request));
     }

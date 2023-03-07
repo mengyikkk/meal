@@ -641,3 +641,22 @@ request:
 - `description`: string。--banner描述
 - `orderNum`: integer。--排序
 - `name`: string banner名
+
+12. 绑定店铺(新增绑定店铺,更新绑定店铺)
+
+   ```http request
+   GET  http://localhost:9001/wx/auth/bind/{shopId}
+   Authorization: {{token}}
+   ```
+
+response:
+
+ ```json
+{
+   "code": 200,
+   "description": null,
+   "result": 1046003,
+   "records": null
+}
+```
+- `result`: int。店铺id

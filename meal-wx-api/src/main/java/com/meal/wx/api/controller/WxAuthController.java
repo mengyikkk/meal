@@ -63,7 +63,10 @@ public class WxAuthController {
     public Result<?> refresh(@RequestHeader("${jwt.tokenHeader}") String token){
         return  this.wxAuthService.refresh(token);
     }
-
+    @GetMapping("/bind/{shopId}")
+    public Result<?> bind(@PathVariable("shopId") Long shopId ){
+        return  this.wxAuthService.bind(shopId);
+    }
 
     @PostMapping("/loginByWx")
     public Result<?> loginByWx(@RequestBody WxLoginInfo wxLoginInfo, HttpServletRequest request) {

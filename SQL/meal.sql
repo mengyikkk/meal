@@ -190,8 +190,8 @@ CREATE TABLE `meal_category` (
                                      `icon_url` varchar(255) DEFAULT '' COMMENT '类目图标',
                                      `pic_url` varchar(255) DEFAULT '' COMMENT '类目图片',
                                      `sort_order` tinyint(3) DEFAULT '50' COMMENT '排序',
-                                     `add_time` datetime DEFAULT NULL COMMENT '创建时间',
-                                     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                     `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+                                     `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
                                      `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
                                      PRIMARY KEY (`id`),
                                      KEY `parent_id` (`pid`)
@@ -206,8 +206,20 @@ CREATE TABLE `meal_banner` (
                                  `name` varchar(63) NOT NULL DEFAULT '' COMMENT '名称',
                                  `order_num` tinyint(5) DEFAULT '50' COMMENT '排序',
                                  `desc` varchar(255) DEFAULT '' COMMENT 'banner语介绍',
-                                 `add_time` datetime DEFAULT NULL COMMENT '创建时间',
-                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
                                  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
                                  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1036007 DEFAULT CHARSET=utf8mb4 COMMENT='banner';
+
+DROP TABLE IF EXISTS `meal_user_shop`;
+CREATE TABLE `meal_user_shop` (
+                               `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                               `user_id` bigint(20)  NOT NULL COMMENT '商铺id',
+                               `shop_id` bigint(20) NOT NULL COMMENT '店铺id',
+                               `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+                               `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
+                               `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                PRIMARY KEY (`id`),
+                                UNIQUE KEY unique_user (user_id)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COMMENT='绑定店铺';

@@ -12,4 +12,5 @@ public interface WxAuthService {
      Result<?> login(LoginVo vo, HttpServletRequest request);
      Result<?> sms(String phoneNumber);
      Result<?> refresh(String token);
+     Result<?> bind(Long shopId);
 }

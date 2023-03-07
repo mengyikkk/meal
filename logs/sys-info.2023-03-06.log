@@ -1,0 +1,92 @@
+11:53:55.830 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+11:53:55.832 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 9064 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+11:53:55.833 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+11:53:56.779 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+11:53:56.779 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+11:53:56.780 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+11:53:56.831 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+11:53:56.932 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+11:54:02.061 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+11:54:03.400 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+11:54:03.419 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 7.806 seconds (JVM running for 8.254)
+11:54:03.678 [RMI TCP Connection(2)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+11:54:38.056 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2032] - {dataSource-1} closing ...
+11:54:38.061 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2104] - {dataSource-1} closed
+11:54:39.468 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 9149 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+11:54:39.466 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+11:54:39.469 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+11:54:40.362 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+11:54:40.363 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+11:54:40.363 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+11:54:40.414 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+11:54:40.515 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+11:54:45.690 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+11:54:46.754 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+11:54:46.769 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 7.535 seconds (JVM running for 8.047)
+11:54:47.205 [RMI TCP Connection(2)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+11:55:42.308 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2032] - {dataSource-1} closing ...
+11:55:42.313 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2104] - {dataSource-1} closed
+11:55:44.037 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+11:55:44.037 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 9162 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+11:55:44.039 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+11:55:44.896 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+11:55:44.896 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+11:55:44.896 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+11:55:44.949 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+11:55:45.046 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+11:55:49.442 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+11:55:50.545 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+11:55:50.561 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 6.763 seconds (JVM running for 7.24)
+11:55:50.757 [RMI TCP Connection(3)-192.168.100.73] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+11:56:41.228 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2032] - {dataSource-1} closing ...
+11:56:41.233 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2104] - {dataSource-1} closed
+18:01:38.476 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 18312 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+18:01:38.475 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+18:01:38.478 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+18:01:39.527 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+18:01:39.528 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+18:01:39.528 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+18:01:39.580 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+18:01:39.683 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+18:01:44.682 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+18:01:46.082 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+18:01:46.097 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 7.907 seconds (JVM running for 8.527)
+18:01:46.126 [RMI TCP Connection(2)-192.168.100.73] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+18:07:52.723 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+18:07:52.724 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 18429 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+18:07:52.726 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+18:07:53.635 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+18:07:53.636 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+18:07:53.636 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+18:07:53.696 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+18:07:53.794 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+18:07:58.301 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+18:07:59.913 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+18:07:59.928 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 7.431 seconds (JVM running for 7.878)
+18:08:00.454 [RMI TCP Connection(10)-192.168.100.73] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+18:09:02.160 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 18472 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+18:09:02.159 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+18:09:02.161 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+18:09:03.078 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+18:09:03.080 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+18:09:03.080 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+18:09:03.134 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+18:09:03.235 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+18:09:07.621 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+18:09:08.756 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+18:09:08.771 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 6.811 seconds (JVM running for 7.3)
+18:09:08.825 [RMI TCP Connection(2)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+18:21:01.489 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+18:21:01.491 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 18685 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+18:21:01.491 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+18:21:02.400 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+18:21:02.400 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+18:21:02.400 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+18:21:02.457 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+18:21:02.556 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+18:21:07.096 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+18:21:08.548 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+18:21:08.564 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 7.316 seconds (JVM running for 7.889)
+18:21:08.760 [RMI TCP Connection(8)-192.168.100.73] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+20:15:07.211 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2032] - {dataSource-1} closing ...
+20:15:07.213 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2104] - {dataSource-1} closed
