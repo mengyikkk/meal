@@ -5,10 +5,11 @@ import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.config.WxMaConfig;
 import cn.binarywang.wx.miniapp.config.impl.WxMaDefaultConfigImpl;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 
-//@Configuration
+@Configuration
 public class WxConfig {
     @Resource
     private WxProperties properties;
@@ -19,6 +20,7 @@ public class WxConfig {
         config.setAppid(properties.getAppId());
         config.setSecret(properties.getAppSecret());
         config.setToken(properties.getToken());
+        config.setMsgDataFormat(properties.getMsgDataFormat());
         config.setAesKey(properties.getAesKey());
         return config;
     }

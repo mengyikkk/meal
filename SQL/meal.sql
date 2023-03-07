@@ -17,7 +17,7 @@ CREATE TABLE `meal_user` (
                                  `wx_openid` varchar(63) NOT NULL DEFAULT '' COMMENT '微信登录openid',
                                  `session_key` varchar(100) NOT NULL DEFAULT '' COMMENT '微信登录会话KEY',
                                  `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '0 可用, 1 禁用, 2 注销',
-                                 `admin` tinyint(1) NULL DEFAULT 0 COMMENT '是否是管理员',
+                                 `admin` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是管理员',
                                  `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间' ON UPDATE CURRENT_TIMESTAMP,
                                  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',

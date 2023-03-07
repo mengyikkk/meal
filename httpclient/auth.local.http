@@ -115,3 +115,14 @@ Authorization: {{token}}
 ###
 GET  http://localhost:9001/wx/auth/bind/1046003
 Authorization: {{token}}
+###
+
+POST http://localhost:9001/wx/auth/loginByWx
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "code": "041Fjf0w3OSye03JOo1w3NDzag3Fjf05",
+  "encryptedData": "IRjomKz4D2WSzbv4U+bzLzeY0IyJ/9Xn/CivL7EJD6J0P5hGslFdVr7Ycmq8rf/SiWfS7NjMJ3X8XsQa3lqNtgL5Ia6z5bGDMNIx/givvFKhUI5v0TRAiIsANnqmF1iBGxdH6Jz25Un+HPdBAGG/D6O4mwE5I0joBuGbHcKlLXqC2C0mNdZTL6yyKAVn874V13tJnN8VK9PXt2shpzTFUDLVpc2GybRyHtY7YLo8jCp1frVcXf+2gDCnpj8LIrsYmSDetUsZi19oHI8tqEEd4X3pL49WXDgZ8GHY2HA+gkQtfR5AhKEE+BPh3ZZiChSrU/Hbg4+NWCC3pfKr87gOCU40LNdbhHM5YjERA/zVkMrYMUZfPoKqQptIdVJhrHUFbKH6Lj020QVc9dRBEunD0HdcLMxRlyvJvgdvUnkfz2Jk8rVYZI9ijMaryHeQUVV5qF1wvbFt0jGXEqSB6mr86A==",
+  "iv": "TdRcBdKlEFliWwjitR2QOg=="
+}

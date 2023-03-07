@@ -10,14 +10,14 @@ logging:
     com:
       meal: debug
 
-#meal:
-#  wx:
-#    miniapp:
-#      configs:
-#          appid: #微信小程序的appid
-#          secret: #微信小程序的Secret
-#          token: #微信小程序消息服务器配置的token
-#          aesKey: #微信小程序消息服务器配置的EncodingAESKey
-#          msgDataFormat: JSON
+meal:
+  wx:
+    miniapp:
+      configs:
+        appid: "wxff1a8500e8238674"
+        appSecret: "a98a0f28b4edd080950b3bed61bcf881"
+        token: #微信小程序消息服务器配置的token
+        aesKey: #微信小程序消息服务器配置的EncodingAESKey
+        msgDataFormat: JSON
 server:
   port: 9001

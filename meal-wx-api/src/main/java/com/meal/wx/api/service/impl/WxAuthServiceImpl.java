@@ -2,6 +2,7 @@ package com.meal.wx.api.service.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.config.MealProperties;
@@ -10,6 +11,7 @@ import com.meal.common.enums.LoginTypeEnum;
 import com.meal.common.mapper.MealShopMapper;
 import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.mapper.MealUserShopMapper;
+import com.meal.common.model.WxLoginVo;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.*;
 import com.meal.common.model.LoginVo;
@@ -40,7 +42,7 @@ import java.util.Set;
 public class WxAuthServiceImpl implements WxAuthService {
 
     private final Logger logger = LoggerFactory.getLogger(WxAuthServiceImpl.class);
-    //    @Resource
+    @Resource
     private WxMaService wxService;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
@@ -152,6 +154,69 @@ public class WxAuthServiceImpl implements WxAuthService {
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
         // token
+        return ResultUtils.success(result);
+    }
+
+    @Override
+    public Result<?> loginByWx(WxLoginVo info, HttpServletRequest request) {
+        {
+            Set<ConstraintViolation<WxLoginVo>> violations = this.validator.validate(info);
+            if (!violations.isEmpty()) {
+                this.logger.warn("Service-Store[register][block]:param.  request: {}, violation: {}", info, violations);
+                return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
+            }
+        }
+        String openId;
+        String sessionKey;
+        String phone;
+        try {
+            WxMaJscode2SessionResult result = this.wxService.getUserService().getSessionInfo(info.getCode());
+            openId = result.getOpenid();
+            this.logger.info("获取到用户openId:{}", openId);
+            sessionKey = result.getSessionKey();
+            WxMaPhoneNumberInfo phoneInfo = wxService.getUserService().getPhoneNoInfo(sessionKey, info.getEncryptedData(), info.getIv());
+            phone = phoneInfo.getPhoneNumber();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtils.code(ResponseCode.AUTH_OPENID_UNACCESS);
+        }
+        if (Objects.isNull(phone)){
+            return ResultUtils.unknown();
+        }
+        var example = new MealUserExample();
+        example.createCriteria().andLogicalDeleted(Boolean.TRUE).andWxOpenidEqualTo(openId);
+        var user = this.mealUserMapper.selectOneByExample(example);
+        if (Objects.nonNull(user)) {    //已经注册过的用户处理
+            this.logger.info("用户:{}已经注册过走更新流程",user.getUsername());
+            if (!user.isEnabled()) {
+                return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, ("该账号未启用，请联系管理员！"));
+            }
+            //处理不处理不同电话的问题?todo
+            user.setMobile(phone);
+            user.setUsername(phone);
+            this.LastLogIn(user, request);
+            if (this.mealUserMapper.updateByPrimaryKey(user) < 1) {
+                return ResultUtils.unknown();
+            }
+        } else {
+            user = new MealUser();
+            user.setUsername(phone);
+            user.setMobile(phone);
+            user.setSessionKey(sessionKey);
+            user.setWxOpenid(openId);
+            this.LastLogIn(user, request);
+            if (this.mealUserMapper.insertSelective(user) < 1) {
+                return ResultUtils.unknown();
+            }
+        }
+        var result = new WxRegisterReturnVo();
+        UserInfo userInfo = new UserInfo();
+        userInfo.setNickName(user.getNickname());
+        userInfo.setGender(user.getGender());
+        userInfo.setAvatarUrl(user.getAvatar());
+        result.setToken(tokenUtils.generateToken(user));
+        result.setUserInfo(userInfo);
+        this.logger.info("登录成功，在security对象中存入{}登陆者信息", phone);
         return ResultUtils.success(result);
     }
 

@@ -3,10 +3,12 @@ package com.meal.wx.api.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import javax.validation.constraints.NotBlank;
+
 @Configuration
 @ConfigurationProperties(prefix = WxProperties.PREFIX)
 public class WxProperties {
-    public static final String PREFIX = "meal.wx";
+    public static final String PREFIX = "meal.wx.miniapp.configs";
     /**
      * 设置微信小程序的appid
      */
@@ -14,6 +16,7 @@ public class WxProperties {
     /**
      * 设置微信小程序的Secret
      */
+    @NotBlank
     private String appSecret;
 
     private String mchId;
