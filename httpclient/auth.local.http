@@ -108,3 +108,7 @@ Authorization: {{token}}
 ###
 GET  http://localhost:9001/wx/category?shopId=1046003
 Authorization: {{token}}
+
+###
+GET  http://localhost:9001/wx/banner
+Authorization: {{token}}

@@ -28,6 +28,7 @@ public class WxBannerServiceImpl implements WxBannerService {
 
     @Override
     public Result<?> list(Long shopId) {
+        if(Objects.nonNull(shopId))
         {
             var shop = this.mealShopMapper.selectByPrimaryKeyWithLogicalDelete(shopId, Boolean.FALSE);
             if (Objects.isNull(shop)) {
@@ -38,6 +39,7 @@ public class WxBannerServiceImpl implements WxBannerService {
         var example = new MealBannerExample();
         MealBannerExample.Criteria criteria = example.createCriteria();
         criteria.andLogicalDeleted(Boolean.TRUE);
+        criteria.andShopIdEqualTo(0L);
         example.setOrderByClause("order_num asc");
         if (Objects.nonNull(shopId)) {
             criteria.andShopIdEqualTo(shopId);
