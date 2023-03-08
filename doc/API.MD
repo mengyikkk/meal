@@ -660,3 +660,50 @@ response:
 }
 ```
 - `result`: int。店铺id
+
+
+13. 微信登录(包含注册)
+
+   ```http request
+   POST http://localhost:9001/wx/auth/loginByWx
+   Content-Type: application/json
+   Authorization: {{token}}
+   ```
+request:
+   ```json
+{
+   "code":"081tg80w33Fcf03BdE0w3RMpmP3tg80j",
+   "encryptedData":"g+GpXedQ0bQG/mg1pzs1bE544DNrC0fWg2M9pDq/dWpqbKk9Yi67h0Kl7B3KEdZhvy9ASdsSkAvARrGOzAFZ81IQz39RzYDm/bnfPx9YNHNRFxoymq8xpMWY8pJsp6px6NDDBYpuM3h4dGSAMx0KcvO1hOWZuGo3c8G1iPFIyNXAQDsPc4ugEGhj90DyCtqRz4Wp5BhFxC5xk3R1gnDP9BEarGkm7VioQqRCk3DavfY2d4/VfY5eN52+Lbn5wvyRwbvEEO4KVdA6eGOvZe2E0tauCutGYSLnCo5d0CUvLAYJZsgnkc1/SpK2zbfDFTnTzl4cCGsR2NlNFGaIbVFFLh6xKyIKuKXz54PK2oETAbZhkdxxNR33c7VcujFTO75w9xL9FPEoWdTs4DKDlUwQ2TJXZd7F8ClX6uxx5/yhFA/MYN7p4iWfaVzcI+kjoAq6ntvGR0ekljK+8FlT65duZA==",
+   "iv":"dpRIcbq8B1H/HJoKkTPbXg==",
+   "codePhone":"d9ac9bb37a8d9c1e7e3191eafe7df8c11e6d2c2c8adaa1d582077abe062404e6"
+} 
+```
+-`code`:string。 微信code (必填)
+-`encryptedData`:string。 加密数据 (必填)
+-`iv`:string。  (必填)
+-`codePhone`:string。 微信获取手机code(必填)
+response: 
+
+ ```json
+{
+   "code": 200,
+   "description": null,
+   "result": {
+      "userInfo": {
+         "nickName": "微信用户",
+         "avatarUrl": "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
+      },
+      "token": {
+         "token": "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2ODE4NjIzODMsImNyZWF0ZWQiOjE2NzgyNjIzODMxMzYsInVzZXJuYW1lIjoibzAzUEs0a0xtdkt0bGVpUEFJcEZrbHMtMzBwWSJ9.PJLPNTDcC9yDgOjSzK5nSF4KzdUKe9lSGcg9-dLYZ3evCFUMrKwcePl69nmWy6b5swkGsFv6jV4IyRtAxMo27g",
+         "refresh": "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MTQyNjIzODMsImNyZWF0ZWQiOjE2NzgyNjIzODMxMzYsInVzZXJuYW1lIjoibzAzUEs0a0xtdkt0bGVpUEFJcEZrbHMtMzBwWSJ9.rF7CfO4iHic7W2cZY5qE4vSGKyI0leAAAmIbeBFPUZf8e5J_ZrAJpfvwOPkw_AmDCXmcRYN4ZQ991ltb6AXsKQ",
+         "expire": 3600
+      }
+   },
+   "records": null
+}
+```
+- `userInfo.nickName`: string。网名
+- `userInfo.avatarUrl`: string。头像链接
+- `token.token`: string。--token
+- `token.refresh`: string。--刷新token
+- `token.expire`: int。--过期时间 秒
