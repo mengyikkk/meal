@@ -47,7 +47,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             user =(MealUser) redisUtils.getValue("userInfo_" + username);
             redisUtils.expire("userInfo_" + username, expiration);
         } else {
-            user = mealUserService.queryByMobile(username);
+            user = mealUserService.queryByOid(username);
             if (null == user) {
                 throw new UsernameNotFoundException("用户名或密码错误！");
             }

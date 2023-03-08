@@ -5,10 +5,15 @@ import javax.validation.constraints.NotBlank;
 public class WxLoginVo {
     @NotBlank
     private String code;
+
+    @NotBlank
+    private String codePhone;
+
     @NotBlank
     private String encryptedData;
     @NotBlank
     private String iv;
+
 
     public String getCode() {
         return code;
@@ -16,6 +21,15 @@ public class WxLoginVo {
 
     public WxLoginVo setCode(String code) {
         this.code = code;
+        return this;
+    }
+
+    public String getCodePhone() {
+        return codePhone;
+    }
+
+    public WxLoginVo setCodePhone(String codePhone) {
+        this.codePhone = codePhone;
         return this;
     }
 

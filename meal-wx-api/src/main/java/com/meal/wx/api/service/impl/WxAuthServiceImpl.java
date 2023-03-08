@@ -3,6 +3,7 @@ package com.meal.wx.api.service.impl;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.config.MealProperties;
@@ -135,7 +136,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         user.setStatus((byte) 0);
         this.LastLogIn(user, request);
         var example = new MealUserExample();
-        example.createCriteria().andMobileEqualTo(mobile);
+        example.createCriteria().andWxOpenidEqualTo(openId);
         var oldUser = this.mealUserMapper.selectOneByExample(example);
         if (Objects.nonNull(oldUser)) {
             if (this.mealUserMapper.updateByExampleSelective(user, example) < 1) {
@@ -149,7 +150,6 @@ public class WxAuthServiceImpl implements WxAuthService {
         var result = new WxRegisterReturnVo();
         UserInfo userInfo = new UserInfo();
         userInfo.setNickName(user.getNickname());
-        userInfo.setGender(user.getGender());
         userInfo.setAvatarUrl(user.getAvatar());
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
@@ -166,22 +166,27 @@ public class WxAuthServiceImpl implements WxAuthService {
                 return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
             }
         }
+        String phone;
         String openId;
         String sessionKey;
-        String phone;
+        var wxUserService =this.wxService.getUserService();
+        var userWx = new WxMaUserInfo();
         try {
-            WxMaJscode2SessionResult result = this.wxService.getUserService().getSessionInfo(info.getCode());
+            WxMaJscode2SessionResult result = wxUserService.getSessionInfo(info.getCode());
             openId = result.getOpenid();
             this.logger.info("获取到用户openId:{}", openId);
             sessionKey = result.getSessionKey();
-            WxMaPhoneNumberInfo phoneInfo = wxService.getUserService().getPhoneNoInfo(sessionKey, info.getEncryptedData(), info.getIv());
-            phone = phoneInfo.getPhoneNumber();
+            WxMaPhoneNumberInfo phoneInfo = wxUserService.getPhoneNoInfo(info.getCodePhone());
+            phone = phoneInfo.getPurePhoneNumber();
+            this.logger.info("获取到用户Phone:{}", phone);
+            userWx =wxUserService.getUserInfo(sessionKey,info.getEncryptedData(),info.getIv());
+            this.logger.info("获取到用户Phone:{}", JsonUtils.toJsonKeepNullValue(userWx));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtils.code(ResponseCode.AUTH_OPENID_UNACCESS);
         }
         if (Objects.isNull(phone)){
-            return ResultUtils.unknown();
+            return ResultUtils.message(ResponseCode.AUTH_INVALID_MOBILE,"无效手机号");
         }
         var example = new MealUserExample();
         example.createCriteria().andLogicalDeleted(Boolean.TRUE).andWxOpenidEqualTo(openId);
@@ -191,19 +196,20 @@ public class WxAuthServiceImpl implements WxAuthService {
             if (!user.isEnabled()) {
                 return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, ("该账号未启用，请联系管理员！"));
             }
-            //处理不处理不同电话的问题?todo
             user.setMobile(phone);
-            user.setUsername(phone);
+            user.setUsername(openId);
+            this.coverUserByWx(userWx,user);
             this.LastLogIn(user, request);
             if (this.mealUserMapper.updateByPrimaryKey(user) < 1) {
                 return ResultUtils.unknown();
             }
         } else {
             user = new MealUser();
-            user.setUsername(phone);
+            user.setUsername(openId);
             user.setMobile(phone);
             user.setSessionKey(sessionKey);
             user.setWxOpenid(openId);
+            this.coverUserByWx(userWx,user);
             this.LastLogIn(user, request);
             if (this.mealUserMapper.insertSelective(user) < 1) {
                 return ResultUtils.unknown();
@@ -212,7 +218,6 @@ public class WxAuthServiceImpl implements WxAuthService {
         var result = new WxRegisterReturnVo();
         UserInfo userInfo = new UserInfo();
         userInfo.setNickName(user.getNickname());
-        userInfo.setGender(user.getGender());
         userInfo.setAvatarUrl(user.getAvatar());
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
@@ -317,5 +322,9 @@ public class WxAuthServiceImpl implements WxAuthService {
     private void LastLogIn(MealUser user, HttpServletRequest request) {
         user.setLastLoginTime(LocalDateTime.now());
         user.setLastLoginIp(IpUtil.getIpAddr(request));
+    }
+    private void coverUserByWx(WxMaUserInfo userInfo,MealUser user){
+        user.setNickname(userInfo.getNickName());
+        user.setAvatar(userInfo.getAvatarUrl());
     }
 }
