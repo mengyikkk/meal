@@ -39,10 +39,11 @@ public class WxBannerServiceImpl implements WxBannerService {
         var example = new MealBannerExample();
         MealBannerExample.Criteria criteria = example.createCriteria();
         criteria.andLogicalDeleted(Boolean.TRUE);
-        criteria.andShopIdEqualTo(0L);
         example.setOrderByClause("order_num asc");
         if (Objects.nonNull(shopId)) {
             criteria.andShopIdEqualTo(shopId);
+        }else{
+            criteria.andShopIdEqualTo(0L);
         }
         var result = this.mealBannerMapper.selectByExample(example).stream().map(this::cover).collect(Collectors.toList());
         return ResultUtils.successWithEntities(result, (long) result.size());
