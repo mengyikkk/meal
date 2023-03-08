@@ -678,10 +678,10 @@ request:
    "codePhone":"d9ac9bb37a8d9c1e7e3191eafe7df8c11e6d2c2c8adaa1d582077abe062404e6"
 } 
 ```
--`code`:string。 微信code (必填)
--`encryptedData`:string。 加密数据 (必填)
--`iv`:string。  (必填)
--`codePhone`:string。 微信获取手机code(必填)
+- `code`:string。 微信code (必填)
+- `encryptedData`:string。 加密数据 (必填)
+- `iv`:string。  (必填)
+- `codePhone`:string。 微信获取手机code(必填)
 response: 
 
  ```json
