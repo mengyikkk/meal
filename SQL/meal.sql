@@ -223,3 +223,38 @@ CREATE TABLE `meal_user_shop` (
                                 PRIMARY KEY (`id`),
                                 UNIQUE KEY unique_user (user_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COMMENT='绑定店铺';
+
+DROP TABLE IF EXISTS `meal_order`;
+CREATE TABLE `meal_order` (
+                                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                                  `user_id` int(11) NOT NULL COMMENT '用户表的用户ID',
+                                  `shop_id` bigint(20) NOT NULL COMMENT '店铺id',
+                                  `order_sn` varchar(63) NOT NULL DEFAULT '0' COMMENT '订单编号 0是未支付 1是已支付 3 订单完成 4订单退款',
+                                  `order_status` smallint(6) NOT NULL DEFAULT '0'  COMMENT '订单状态 0是未取货 1是已取货 ',
+                                  `ship_status` smallint(6) NOT NULL COMMENT '取货状态',
+                                  `refund_status` smallint(6) DEFAULT '0' COMMENT '售后状态，0是可申请，1是用户已申请，2是管理员审核通过，3是管理员退款成功，4是管理员审核拒绝，5是用户已取消',
+                                  `consignee` varchar(63) NOT NULL COMMENT '收货人名称',
+                                  `mobile` varchar(63) NOT NULL COMMENT '收货人手机号',
+                                  `address` varchar(127) NOT NULL COMMENT '收货具体地址',
+                                  `message` varchar(512) NOT NULL DEFAULT '' COMMENT '用户订单留言',
+                                  `goods_price` decimal(10,2) NOT NULL COMMENT '商品总费用',
+                                  `freight_price` decimal(10,2) NOT NULL COMMENT '配送费用',
+                                  `coupon_price` decimal(10,2) NOT NULL COMMENT '优惠券减免',
+                                  `order_price` decimal(10,2) NOT NULL COMMENT '订单费用， = goods_price + freight_price - coupon_price',
+                                  `actual_price` decimal(10,2) NOT NULL COMMENT '实付费用， = order_price',
+                                  `pay_id` varchar(63) DEFAULT NULL COMMENT '微信付款编号',
+                                  `pay_time` datetime DEFAULT NULL COMMENT '微信付款时间',
+                                  `ship_sn` varchar(63) DEFAULT NULL COMMENT '取货编号',
+                                  `ship_time` datetime DEFAULT NULL COMMENT '取货时间',
+                                  `refund_amount` decimal(10,2) DEFAULT NULL COMMENT '实际退款金额，（有可能退款金额小于实际支付金额）',
+                                  `refund_content` varchar(127) DEFAULT NULL COMMENT '退款备注',
+                                  `refund_time` datetime DEFAULT NULL COMMENT '退款时间',
+                                  `confirm_time` datetime DEFAULT NULL COMMENT '用户确认收货时间',
+                                  `end_time` datetime DEFAULT NULL COMMENT '订单关闭时间=用户确认时间',
+                                  `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
+                                  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                  PRIMARY KEY (`id`),
+                                  KEY `user_id` (`user_id`),
+                                  KEY `shop_id` (`shop_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
