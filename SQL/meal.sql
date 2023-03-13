@@ -229,10 +229,10 @@ CREATE TABLE `meal_order` (
                                   `id` int(11) NOT NULL AUTO_INCREMENT,
                                   `user_id` int(11) NOT NULL COMMENT '用户表的用户ID',
                                   `shop_id` bigint(20) NOT NULL COMMENT '店铺id',
-                                  `order_sn` varchar(63) NOT NULL DEFAULT '0' COMMENT '订单编号 0是未支付 1是已支付 3 订单完成 4订单退款',
-                                  `order_status` smallint(6) NOT NULL DEFAULT '0'  COMMENT '订单状态 0是未取货 1是已取货 ',
-                                  `ship_status` smallint(6) NOT NULL COMMENT '取货状态',
-                                  `refund_status` smallint(6) DEFAULT '0' COMMENT '售后状态，0是可申请，1是用户已申请，2是管理员审核通过，3是管理员退款成功，4是管理员审核拒绝，5是用户已取消',
+                                  `order_sn` varchar(63) NOT NULL DEFAULT '0' COMMENT '订单编号',
+                                  `order_status` smallint(6) NOT NULL DEFAULT '0'  COMMENT '订单状态 0是未支付 1是已支付 3 订单完成 4订单退款',
+                                  `ship_status` smallint(6) NOT NULL COMMENT '取货状态 0是未取货 1是已取货 ',
+                                  `refund_status` smallint(6) DEFAULT '0' COMMENT '退款状态，0是可申请，1是用户已申请，2是管理员审核通过，3是管理员退款成功，4是管理员审核拒绝，5是用户已取消',
                                   `consignee` varchar(63) NOT NULL COMMENT '收货人名称',
                                   `mobile` varchar(63) NOT NULL COMMENT '收货人手机号',
                                   `address` varchar(127) NOT NULL COMMENT '收货具体地址',
@@ -258,3 +258,23 @@ CREATE TABLE `meal_order` (
                                   KEY `user_id` (`user_id`),
                                   KEY `shop_id` (`shop_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
+
+
+CREATE TABLE `meal_order_goods` (
+                                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                                        `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单表的订单ID',
+                                        `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品表的商品ID',
+                                        `goods_name` varchar(127) NOT NULL DEFAULT '' COMMENT '商品名称',
+                                        `goods_sn` varchar(63) NOT NULL DEFAULT '' COMMENT '商品编号',
+                                        `little_calamity_ids` varchar(255)  DEFAULT NULL COMMENT '小料ids',
+                                        `number` smallint(5) NOT NULL DEFAULT '0' COMMENT '商品货品的购买数量',
+                                        `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '商品货品的售价',
+                                        `pic_url` varchar(255) NOT NULL DEFAULT '' COMMENT '商品货品图片或者商品图片',
+                                        `comment` int(11) DEFAULT '0' COMMENT '订单商品评论，如果是-1，则超期不能评价；如果是0，则可以评价；如果其他值，则是comment表里面的评论ID。',
+                                        `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                        `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                        `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                        PRIMARY KEY (`id`),
+                                        KEY `order_id` (`order_id`),
+                                        KEY `goods_id` (`goods_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单商品表';

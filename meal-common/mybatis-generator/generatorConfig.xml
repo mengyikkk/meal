@@ -59,7 +59,7 @@
 <!--        <table tableName="meal_goods">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>-->
-        <table tableName="meal_user_shop">
+        <table tableName="meal_order">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
     </context>
