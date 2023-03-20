@@ -3,11 +3,10 @@ package com.meal.wx.api.service.impl;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.dto.MealCart;
+import com.meal.common.dto.MealCartCalamity;
+import com.meal.common.dto.MealCartCalamityExample;
 import com.meal.common.dto.MealCartExample;
-import com.meal.common.mapper.MealCartMapper;
-import com.meal.common.mapper.MealGoodsMapper;
-import com.meal.common.mapper.MealLittleCalamityMapper;
-import com.meal.common.mapper.MealShopMapper;
+import com.meal.common.mapper.*;
 import com.meal.common.model.WxShopCartCalamitySonVo;
 import com.meal.common.model.WxShopCartResponseVo;
 import com.meal.common.model.WxShoppingCartVo;
@@ -16,9 +15,11 @@ import com.meal.common.utils.MapperUtils;
 import com.meal.common.utils.ResultUtils;
 import com.meal.common.utils.SecurityUtils;
 import com.meal.wx.api.service.WxCartService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
@@ -40,7 +41,8 @@ public class WxCartServiceImpl implements WxCartService {
     private MealShopMapper mealShopMapper;
     @Resource
     private MealLittleCalamityMapper mealLittleCalamityMapper;
-
+    @Resource
+    private MealCartCalamityMapper mealCartCalamityMapper;
     @Resource
     private TransactionExecutor transactionExecutor;
     private final Logger logger = LoggerFactory.getLogger(WxCartServiceImpl.class);
@@ -50,16 +52,14 @@ public class WxCartServiceImpl implements WxCartService {
         {
             Set<ConstraintViolation<WxShoppingCartVo>> violations = this.validator.validate(shoppingCartVo);
             if (!violations.isEmpty()) {
-                this.logger.warn("Service-Cart[WxCartServiceImpl][insertShoppingCart]:param.  request: {}, violation: {}",
-                        shoppingCartVo, violations);
+                this.logger.warn("Service-Cart[WxCartServiceImpl][insertShoppingCart]:param.  request: {}, violation: {}", shoppingCartVo, violations);
                 return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
             }
         }
         {
             var shop = this.mealShopMapper.selectByPrimaryKeyWithLogicalDelete(shoppingCartVo.getShopId(), Boolean.FALSE);
             if (Objects.isNull(shop)) {
-                this.logger.warn("Service-Cart[WxCartServiceImpl][insertShoppingCart]:store. uid: {}, request: {}",
-                        SecurityUtils.getUserId(), shoppingCartVo);
+                this.logger.warn("Service-Cart[WxCartServiceImpl][insertShoppingCart]:store. uid: {}, request: {}", SecurityUtils.getUserId(), shoppingCartVo);
                 return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
             }
         }
@@ -71,29 +71,30 @@ public class WxCartServiceImpl implements WxCartService {
             mealCartMapper.deleteByExample(example);
             return 1;
         });
-        var goodsByShopMap = MapperUtils.goodsMapAllByShop(mealGoodsMapper, shoppingCartVo.getShopId());
         var products = shoppingCartVo.getGoods();
         Collections.reverse(products);
         products.forEach(e -> {
-                    var cart = new MealCart();
-                    cart.setGoodsId(e.getGoodsId());
-                    cart.setNumber(e.getNumber());
-                    cart.setShopId(shoppingCartVo.getShopId());
-                    cart.setGoodsSn(e.getGoodsSn());
-                    cart.setChecked(e.getChecked());
-                    //todo 有可能空指针 和前端判断一下 消息共同事宜 决定
-                    cart.setGoodsName(goodsByShopMap.get(e.getGoodsId()).getName());
-                    cart.setUserId(uid);
-                    cart.setCalamityNumber(e.getCalamityNumber());
-                    cart.setCalamityName(e.getCalamityName());
-                    cart.setCalamityId(e.getCalamityId());
-                    cart.setAddTime(LocalDateTime.now());
-                    cart.setUpdateTime(LocalDateTime.now());
-                    functions.add(nothing ->
-                            mealCartMapper.insertSelective(cart)
-                    );
-                }
-        );
+            var cart = new MealCart();
+            cart.setGoodsId(e.getGoodsId());
+            cart.setNumber(e.getNumber());
+            cart.setShopId(shoppingCartVo.getShopId());
+            cart.setGoodsSn(e.getGoodsSn());
+            cart.setChecked(e.getChecked());
+            cart.setGoodsName(e.getGoodsName());
+            cart.setUserId(uid);
+            cart.setAddTime(LocalDateTime.now());
+            cart.setUpdateTime(LocalDateTime.now());
+            functions.add(nothing -> mealCartMapper.insertSelective(cart));
+            if (ObjectUtils.isNotEmpty(e.getCartCalamityVos())) {
+                e.getCartCalamityVos().forEach(a -> {
+                    var cartCalamity = new MealCartCalamity();
+                    cartCalamity.setCalamityId(a.getCalamityId());
+                    cartCalamity.setCalamityNumber(a.getCalamityNumber());
+                    cartCalamity.setCalamityName(a.getCalamityName());
+                    functions.add(nothing -> mealCartCalamityMapper.insertSelective(cartCalamity.setCartId(cart.getId())));
+                });
+            }
+        });
         if (this.transactionExecutor.transaction(functions)) {
             return ResultUtils.success();
         }
@@ -105,12 +106,11 @@ public class WxCartServiceImpl implements WxCartService {
         {
             var shop = this.mealShopMapper.selectByPrimaryKeyWithLogicalDelete(shopId, Boolean.FALSE);
             if (Objects.isNull(shop)) {
-                this.logger.warn("Service-Cart[WxCartServiceImpl][selectShoppingCartAmount]:store. uid: {}, request: {}",
-                        SecurityUtils.getUserId(), shopId);
+                this.logger.warn("Service-Cart[WxCartServiceImpl][selectShoppingCartAmount]:store. uid: {}, request: {}", SecurityUtils.getUserId(), shopId);
                 return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
             }
         }
-        return ResultUtils.success(this.count(uid,shopId));
+        return ResultUtils.success(this.count(uid, shopId));
     }
 
     @Override
@@ -118,8 +118,7 @@ public class WxCartServiceImpl implements WxCartService {
         {
             var shop = this.mealShopMapper.selectByPrimaryKeyWithLogicalDelete(shopId, Boolean.FALSE);
             if (Objects.isNull(shop)) {
-                this.logger.warn("Service-Cart[WxCartServiceImpl][selectShoppingCartList]:store. uid: {}, request: {}",
-                        SecurityUtils.getUserId(), shopId);
+                this.logger.warn("Service-Cart[WxCartServiceImpl][selectShoppingCartList]:store. uid: {}, request: {}", SecurityUtils.getUserId(), shopId);
                 return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
             }
         }
@@ -127,14 +126,15 @@ public class WxCartServiceImpl implements WxCartService {
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shopId);
         List<MealCart> mealCarts = this.mealCartMapper.selectByExample(example);
-        if (mealCarts.isEmpty()){
-            return  ResultUtils.success();
+        if (mealCarts.isEmpty()) {
+            return ResultUtils.success();
         }
-        var calamityGoodsMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCarts.stream()
-                .filter(e->Objects.isNull(e.getCalamityId())).map(MealCart::getGoodsId).collect(Collectors.toList()), shopId);
-        var calamityMap = mealCarts.stream().filter(e -> Objects.nonNull(e.getCalamityId()))
-                .collect(Collectors.toMap(MealCart::getGoodsId, Function.identity()));
-        var result = mealCarts.stream().filter(e -> Objects.isNull(e.getCalamityId())).map(e -> {
+        var cartCalamityExample = new MealCartCalamityExample();
+        cartCalamityExample.createCriteria().andCartIdIn(mealCarts.stream().map(MealCart::getId).collect(Collectors.toList())).andDeletedEqualTo(MealCartCalamity.NOT_DELETED);
+        List<MealCartCalamity> mealCartCalamities = this.mealCartCalamityMapper.selectByExample(cartCalamityExample);
+        var cartCalamityMap = mealCartCalamities.stream().collect(Collectors.groupingBy(MealCartCalamity::getCartId));
+        var calamityMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCartCalamities.stream().map(MealCartCalamity::getCalamityId).collect(Collectors.toList()), shopId);
+        var result = mealCarts.stream().map(e -> {
             var vo = new WxShopCartResponseVo();
             var product = goodsByShopMap.getOrDefault(e.getGoodsId(), null);
             if (Objects.isNull(product)) {
@@ -147,51 +147,56 @@ public class WxCartServiceImpl implements WxCartService {
                 vo.setPrice(product.getRetailPrice());
                 vo.setGoodsName(product.getName());
             }
-            var calamity = calamityMap.getOrDefault(e.getGoodsId(), null);
-            if (Objects.nonNull(calamity)) {
-                var calamityVo = new WxShopCartCalamitySonVo()
-                        .setCalamityId(calamity.getCalamityId())
-                        .setCalamityName(calamity.getCalamityName()).setCalamityNumber(calamity.getCalamityNumber());
-                var calamityGoods = calamityGoodsMap.getOrDefault(calamity.getCalamityId(), null);
-                if (Objects.isNull(calamityGoods)) {
-                    calamityVo.setErrStatus(Boolean.TRUE);
-                } else {
-                    calamityVo.setCalamityUnit(calamityGoods.getUnit());
-                    calamityVo.setCalamityUrl(calamityGoods.getPicUrl());
-                    calamityVo.setCalamityPrice(calamityGoods.getRetailPrice());
-                    calamityVo.setErrStatus(Boolean.FALSE);
-                }
-                vo.setCalamityVo(calamityVo);
+            var cartCalamityByCartId = cartCalamityMap.getOrDefault(e.getId(), Collections.emptyList());
+            List<WxShopCartCalamitySonVo> resultCalamityVos = new ArrayList<>();
+            if (ObjectUtils.isNotEmpty(cartCalamityByCartId)) {
+                cartCalamityByCartId.forEach(a -> {
+                    var wxShopCartCalamitySon = new WxShopCartCalamitySonVo();
+                    wxShopCartCalamitySon.setCalamityId(a.getCalamityId());
+                    wxShopCartCalamitySon.setCalamityName(a.getCalamityName());
+                    wxShopCartCalamitySon.setCalamityNumber(a.getCalamityNumber());
+                    var calamity = calamityMap.getOrDefault(a.getCalamityId(), null);
+                    if (Objects.isNull(calamity)) {
+                        wxShopCartCalamitySon.setErrStatus(Boolean.TRUE);
+                    } else {
+                        wxShopCartCalamitySon.setCalamityUnit(calamity.getUnit());
+                        wxShopCartCalamitySon.setCalamityUrl(calamity.getPicUrl());
+                        wxShopCartCalamitySon.setCalamityPrice(calamity.getRetailPrice());
+                        wxShopCartCalamitySon.setErrStatus(Boolean.FALSE);
+                        wxShopCartCalamitySon.setCalamityName(calamity.getName());
+                    }
+                    resultCalamityVos.add(wxShopCartCalamitySon);
+                });
+                vo.setCalamityVos(resultCalamityVos);
             }
-            vo.setGoodsId(e.getGoodsId()).setGoodsName(e.getGoodsName())
-                    .setGoodsIsTime(e.getGoodsIsTime()).setChecked(e.getChecked())
-                    .setGoodsName(e.getGoodsName()).setNumber(e.getNumber()).setGoodsSn(e.getGoodsSn());
-            return vo;
+            return vo.setGoodsId(e.getGoodsId()).setGoodsName(e.getGoodsName()).setGoodsIsTime(e.getGoodsIsTime()).setChecked(e.getChecked()).setGoodsName(e.getGoodsName()).setNumber(e.getNumber()).setGoodsSn(e.getGoodsSn());
         }).collect(Collectors.toList());
-        return ResultUtils.successWithEntities(result,this.count(uid,shopId));
+        return ResultUtils.successWithEntities(result, this.count(uid, shopId));
     }
 
     @Override
+    @Transactional
     public Result<?> deleteShoppingCartList(Long uid, Long shopId) {
         {
             var shop = this.mealShopMapper.selectByPrimaryKeyWithLogicalDelete(shopId, Boolean.FALSE);
             if (Objects.isNull(shop)) {
-                this.logger.warn("Service-Cart[WxCartServiceImpl][deleteShoppingCartList]:store. uid: {}, request: {}",
-                        SecurityUtils.getUserId(), shopId);
+                this.logger.warn("Service-Cart[WxCartServiceImpl][deleteShoppingCartList]:store. uid: {}, request: {}", SecurityUtils.getUserId(), shopId);
                 return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
             }
         }
-        this.logger.info("[WxCartServiceImpl][deleteShoppingCartList]:store. uid: {} 清空购物车, ",uid);
+        this.logger.info("[WxCartServiceImpl][deleteShoppingCartList]:store. uid: {} 清空购物车, ", uid);
         var example = new MealCartExample();
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
-        if (this.mealCartMapper.deleteByExample(example) < 1) {
-            return ResultUtils.unknown();
-        }
+        var exampleCalamity = new MealCartCalamityExample();
+        exampleCalamity.createCriteria().andCartIdIn(this.mealCartMapper.selectByExample(example).stream().map(MealCart::getId).collect(Collectors.toList())).andDeletedEqualTo(MealCartCalamity.NOT_DELETED);
+        this.mealCartCalamityMapper.deleteByExample(exampleCalamity);
+        this.mealCartMapper.deleteByExample(example);
         return ResultUtils.success();
     }
-    private long count(Long uid, Long shopId){
+
+    private long count(Long uid, Long shopId) {
         var example = new MealCartExample();
-        example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED).andCalamityIdIsNull();
+        example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         return this.mealCartMapper.countByExample(example);
     }
 }

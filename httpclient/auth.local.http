@@ -3,11 +3,12 @@ Content-Type: application/json
 
 {
   "code": "123456",
-  "username":"13876410945",
-  "nickname":"test21",
+  "username": "13876410945",
+  "nickname": "test21",
   "password": "123456783",
   "mobile": "13876410945"
 }
+
 ###
 
 POST http://112.74.165.81:8080/wx/auth/login
@@ -18,6 +19,7 @@ Content-Type: application/json
   "password": "123456783",
   "type": "1"
 }
+
 ###
 
 POST http://localhost:9001/wx/auth/refresh
@@ -26,6 +28,7 @@ Authorization:  {{token}}
 ###
 GET  http://localhost:9001/wx/auth
 Authorization: {{token}}
+
 ###
 POST http://localhost:9001/wx/shop/list
 Authorization:  {{token}}
@@ -39,7 +42,7 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "shopId":1046003,
+  "shopId": 1046003,
   "categoryId": 1036008,
   "page": 1,
   "limit": 10
@@ -51,10 +54,11 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "shopId":1046003,
+  "shopId": 1046003,
   "page": 1,
   "limit": 10
 }
+
 ###
 POST http://localhost:9001/wx/cart/add
 Authorization:  {{token}}
@@ -66,38 +70,42 @@ Content-Type: application/json
     {
       "goodsId": "1181004",
       "goodsSn": "1181004",
+      "goodsName": "蛋肠粉",
       "checked": "true",
-      "number":"1"
-    },
-    {
-      "goodsId": "1181004",
-      "goodsSn": "1181004",
-      "checked": "true",
-      "number":"0",
-      "calamityId": 251,
-      "calamityName": "蒜蓉酱油",
-      "calamityNumber": 2
+      "number": "1",
+      "cartCalamityVos": [
+        {
+          "calamityId": 251,
+          "calamityName": "蒜蓉酱油",
+          "calamityNumber": 2
+        }
+      ]
     },
     {
       "goodsId": "1181005",
       "goodsSn": "1181005",
+      "goodsName": "肉肠粉",
       "checked": "true",
-      "number":"1"
+      "number": "1"
     },
     {
       "goodsId": "1181006",
       "goodsSn": "1181006",
+      "goodsName": "炒粉",
       "checked": "true",
-      "number":"1"
+      "number": "1"
     }
   ]
 }
+
 ###
 GET  http://localhost:9001/wx/cart/amount?shopId=1046003
 Authorization: {{token}}
+
 ###
 GET  http://localhost:9001/wx/cart?shopId=1046003
 Authorization: {{token}}
+
 ###
 POST  http://localhost:9001/wx/cart/delete?shopId=1046003
 Authorization: {{token}}
@@ -109,9 +117,11 @@ Authorization: {{token}}
 ###
 GET  http://localhost:9001/wx/banner
 Authorization: {{token}}
+
 ###
 GET  http://localhost:9001/wx/auth/bind/1046003
 Authorization: {{token}}
+
 ###
 
 POST http://localhost:9001/wx/auth/loginByWx
@@ -119,8 +129,8 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "code":"081tg80w33Fcf03BdE0w3RMpmP3tg80j",
-  "encryptedData":"g+GpXedQ0bQG/mg1pzs1bE544DNrC0fWg2M9pDq/dWpqbKk9Yi67h0Kl7B3KEdZhvy9ASdsSkAvARrGOzAFZ81IQz39RzYDm/bnfPx9YNHNRFxoymq8xpMWY8pJsp6px6NDDBYpuM3h4dGSAMx0KcvO1hOWZuGo3c8G1iPFIyNXAQDsPc4ugEGhj90DyCtqRz4Wp5BhFxC5xk3R1gnDP9BEarGkm7VioQqRCk3DavfY2d4/VfY5eN52+Lbn5wvyRwbvEEO4KVdA6eGOvZe2E0tauCutGYSLnCo5d0CUvLAYJZsgnkc1/SpK2zbfDFTnTzl4cCGsR2NlNFGaIbVFFLh6xKyIKuKXz54PK2oETAbZhkdxxNR33c7VcujFTO75w9xL9FPEoWdTs4DKDlUwQ2TJXZd7F8ClX6uxx5/yhFA/MYN7p4iWfaVzcI+kjoAq6ntvGR0ekljK+8FlT65duZA==",
-  "iv":"dpRIcbq8B1H/HJoKkTPbXg==",
-  "codePhone":"d9ac9bb37a8d9c1e7e3191eafe7df8c11e6d2c2c8adaa1d582077abe062404e6"
+  "code": "081tg80w33Fcf03BdE0w3RMpmP3tg80j",
+  "encryptedData": "g+GpXedQ0bQG/mg1pzs1bE544DNrC0fWg2M9pDq/dWpqbKk9Yi67h0Kl7B3KEdZhvy9ASdsSkAvARrGOzAFZ81IQz39RzYDm/bnfPx9YNHNRFxoymq8xpMWY8pJsp6px6NDDBYpuM3h4dGSAMx0KcvO1hOWZuGo3c8G1iPFIyNXAQDsPc4ugEGhj90DyCtqRz4Wp5BhFxC5xk3R1gnDP9BEarGkm7VioQqRCk3DavfY2d4/VfY5eN52+Lbn5wvyRwbvEEO4KVdA6eGOvZe2E0tauCutGYSLnCo5d0CUvLAYJZsgnkc1/SpK2zbfDFTnTzl4cCGsR2NlNFGaIbVFFLh6xKyIKuKXz54PK2oETAbZhkdxxNR33c7VcujFTO75w9xL9FPEoWdTs4DKDlUwQ2TJXZd7F8ClX6uxx5/yhFA/MYN7p4iWfaVzcI+kjoAq6ntvGR0ekljK+8FlT65duZA==",
+  "iv": "dpRIcbq8B1H/HJoKkTPbXg==",
+  "codePhone": "d9ac9bb37a8d9c1e7e3191eafe7df8c11e6d2c2c8adaa1d582077abe062404e6"
 }

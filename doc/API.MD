@@ -403,8 +403,8 @@ response:
    "number": 1,
    "url": null,
    "unit": null,
-   "price": null,
    "checked": true,
+   "price": null,
    "errStatus": true
    },
    {
@@ -415,8 +415,8 @@ response:
    "number": 1,
    "url": null,
    "unit": "份",
-   "price": 7.00,
    "checked": true,
+   "price": 7.00,
    "errStatus": false
    },
    {
@@ -424,24 +424,38 @@ response:
    "goodsSn": "1181004",
    "goodsIsTime": true,
    "goodsName": "蛋肠粉",
-   "number": 1,
+   "number": 0,
    "url": null,
    "unit": "份",
-   "price": 7.00,
    "checked": true,
-   "calamityVo": {
+   "price": 7.00,
+   "calamityVos": [
+   {
    "calamityId": 251,
    "calamityName": "蒜蓉酱油",
    "calamityNumber": 2,
    "calamityUnit": "’份‘",
    "calamityUrl": null,
-   "calamityPrice": 0.00,
+   "errStatus": false,
+   "calamityPrice": 0.00
+   }
+   ],
    "errStatus": false
    },
+   {
+   "goodsId": 1181004,
+   "goodsSn": "1181004",
+   "goodsIsTime": true,
+   "goodsName": null,
+   "number": 1,
+   "url": null,
+   "unit": "份",
+   "checked": true,
+   "price": 7.00,
    "errStatus": false
    }
    ],
-   "records": 3
+   "records": 4
    }
    ```
     - `id`: integer。-- 小料id
@@ -457,14 +471,14 @@ response:
     - `unit`: string。--单位
     - `checked`: boolean。-- 商品选择flag
     - `retailPrice`: decimal。--卖价 (单价)
-    - `calamityVo.calamityId`: int。--小料ID
-    - `calamityVo.calamityName`: string。--小料名
-    - `calamityVo.calamityNumber`: int。--小料数量
-    - `calamityVo.calamityUnit`: string。--单位
-    - `calamityVo.calamityPrice`: decimal。--小料价格
-    - `calamityVo.calamityUrl`: string。--小料图片url
-    - `calamityVo.retailPrice`: decimal。--小料价格(单价)
-    - `calamityVo.errStatus`: boolean。--小料失效flag
+    - `calamityVos.calamityId`: int。--小料ID
+    - `calamityVos.calamityName`: string。--小料名
+    - `calamityVos.calamityNumber`: int。--小料数量
+    - `calamityVos.calamityUnit`: string。--单位
+    - `calamityVos.calamityPrice`: decimal。--小料价格
+    - `calamityVos.calamityUrl`: string。--小料图片url
+    - `calamityVos.retailPrice`: decimal。--小料价格(单价)
+    - `calamityVos.errStatus`: boolean。--小料失效flag
 
 8. 购物车 单子数量
     ```http request
@@ -499,29 +513,37 @@ response:
    {
    "goodsId": "1181004",
    "goodsSn": "1181004",
+   "goodsName": "212",
    "checked": "true",
-   "number":"1"
+   "number": "1"
    },
    {
    "goodsId": "1181004",
    "goodsSn": "1181004",
+   "goodsName": "212",
    "checked": "true",
-   "number":"0",
+   "number": "1",
+   "cartCalamityVos": [
+   {
    "calamityId": 251,
    "calamityName": "蒜蓉酱油",
    "calamityNumber": 2
+   }
+   ]
    },
    {
    "goodsId": "1181005",
+   "goodsName": "212",
    "goodsSn": "1181005",
    "checked": "true",
-   "number":"1"
+   "number": "1"
    },
    {
    "goodsId": "1181006",
+   "goodsName": "212",  
    "goodsSn": "1181006",
    "checked": "true",
-   "number":"1"
+   "number": "1"
    }
    ]
    }
@@ -531,9 +553,10 @@ response:
     - `goods.goodsSn`: string。--商品编号
     - `goods.checked`: boolean。--选择flag
     - `goods.number`: integer。--数量
-    - `goods.calamityId`: integer。--小料ID
-    - `goods.calamityName`: string。--小料name
-    - `goods.calamityNumber`: integer。--小料数量
+    - `goods.cartCalamityVos`: list。--小料集合
+    - `goods.cartCalamityVos.calamityId`: integer。--小料ID
+    - `goods.cartCalamityVos.calamityName`: string。--小料name
+    - `goods.cartCalamityVos.calamityNumber`: integer。--小料数量
       response:
 
    ```json

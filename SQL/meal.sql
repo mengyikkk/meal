@@ -168,15 +168,25 @@ CREATE TABLE `meal_cart` (
                                  `goods_is_time` tinyint(1) DEFAULT '1' COMMENT '商品时间到期提示',
                                  `goods_name` varchar(127) DEFAULT NULL COMMENT '商品名称',
                                  `number` bigint(20) DEFAULT 1 COMMENT '商品货品的数量',
-                                 `calamity_id` bigint(20) DEFAULT NULL COMMENT '小料表的商品ID',
-                                 `calamity_name` varchar(127) DEFAULT NULL COMMENT '小料名称',
-                                 `calamity_number` bigint(20) DEFAULT 1 COMMENT '小料数量',
                                  `checked` tinyint(1) DEFAULT '1' COMMENT '购物车中商品是否选择状态',
                                  `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
                                  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
                                  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='购物车商品表';
+
+DROP TABLE IF EXISTS `meal_cart_calamity`;
+CREATE TABLE `meal_cart_calamity` (
+                             `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                             `cart_id` bigint(20) DEFAULT NULL COMMENT '购物车表ID',
+                             `calamity_id` bigint(20) DEFAULT NULL COMMENT '小料表的商品ID',
+                             `calamity_name` varchar(127) DEFAULT NULL COMMENT '小料名称',
+                             `calamity_number` bigint(20) DEFAULT 1 COMMENT '小料数量',
+                             `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+                             `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
+                             `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                             PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='购物车商品小料子表';
 
 DROP TABLE IF EXISTS `meal_category`;
 

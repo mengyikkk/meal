@@ -3,16 +3,21 @@ package com.meal.common.model;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 public class ShoppingCartVo {
+    @NotNull
     private  Long goodsId;
+    @NotBlank
+    private  String goodsName;
+    @NotBlank
     private  String goodsSn;
-
+    @NotBlank
     private  Boolean checked;
-
+    @Positive
     private  Long number;
 
-    private Long calamityId;
+    private List<CartCalamityVo> cartCalamityVos;
 
     /**
      *
@@ -22,7 +27,6 @@ public class ShoppingCartVo {
      * @mbg.generated
      */
 
-    private String calamityName;
 
     /**
      *
@@ -32,7 +36,6 @@ public class ShoppingCartVo {
      * @mbg.generated
      */
 
-    private Long calamityNumber;
 
     public Long getGoodsId() {
         return goodsId;
@@ -71,30 +74,21 @@ public class ShoppingCartVo {
         return this;
     }
 
-    public Long getCalamityId() {
-        return calamityId;
+    public String getGoodsName() {
+        return goodsName;
     }
 
-    public ShoppingCartVo setCalamityId(Long calamityId) {
-        this.calamityId = calamityId;
+    public ShoppingCartVo setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
         return this;
     }
 
-    public String getCalamityName() {
-        return calamityName;
+    public List<CartCalamityVo> getCartCalamityVos() {
+        return cartCalamityVos;
     }
 
-    public ShoppingCartVo setCalamityName(String calamityName) {
-        this.calamityName = calamityName;
-        return this;
-    }
-
-    public Long getCalamityNumber() {
-        return calamityNumber;
-    }
-
-    public ShoppingCartVo setCalamityNumber(Long calamityNumber) {
-        this.calamityNumber = calamityNumber;
+    public ShoppingCartVo setCartCalamityVos(List<CartCalamityVo> cartCalamityVos) {
+        this.cartCalamityVos = cartCalamityVos;
         return this;
     }
 }

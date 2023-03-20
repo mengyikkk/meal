@@ -14,7 +14,7 @@ public enum ResponseCode implements StateMapping<Integer> {
     AUTH_OPENID_UNACCESS ( 708,"小程序openId失效"),
     AUTH_OPENID_BINDED ( 709,"小程序openId 无效绑定"),
 
-//    GOODS_INVALID ( 713),
+    GOODS_INVALID ( 713,"商品失效"),
 
 //    ORDER_UNKNOWN ( 720),
 //    ORDER_INVALID ( 721),

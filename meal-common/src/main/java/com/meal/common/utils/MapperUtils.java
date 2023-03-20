@@ -32,9 +32,9 @@ public  final class MapperUtils {
         example.createCriteria().andShopIdIn(List.of(shopId,0L));
         return  mealGoodsMapper.selectByExample(example).stream().collect(Collectors.toMap(MealGoods::getId, Function.identity()));
     }
-    public static Map<Long, MealLittleCalamity> calamityMapByShopAndGoods(MealLittleCalamityMapper mealLittleCalamityMapper, List<Long> goodIds, Long shopIds){
+    public static Map<Long, MealLittleCalamity> calamityMapByShopAndGoods(MealLittleCalamityMapper mealLittleCalamityMapper, List<Long> ids, Long shopIds){
         var example  = new MealLittleCalamityExample();
-        example.createCriteria().andShopIdIn(List.of(shopIds,0L)).andGoodsIdIn(goodIds).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value());
+        example.createCriteria().andShopIdIn(List.of(shopIds,0L)).andIdIn(ids).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value());
         return  mealLittleCalamityMapper.selectByExample(example).stream().collect(Collectors.toMap(MealLittleCalamity::getId, Function.identity()));
     }
 }

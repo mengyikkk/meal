@@ -3,6 +3,7 @@ package com.meal.common.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class WxShopCartResponseVo {
     private Long goodsId;
@@ -58,7 +59,7 @@ public class WxShopCartResponseVo {
 
     private BigDecimal price;
     @JsonInclude(value= JsonInclude.Include.NON_NULL)
-    private  WxShopCartCalamitySonVo calamityVo;
+    private List<WxShopCartCalamitySonVo> calamityVos;
 
     private Boolean errStatus;
 
@@ -125,12 +126,12 @@ public class WxShopCartResponseVo {
         return this;
     }
 
-    public WxShopCartCalamitySonVo getCalamityVo() {
-        return calamityVo;
+    public List<WxShopCartCalamitySonVo> getCalamityVos() {
+        return calamityVos;
     }
 
-    public WxShopCartResponseVo setCalamityVo(WxShopCartCalamitySonVo calamityVo) {
-        this.calamityVo = calamityVo;
+    public WxShopCartResponseVo setCalamityVos(List<WxShopCartCalamitySonVo> calamityVos) {
+        this.calamityVos = calamityVos;
         return this;
     }
 
