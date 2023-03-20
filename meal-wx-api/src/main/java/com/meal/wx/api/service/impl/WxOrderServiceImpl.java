@@ -45,8 +45,6 @@ public class WxOrderServiceImpl implements WxOrderService {
         }
         var goodListVo = wxOrderVo.getShoppingCartVos();
         var goodsByShop = MapperUtils.goodsMapByShop(mealGoodsMapper, wxOrderVo.getShopId());
-        var goodsByCalamity =MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper,
-                goodListVo.stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList()), wxOrderVo.getShopId());
         BigDecimal goodsPrice = BigDecimal.ZERO;
         for (OrderCartVo shoppingCartVo : goodListVo) {
             var good = goodsByShop.get(shoppingCartVo.getGoodsId());

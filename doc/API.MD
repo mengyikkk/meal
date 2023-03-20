@@ -424,7 +424,7 @@ response:
    "goodsSn": "1181004",
    "goodsIsTime": true,
    "goodsName": "蛋肠粉",
-   "number": 0,
+   "number": 1,
    "url": null,
    "unit": "份",
    "checked": true,
@@ -433,7 +433,7 @@ response:
    {
    "calamityId": 251,
    "calamityName": "蒜蓉酱油",
-   "calamityNumber": 2,
+   "calamityNumber": null,
    "calamityUnit": "’份‘",
    "calamityUrl": null,
    "errStatus": false,
@@ -441,21 +441,9 @@ response:
    }
    ],
    "errStatus": false
-   },
-   {
-   "goodsId": 1181004,
-   "goodsSn": "1181004",
-   "goodsIsTime": true,
-   "goodsName": null,
-   "number": 1,
-   "url": null,
-   "unit": "份",
-   "checked": true,
-   "price": 7.00,
-   "errStatus": false
    }
    ],
-   "records": 4
+   "records": 3
    }
    ```
     - `id`: integer。-- 小料id
@@ -513,14 +501,7 @@ response:
    {
    "goodsId": "1181004",
    "goodsSn": "1181004",
-   "goodsName": "212",
-   "checked": "true",
-   "number": "1"
-   },
-   {
-   "goodsId": "1181004",
-   "goodsSn": "1181004",
-   "goodsName": "212",
+   "goodsName": "蛋肠粉",
    "checked": "true",
    "number": "1",
    "cartCalamityVos": [
@@ -533,15 +514,15 @@ response:
    },
    {
    "goodsId": "1181005",
-   "goodsName": "212",
    "goodsSn": "1181005",
+   "goodsName": "肉肠粉",
    "checked": "true",
    "number": "1"
    },
    {
    "goodsId": "1181006",
-   "goodsName": "212",  
    "goodsSn": "1181006",
+   "goodsName": "炒粉",
    "checked": "true",
    "number": "1"
    }

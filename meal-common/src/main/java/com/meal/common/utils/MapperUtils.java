@@ -37,4 +37,18 @@ public  final class MapperUtils {
         example.createCriteria().andShopIdIn(List.of(shopIds,0L)).andIdIn(ids).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value());
         return  mealLittleCalamityMapper.selectByExample(example).stream().collect(Collectors.toMap(MealLittleCalamity::getId, Function.identity()));
     }
+    //key:goodsId->对应的所有小料
+    public static Map<Long, List<MealLittleCalamity>> goodsByCalamity(MealLittleCalamityMapper mealLittleCalamityMapper,Long shopId){
+        var exampleCalamity = new MealLittleCalamityExample();
+        exampleCalamity.createCriteria().andShopIdIn(List.of(0L, shopId))
+                .andDeletedEqualTo(MealLittleCalamity.NOT_DELETED);
+        return  mealLittleCalamityMapper.selectByExample(exampleCalamity).stream()
+                .collect(Collectors.groupingBy(MealLittleCalamity::getGoodsId));
+    }
+    //key:shopId->对应的 所有商品和
+    public static Map<Long, List<MealGoods>> shopByGoods(MealGoodsMapper mealGoodsMapper,Long shopId){
+        var example  = new MealGoodsExample();
+        example.createCriteria().andShopIdIn(List.of(shopId,0L)).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value());
+        return  mealGoodsMapper.selectByExample(example).stream().collect(Collectors.groupingBy(MealGoods::getShopId));
+    }
 }
