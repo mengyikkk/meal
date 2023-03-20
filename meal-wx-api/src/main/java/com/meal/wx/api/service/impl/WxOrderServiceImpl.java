@@ -53,7 +53,6 @@ public class WxOrderServiceImpl implements WxOrderService {
         BigDecimal goodsPrice = BigDecimal.ZERO;
         for (OrderCartVo shoppingCartVo : goodListVo) {
             var good = goodsByShopMap.get(shoppingCartVo.getGoodsId());
-            //check
             if (Objects.isNull(good)) {
                 return ResultUtils.message(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage());
             }
@@ -72,9 +71,14 @@ public class WxOrderServiceImpl implements WxOrderService {
                     if (calamity.getRetailPrice().compareTo(calamityVo.getCalamityPrice())!=0){
                         return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID,ResponseCode.CALAMITY_IS_INVALID.getMessage());
                     }
+                    goodsPrice = goodsPrice.add(calamity.getRetailPrice().multiply(BigDecimal.valueOf(calamityVo.getCalamityNumber())));
                 }
             }
         }
+        if (goodsPrice.compareTo(wxOrderVo.getActualPrice())!=0){
+            return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL,ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
+        }
+
         return null;
     }
 
