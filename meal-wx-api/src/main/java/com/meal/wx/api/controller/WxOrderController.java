@@ -18,7 +18,6 @@ public class WxOrderController {
     private WxOrderService wxOrderService;
     @PostMapping
     public Result<?> submit(@RequestBody WxOrderVo wxOrder){
-
         return this.wxOrderService.submit(wxOrder, SecurityUtils.getUserId());
     }
 }
