@@ -5,9 +5,7 @@ import com.meal.common.dto.MealMenu;
 import com.meal.common.dto.MealUser;
 import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.service.MealUserService;
-import com.meal.common.utils.JsonUtils;
 import com.meal.common.utils.RedisUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -47,7 +45,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             user =(MealUser) redisUtils.getValue("userInfo_" + username);
             redisUtils.expire("userInfo_" + username, expiration);
         } else {
-            user = mealUserService.queryByOid(username);
+            user = mealUserService.queryByUserName(username);
             if (null == user) {
                 throw new UsernameNotFoundException("用户名或密码错误！");
             }

@@ -13,9 +13,9 @@ public class MealUserService {
     @Resource
     private MealUserMapper mealUserMapper;
 
-    public MealUser queryByOid(String openId) {
+    public MealUser queryByUserName(String openId) {
         MealUserExample example = new MealUserExample();
-        example.createCriteria().andWxOpenidEqualTo(openId).andDeletedEqualTo(false);
+        example.createCriteria().andUsernameEqualTo(openId).andDeletedEqualTo(false);
         return this.mealUserMapper.selectOneByExample(example);
     }
 

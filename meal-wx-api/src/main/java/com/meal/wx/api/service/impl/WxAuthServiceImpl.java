@@ -117,7 +117,7 @@ public class WxAuthServiceImpl implements WxAuthService {
                 e.printStackTrace();
                 return ResultUtils.code(ResponseCode.AUTH_OPENID_UNACCESS);
             }
-            var checkUser = this.mealUserService.queryByOid(openId);
+            var checkUser = this.mealUserService.queryByUserName(openId);
             String checkPassword = checkUser.getPassword();
             if (!checkPassword.equals(openId)) {
                 return ResultUtils.code(ResponseCode.AUTH_OPENID_BINDED);

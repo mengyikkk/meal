@@ -11,13 +11,14 @@ Content-Type: application/json
 
 ###
 
-POST http://112.74.165.81:8080/wx/auth/login
+POST http://localhost:9001/wx/auth/login
 Content-Type: application/json
 
 {
   "phoneNumber": "13876410945",
   "password": "123456783",
-  "type": "1"
+  "type": "1",
+  "code": "1212"
 }
 
 ###
@@ -126,7 +127,6 @@ Authorization: {{token}}
 
 POST http://localhost:9001/wx/auth/loginByWx
 Content-Type: application/json
-Authorization: {{token}}
 
 {
   "code": "081tg80w33Fcf03BdE0w3RMpmP3tg80j",
