@@ -150,12 +150,11 @@ public class WxCartServiceImpl implements WxCartService {
         var goodsByCalamity = calamityMap.keySet();
         var result = mealCarts.stream().map(e -> {
             if (!shopByGoodsIds.contains(e.getGoodsId())) {
-                // TODO: 2023/03/20  do跟前端商讨如果某个商品失效
+                // TODO: 2023/03/20  do跟前端商讨如果某个商品失效`
                 return ResultUtils.message(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage());
             }
             var vo = new WxShopCartResponseVo();
             var product = goodsByShopMap.getOrDefault(e.getGoodsId(), null);
-            // TODO: 2023/03/20  判断商品符合时间段.
             if (Objects.isNull(product)) {
                 vo.setErrStatus(Boolean.TRUE);
                 vo.setGoodsName(e.getGoodsName());
@@ -171,7 +170,7 @@ public class WxCartServiceImpl implements WxCartService {
             if (ObjectUtils.isNotEmpty(cartCalamityByCartId)) {
                 for (MealCartCalamity mealCartCalamity : cartCalamityByCartId) {
                     if (!goodsByCalamity.contains(mealCartCalamity.getCalamityId())) {
-                        // TODO: 2023/03/20  do跟前端商讨如果某个商品失效
+                        // TODO: 2023/03/20  do跟前端商讨如果某个商品失效`
                         return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage());
                     }
                     var wxShopCartCalamitySon = new WxShopCartCalamitySonVo();
