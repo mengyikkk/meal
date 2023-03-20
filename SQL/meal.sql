@@ -254,6 +254,7 @@ CREATE TABLE `meal_order` (
                                   `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                   `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
                                   `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                  `version` INT NOT NULL DEFAULT 0,
                                   PRIMARY KEY (`id`),
                                   KEY `user_id` (`user_id`),
                                   KEY `shop_id` (`shop_id`)
@@ -266,7 +267,6 @@ CREATE TABLE `meal_order_goods` (
                                         `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品表的商品ID',
                                         `goods_name` varchar(127) NOT NULL DEFAULT '' COMMENT '商品名称',
                                         `goods_sn` varchar(63) NOT NULL DEFAULT '' COMMENT '商品编号',
-                                        `little_calamity_ids` varchar(255)  DEFAULT NULL COMMENT '小料ids',
                                         `number` smallint(5) NOT NULL DEFAULT '0' COMMENT '商品货品的购买数量',
                                         `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '商品货品的售价',
                                         `pic_url` varchar(255) NOT NULL DEFAULT '' COMMENT '商品货品图片或者商品图片',
@@ -274,7 +274,29 @@ CREATE TABLE `meal_order_goods` (
                                         `add_time` datetime DEFAULT NULL COMMENT '创建时间',
                                         `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                         `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                        `version` INT NOT NULL DEFAULT 0,
                                         PRIMARY KEY (`id`),
                                         KEY `order_id` (`order_id`),
                                         KEY `goods_id` (`goods_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单商品表';
+
+CREATE TABLE `meal_order_goods_calamity` (
+                                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                                    `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单表的订单ID',
+                                    `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品表的商品ID',
+                                    `calamity_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品表的商品ID',
+                                    `calamity_name` varchar(127) NOT NULL DEFAULT '' COMMENT '商品名称',
+                                    `calamity_sn` varchar(63) NOT NULL DEFAULT '' COMMENT '商品编号',
+                                    `number` smallint(5) NOT NULL DEFAULT '0' COMMENT '商品货品的购买数量',
+                                    `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '商品货品的售价',
+                                    `pic_url` varchar(255) NOT NULL DEFAULT '' COMMENT '商品货品图片或者商品图片',
+                                    `comment` int(11) DEFAULT '0' COMMENT '订单商品评论，如果是-1，则超期不能评价；如果是0，则可以评价；如果其他值，则是comment表里面的评论ID。',
+                                    `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                    `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                    `version` INT NOT NULL DEFAULT 0,
+                                    PRIMARY KEY (`id`),
+                                    KEY `order_id` (`order_id`),
+                                    KEY `goods_id` (`goods_id`),
+                                    KEY `calamity_id` (`calamity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单小料表';

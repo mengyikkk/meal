@@ -62,5 +62,11 @@
         <table tableName="meal_order">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
+        <table tableName="meal_order_goods">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="meal_order_goods_calamity">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>
