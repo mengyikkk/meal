@@ -88,13 +88,6 @@ Content-Type: application/json
       "goodsName": "肉肠粉",
       "checked": "true",
       "number": "1"
-    },
-    {
-      "goodsId": "1181006",
-      "goodsSn": "1181006",
-      "goodsName": "炒粉",
-      "checked": "true",
-      "number": "1"
     }
   ]
 }

@@ -26,7 +26,7 @@ public  final class MapperUtils {
     public static Map<Long, MealGoods> goodsMapByShop(MealGoodsMapper mealGoodsMapper,Long shopId,List<Long> goodIds){
         var example  = new MealGoodsExample();
         MealGoodsExample.Criteria criteria = example.createCriteria();
-        criteria.andShopIdIn(List.of(shopId,0L)).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value());
+        criteria.andShopIdIn(List.of(shopId,0L)).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value()).andIsOnSaleEqualTo(Boolean.TRUE);
         if (!ObjectUtils.isEmpty(goodIds)){
             criteria.andIdIn(goodIds);
         }
@@ -36,7 +36,7 @@ public  final class MapperUtils {
     public static Map<Long, MealLittleCalamity> calamityMapByShopAndGoods(MealLittleCalamityMapper mealLittleCalamityMapper, List<Long> ids,List<Long> goodIds, Long shopIds){
         var example  = new MealLittleCalamityExample();
         MealLittleCalamityExample.Criteria criteria = example.createCriteria();
-        criteria.andShopIdIn(List.of(shopIds,0L)).andGoodsIdIn(goodIds).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value());
+        criteria.andShopIdIn(List.of(shopIds,0L)).andGoodsIdIn(goodIds).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value()).andIsOnSaleEqualTo(Boolean.TRUE);
         if (!ObjectUtils.isEmpty(ids)){
             criteria.andIdIn(ids);
         }
