@@ -59,11 +59,11 @@ public class WxCartServiceImpl implements WxCartService {
             }
         }
         List<Long> cartGoodIds = shoppingCartVo.getGoods().stream().map(ShoppingCartVo::getGoodsId).collect(Collectors.toList());
-        var shopByGoodsIds = MapperUtils.goodsMapByShop(mealGoodsMapper, shoppingCartVo.getShopId(), cartGoodIds).keySet();
+        //取出数据库有效的商品和小料
+        Map<Long, MealGoods> longMealGoodsMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shoppingCartVo.getShopId(), cartGoodIds);
         //店铺小料集合 //商品对应小料集合
         var goodsByCalamity = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, Collections.emptyList()
-                , new ArrayList<>(shopByGoodsIds), shoppingCartVo.getShopId());
-        var shopCalamity = goodsByCalamity.keySet();
+                , new ArrayList<>(longMealGoodsMap.keySet()), shoppingCartVo.getShopId());
 
         List<Function<Void, Integer>> functions = new LinkedList<>();
         var example = new MealCartExample();
@@ -76,31 +76,34 @@ public class WxCartServiceImpl implements WxCartService {
         var products = shoppingCartVo.getGoods();
         Collections.reverse(products);
         for (ShoppingCartVo product : products) {
-            if (!shopByGoodsIds.contains(product.getGoodsId())) {
+            MealGoods goods = longMealGoodsMap.getOrDefault(product.getGoodsId(), null);
+            if (Objects.isNull(goods)){
                 // TODO: 2023/03/20  do跟前端商讨如果某个商品失效
-                return ResultUtils.message(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage());
+                return ResultUtils.entityMessage(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage(),product.getGoodsId());
             }
             var cart = new MealCart();
-            cart.setGoodsId(product.getGoodsId());
+            cart.setGoodsId(goods.getId());
             cart.setNumber(product.getNumber());
             cart.setShopId(shoppingCartVo.getShopId());
-            cart.setGoodsSn(product.getGoodsSn());
+            cart.setGoodsSn(goods.getGoodsSn());
             cart.setChecked(product.getChecked());
-            cart.setGoodsName(product.getGoodsName());
+            cart.setGoodsName(goods.getName());
             cart.setUserId(uid);
             cart.setAddTime(LocalDateTime.now());
             cart.setUpdateTime(LocalDateTime.now());
             functions.add(nothing -> mealCartMapper.insertSelective(cart));
             if (ObjectUtils.isNotEmpty(product.getCartCalamityVos())) {
                 for (CartCalamityVo cartCalamityVo : product.getCartCalamityVos()) {
-                    if (!shopCalamity.contains(cartCalamityVo.getCalamityId())) {
+                    MealLittleCalamity littleCalamity = goodsByCalamity.getOrDefault(cartCalamityVo.getCalamityId(), null);
+                    if (Objects.isNull(littleCalamity)) {
                         // TODO: 2023/03/20  do跟前端商讨如果小料失效
-                        return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage());
+                        return ResultUtils.entityMessage(ResponseCode.CALAMITY_IS_INVALID,
+                                ResponseCode.CALAMITY_IS_INVALID.getMessage(),cartCalamityVo.getCalamityId());
                     }
                     var cartCalamity = new MealCartCalamity();
-                    cartCalamity.setCalamityId(cartCalamityVo.getCalamityId());
+                    cartCalamity.setCalamityId(littleCalamity.getId());
                     cartCalamity.setCalamityNumber(cartCalamityVo.getCalamityNumber());
-                    cartCalamity.setCalamityName(cartCalamityVo.getCalamityName());
+                    cartCalamity.setCalamityName(littleCalamity.getName());
                     functions.add(nothing -> mealCartCalamityMapper.insertSelective(cartCalamity.setCartId(cart.getId())));
                 }
             }
@@ -144,15 +147,10 @@ public class WxCartServiceImpl implements WxCartService {
         List<MealCartCalamity> mealCartCalamities = this.mealCartCalamityMapper.selectByExample(cartCalamityExample);
         var cartCalamityMap = mealCartCalamities.stream().collect(Collectors.groupingBy(MealCartCalamity::getCartId));
         var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shopId, Collections.emptyList());
-        var shopByGoodsIds = goodsByShopMap.keySet();
         //小料
-        var calamityMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCartCalamities.stream().map(MealCartCalamity::getCalamityId).collect(Collectors.toList()), new ArrayList<>(shopByGoodsIds), shopId);
-        var goodsByCalamity = calamityMap.keySet();
+        var calamityMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCartCalamities.stream().map(MealCartCalamity::getCalamityId)
+                .collect(Collectors.toList()), new ArrayList<>(goodsByShopMap.keySet()), shopId);
         var result = mealCarts.stream().map(e -> {
-            if (!shopByGoodsIds.contains(e.getGoodsId())) {
-                // TODO: 2023/03/20  do跟前端商讨如果某个商品失效`
-                return ResultUtils.message(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage());
-            }
             var vo = new WxShopCartResponseVo();
             var product = goodsByShopMap.getOrDefault(e.getGoodsId(), null);
             if (Objects.isNull(product)) {
@@ -169,10 +167,6 @@ public class WxCartServiceImpl implements WxCartService {
             List<WxShopCartCalamitySonVo> resultCalamityVos = new ArrayList<>();
             if (ObjectUtils.isNotEmpty(cartCalamityByCartId)) {
                 for (MealCartCalamity mealCartCalamity : cartCalamityByCartId) {
-                    if (!goodsByCalamity.contains(mealCartCalamity.getCalamityId())) {
-                        // TODO: 2023/03/20  do跟前端商讨如果某个商品失效`
-                        return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage());
-                    }
                     var wxShopCartCalamitySon = new WxShopCartCalamitySonVo();
                     wxShopCartCalamitySon.setCalamityId(mealCartCalamity.getCalamityId());
                     wxShopCartCalamitySon.setCalamityName(mealCartCalamity.getCalamityName());

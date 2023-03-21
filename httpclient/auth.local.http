@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:9001/wx/auth/login
+POST {{host}}/wx/auth/login
 Content-Type: application/json
 
 {
@@ -105,7 +105,7 @@ POST  http://localhost:9001/wx/cart/delete?shopId=1046003
 Authorization: {{token}}
 
 ###
-GET  http://localhost:9001/wx/category?shopId=1046003
+GET  {{host}}/wx/category?shopId=1046003
 Authorization: {{token}}
 
 ###
