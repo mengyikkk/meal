@@ -18,11 +18,6 @@ import java.util.stream.Collectors;
 public  final class MapperUtils {
     private MapperUtils(){}
 
-    public static Map<Long, MealGoods> goodsMap(MealGoodsMapper mealGoodsMapper){
-        var example  = new MealGoodsExample();
-        example.createCriteria();
-        return  mealGoodsMapper.selectByExample(example).stream().collect(Collectors.toMap(MealGoods::getId, Function.identity()));
-    }
     public static Map<Long, MealGoods> goodsMapByShop(MealGoodsMapper mealGoodsMapper,Long shopId,List<Long> goodIds){
         var example  = new MealGoodsExample();
         MealGoodsExample.Criteria criteria = example.createCriteria();

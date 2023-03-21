@@ -7,8 +7,7 @@ import java.util.List;
 public class OrderCartVo {
     @NotNull
     private  Long goodsId;
-    @NotBlank
-    private  String goodsSn;
+
     @NotNull
     @Positive
     private  Long number;
@@ -26,14 +25,6 @@ public class OrderCartVo {
         return this;
     }
 
-    public String getGoodsSn() {
-        return goodsSn;
-    }
-
-    public OrderCartVo setGoodsSn(String goodsSn) {
-        this.goodsSn = goodsSn;
-        return this;
-    }
 
     public Long getNumber() {
         return number;
