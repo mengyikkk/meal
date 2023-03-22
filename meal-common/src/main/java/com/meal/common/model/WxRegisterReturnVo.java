@@ -8,6 +8,8 @@ public class WxRegisterReturnVo {
     private UserInfo userInfo;
     private TokenVo token;
 
+    private Long  shopId;
+
     public UserInfo getUserInfo() {
         return userInfo;
     }
@@ -23,6 +25,15 @@ public class WxRegisterReturnVo {
 
     public WxRegisterReturnVo setToken(TokenVo token) {
         this.token = token;
+        return this;
+    }
+
+    public Long getShopId() {
+        return shopId;
+    }
+
+    public WxRegisterReturnVo setShopId(Long shopId) {
+        this.shopId = shopId;
         return this;
     }
 }

@@ -5,6 +5,7 @@ import com.meal.common.model.LoginVo;
 import com.meal.common.model.WxLoginVo;
 import com.meal.common.model.WxRegisterReturnVo;
 import com.meal.common.model.WxRegisterVo;
+import com.meal.common.utils.SecurityUtils;
 import com.meal.wx.api.service.WxAuthService;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,5 +56,9 @@ public class WxAuthController {
     @PostMapping("/loginByWx")
     public Result<?> loginByWx(@RequestBody WxLoginVo info, HttpServletRequest request) {
         return this.wxAuthService.loginByWx(info, request);
+    }
+    @GetMapping("/bind")
+    public Result<?> getShopId() {
+        return this.wxAuthService.getShopId(SecurityUtils.getUserId());
     }
 }

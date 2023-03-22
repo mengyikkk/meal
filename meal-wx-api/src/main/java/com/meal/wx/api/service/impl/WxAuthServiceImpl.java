@@ -153,6 +153,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         userInfo.setAvatarUrl(user.getAvatar());
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
+        result.setShopId(this.getShopByBind(user.getId()));
         // token
         return ResultUtils.success(result);
     }
@@ -169,7 +170,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         String phone;
         String openId;
         String sessionKey;
-        var wxUserService =this.wxService.getUserService();
+        var wxUserService = this.wxService.getUserService();
         var userWx = new WxMaUserInfo();
         try {
             WxMaJscode2SessionResult result = wxUserService.getSessionInfo(info.getCode());
@@ -179,26 +180,26 @@ public class WxAuthServiceImpl implements WxAuthService {
             WxMaPhoneNumberInfo phoneInfo = wxUserService.getPhoneNoInfo(info.getCodePhone());
             phone = phoneInfo.getPurePhoneNumber();
             this.logger.info("获取到用户Phone:{}", phone);
-            userWx =wxUserService.getUserInfo(sessionKey,info.getEncryptedData(),info.getIv());
+            userWx = wxUserService.getUserInfo(sessionKey, info.getEncryptedData(), info.getIv());
             this.logger.info("获取到用户Phone:{}", JsonUtils.toJsonKeepNullValue(userWx));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtils.code(ResponseCode.AUTH_OPENID_UNACCESS);
         }
-        if (Objects.isNull(phone)){
-            return ResultUtils.message(ResponseCode.AUTH_INVALID_MOBILE,"无效手机号");
+        if (Objects.isNull(phone)) {
+            return ResultUtils.message(ResponseCode.AUTH_INVALID_MOBILE, "无效手机号");
         }
         var example = new MealUserExample();
         example.createCriteria().andLogicalDeleted(Boolean.TRUE).andWxOpenidEqualTo(openId);
         var user = this.mealUserMapper.selectOneByExample(example);
         if (Objects.nonNull(user)) {    //已经注册过的用户处理
-            this.logger.info("用户:{}已经注册过走更新流程",user.getUsername());
+            this.logger.info("用户:{}已经注册过走更新流程", user.getUsername());
             if (!user.isEnabled()) {
                 return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, ("该账号未启用，请联系管理员！"));
             }
             user.setMobile(phone);
             user.setUsername(openId);
-            this.coverUserByWx(userWx,user);
+            this.coverUserByWx(userWx, user);
             this.LastLogIn(user, request);
             if (this.mealUserMapper.updateByPrimaryKey(user) < 1) {
                 return ResultUtils.unknown();
@@ -209,7 +210,7 @@ public class WxAuthServiceImpl implements WxAuthService {
             user.setMobile(phone);
             user.setSessionKey(sessionKey);
             user.setWxOpenid(openId);
-            this.coverUserByWx(userWx,user);
+            this.coverUserByWx(userWx, user);
             this.LastLogIn(user, request);
             if (this.mealUserMapper.insertSelective(user) < 1) {
                 return ResultUtils.unknown();
@@ -221,6 +222,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         userInfo.setAvatarUrl(user.getAvatar());
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
+        result.setShopId(this.getShopByBind(user.getId()));
         this.logger.info("登录成功，在security对象中存入{}登陆者信息", phone);
         return ResultUtils.success(result);
     }
@@ -262,8 +264,15 @@ public class WxAuthServiceImpl implements WxAuthService {
         if (this.mealUserMapper.updateByPrimaryKey(user) < 1) {
             return ResultUtils.unknown();
         }
+        var result = new WxRegisterReturnVo();
+        UserInfo userInfo = new UserInfo();
+        userInfo.setNickName(user.getNickname());
+        userInfo.setAvatarUrl(user.getAvatar());
+        result.setToken(tokenUtils.generateToken(user));
+        result.setUserInfo(userInfo);
+        result.setShopId(this.getShopByBind(user.getId()));
         this.logger.info("登录成功，在security对象中存入{}登陆者信息", vo.getPhoneNumber());
-        return ResultUtils.success(tokenUtils.generateToken(user));
+        return ResultUtils.success(result);
     }
 
     @Override
@@ -319,11 +328,23 @@ public class WxAuthServiceImpl implements WxAuthService {
         return ResultUtils.success(shopId);
     }
 
+    @Override
+    public Result<?> getShopId(Long userId) {
+        return ResultUtils.success(getShopByBind(userId));
+    }
+
+    private Long getShopByBind(Long userId) {
+        var example = new MealUserShopExample();
+        example.createCriteria().andUserIdEqualTo(userId);
+        return this.mealUserShopMapper.selectOneByExample(example).getShopId();
+    }
+
     private void LastLogIn(MealUser user, HttpServletRequest request) {
         user.setLastLoginTime(LocalDateTime.now());
         user.setLastLoginIp(IpUtil.getIpAddr(request));
     }
-    private void coverUserByWx(WxMaUserInfo userInfo,MealUser user){
+
+    private void coverUserByWx(WxMaUserInfo userInfo, MealUser user) {
         user.setNickname(userInfo.getNickName());
         user.setAvatar(userInfo.getAvatarUrl());
     }

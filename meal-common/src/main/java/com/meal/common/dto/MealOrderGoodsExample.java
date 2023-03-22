@@ -274,7 +274,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(Integer value) {
+        public Criteria andIdEqualTo(Long value) {
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
@@ -290,7 +290,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(Integer value) {
+        public Criteria andIdNotEqualTo(Long value) {
             addCriterion("id <>", value, "id");
             return (Criteria) this;
         }
@@ -306,7 +306,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(Integer value) {
+        public Criteria andIdGreaterThan(Long value) {
             addCriterion("id >", value, "id");
             return (Criteria) this;
         }
@@ -322,7 +322,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andIdGreaterThanOrEqualTo(Long value) {
             addCriterion("id >=", value, "id");
             return (Criteria) this;
         }
@@ -338,7 +338,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(Integer value) {
+        public Criteria andIdLessThan(Long value) {
             addCriterion("id <", value, "id");
             return (Criteria) this;
         }
@@ -354,7 +354,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(Integer value) {
+        public Criteria andIdLessThanOrEqualTo(Long value) {
             addCriterion("id <=", value, "id");
             return (Criteria) this;
         }
@@ -370,22 +370,22 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdIn(List<Integer> values) {
+        public Criteria andIdIn(List<Long> values) {
             addCriterion("id in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<Integer> values) {
+        public Criteria andIdNotIn(List<Long> values) {
             addCriterion("id not in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(Integer value1, Integer value2) {
+        public Criteria andIdBetween(Long value1, Long value2) {
             addCriterion("id between", value1, value2, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andIdNotBetween(Long value1, Long value2) {
             addCriterion("id not between", value1, value2, "id");
             return (Criteria) this;
         }
@@ -400,7 +400,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdEqualTo(Integer value) {
+        public Criteria andOrderIdEqualTo(Long value) {
             addCriterion("order_id =", value, "orderId");
             return (Criteria) this;
         }
@@ -416,7 +416,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotEqualTo(Integer value) {
+        public Criteria andOrderIdNotEqualTo(Long value) {
             addCriterion("order_id <>", value, "orderId");
             return (Criteria) this;
         }
@@ -432,7 +432,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThan(Integer value) {
+        public Criteria andOrderIdGreaterThan(Long value) {
             addCriterion("order_id >", value, "orderId");
             return (Criteria) this;
         }
@@ -448,7 +448,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andOrderIdGreaterThanOrEqualTo(Long value) {
             addCriterion("order_id >=", value, "orderId");
             return (Criteria) this;
         }
@@ -464,7 +464,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThan(Integer value) {
+        public Criteria andOrderIdLessThan(Long value) {
             addCriterion("order_id <", value, "orderId");
             return (Criteria) this;
         }
@@ -480,7 +480,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThanOrEqualTo(Integer value) {
+        public Criteria andOrderIdLessThanOrEqualTo(Long value) {
             addCriterion("order_id <=", value, "orderId");
             return (Criteria) this;
         }
@@ -496,22 +496,22 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdIn(List<Integer> values) {
+        public Criteria andOrderIdIn(List<Long> values) {
             addCriterion("order_id in", values, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotIn(List<Integer> values) {
+        public Criteria andOrderIdNotIn(List<Long> values) {
             addCriterion("order_id not in", values, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdBetween(Integer value1, Integer value2) {
+        public Criteria andOrderIdBetween(Long value1, Long value2) {
             addCriterion("order_id between", value1, value2, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andOrderIdNotBetween(Long value1, Long value2) {
             addCriterion("order_id not between", value1, value2, "orderId");
             return (Criteria) this;
         }
@@ -526,7 +526,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdEqualTo(Integer value) {
+        public Criteria andGoodsIdEqualTo(Long value) {
             addCriterion("goods_id =", value, "goodsId");
             return (Criteria) this;
         }
@@ -542,7 +542,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdNotEqualTo(Integer value) {
+        public Criteria andGoodsIdNotEqualTo(Long value) {
             addCriterion("goods_id <>", value, "goodsId");
             return (Criteria) this;
         }
@@ -558,7 +558,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdGreaterThan(Integer value) {
+        public Criteria andGoodsIdGreaterThan(Long value) {
             addCriterion("goods_id >", value, "goodsId");
             return (Criteria) this;
         }
@@ -574,7 +574,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andGoodsIdGreaterThanOrEqualTo(Long value) {
             addCriterion("goods_id >=", value, "goodsId");
             return (Criteria) this;
         }
@@ -590,7 +590,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdLessThan(Integer value) {
+        public Criteria andGoodsIdLessThan(Long value) {
             addCriterion("goods_id <", value, "goodsId");
             return (Criteria) this;
         }
@@ -606,7 +606,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdLessThanOrEqualTo(Integer value) {
+        public Criteria andGoodsIdLessThanOrEqualTo(Long value) {
             addCriterion("goods_id <=", value, "goodsId");
             return (Criteria) this;
         }
@@ -622,22 +622,22 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdIn(List<Integer> values) {
+        public Criteria andGoodsIdIn(List<Long> values) {
             addCriterion("goods_id in", values, "goodsId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdNotIn(List<Integer> values) {
+        public Criteria andGoodsIdNotIn(List<Long> values) {
             addCriterion("goods_id not in", values, "goodsId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdBetween(Integer value1, Integer value2) {
+        public Criteria andGoodsIdBetween(Long value1, Long value2) {
             addCriterion("goods_id between", value1, value2, "goodsId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andGoodsIdNotBetween(Long value1, Long value2) {
             addCriterion("goods_id not between", value1, value2, "goodsId");
             return (Criteria) this;
         }
@@ -924,7 +924,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andNumberEqualTo(Short value) {
+        public Criteria andNumberEqualTo(Long value) {
             addCriterion("`number` =", value, "number");
             return (Criteria) this;
         }
@@ -940,7 +940,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andNumberNotEqualTo(Short value) {
+        public Criteria andNumberNotEqualTo(Long value) {
             addCriterion("`number` <>", value, "number");
             return (Criteria) this;
         }
@@ -956,7 +956,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andNumberGreaterThan(Short value) {
+        public Criteria andNumberGreaterThan(Long value) {
             addCriterion("`number` >", value, "number");
             return (Criteria) this;
         }
@@ -972,7 +972,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andNumberGreaterThanOrEqualTo(Short value) {
+        public Criteria andNumberGreaterThanOrEqualTo(Long value) {
             addCriterion("`number` >=", value, "number");
             return (Criteria) this;
         }
@@ -988,7 +988,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andNumberLessThan(Short value) {
+        public Criteria andNumberLessThan(Long value) {
             addCriterion("`number` <", value, "number");
             return (Criteria) this;
         }
@@ -1004,7 +1004,7 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andNumberLessThanOrEqualTo(Short value) {
+        public Criteria andNumberLessThanOrEqualTo(Long value) {
             addCriterion("`number` <=", value, "number");
             return (Criteria) this;
         }
@@ -1020,22 +1020,22 @@ public class MealOrderGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andNumberIn(List<Short> values) {
+        public Criteria andNumberIn(List<Long> values) {
             addCriterion("`number` in", values, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumberNotIn(List<Short> values) {
+        public Criteria andNumberNotIn(List<Long> values) {
             addCriterion("`number` not in", values, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumberBetween(Short value1, Short value2) {
+        public Criteria andNumberBetween(Long value1, Long value2) {
             addCriterion("`number` between", value1, value2, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumberNotBetween(Short value1, Short value2) {
+        public Criteria andNumberNotBetween(Long value1, Long value2) {
             addCriterion("`number` not between", value1, value2, "number");
             return (Criteria) this;
         }
@@ -1299,132 +1299,6 @@ public class MealOrderGoodsExample {
 
         public Criteria andPicUrlNotBetween(String value1, String value2) {
             addCriterion("pic_url not between", value1, value2, "picUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentIsNull() {
-            addCriterion("`comment` is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentIsNotNull() {
-            addCriterion("`comment` is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentEqualTo(Integer value) {
-            addCriterion("`comment` =", value, "comment");
-            return (Criteria) this;
-        }
-
-        /**
-         * This method was generated by MyBatis Generator.
-         * This method corresponds to the database table meal_order_goods
-         *
-         * @mbg.generated
-         */
-        public Criteria andCommentEqualToColumn(MealOrderGoods.Column column) {
-            addCriterion(new StringBuilder("`comment` = ").append(column.getEscapedColumnName()).toString());
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentNotEqualTo(Integer value) {
-            addCriterion("`comment` <>", value, "comment");
-            return (Criteria) this;
-        }
-
-        /**
-         * This method was generated by MyBatis Generator.
-         * This method corresponds to the database table meal_order_goods
-         *
-         * @mbg.generated
-         */
-        public Criteria andCommentNotEqualToColumn(MealOrderGoods.Column column) {
-            addCriterion(new StringBuilder("`comment` <> ").append(column.getEscapedColumnName()).toString());
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentGreaterThan(Integer value) {
-            addCriterion("`comment` >", value, "comment");
-            return (Criteria) this;
-        }
-
-        /**
-         * This method was generated by MyBatis Generator.
-         * This method corresponds to the database table meal_order_goods
-         *
-         * @mbg.generated
-         */
-        public Criteria andCommentGreaterThanColumn(MealOrderGoods.Column column) {
-            addCriterion(new StringBuilder("`comment` > ").append(column.getEscapedColumnName()).toString());
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentGreaterThanOrEqualTo(Integer value) {
-            addCriterion("`comment` >=", value, "comment");
-            return (Criteria) this;
-        }
-
-        /**
-         * This method was generated by MyBatis Generator.
-         * This method corresponds to the database table meal_order_goods
-         *
-         * @mbg.generated
-         */
-        public Criteria andCommentGreaterThanOrEqualToColumn(MealOrderGoods.Column column) {
-            addCriterion(new StringBuilder("`comment` >= ").append(column.getEscapedColumnName()).toString());
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentLessThan(Integer value) {
-            addCriterion("`comment` <", value, "comment");
-            return (Criteria) this;
-        }
-
-        /**
-         * This method was generated by MyBatis Generator.
-         * This method corresponds to the database table meal_order_goods
-         *
-         * @mbg.generated
-         */
-        public Criteria andCommentLessThanColumn(MealOrderGoods.Column column) {
-            addCriterion(new StringBuilder("`comment` < ").append(column.getEscapedColumnName()).toString());
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentLessThanOrEqualTo(Integer value) {
-            addCriterion("`comment` <=", value, "comment");
-            return (Criteria) this;
-        }
-
-        /**
-         * This method was generated by MyBatis Generator.
-         * This method corresponds to the database table meal_order_goods
-         *
-         * @mbg.generated
-         */
-        public Criteria andCommentLessThanOrEqualToColumn(MealOrderGoods.Column column) {
-            addCriterion(new StringBuilder("`comment` <= ").append(column.getEscapedColumnName()).toString());
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentIn(List<Integer> values) {
-            addCriterion("`comment` in", values, "comment");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentNotIn(List<Integer> values) {
-            addCriterion("`comment` not in", values, "comment");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentBetween(Integer value1, Integer value2) {
-            addCriterion("`comment` between", value1, value2, "comment");
-            return (Criteria) this;
-        }
-
-        public Criteria andCommentNotBetween(Integer value1, Integer value2) {
-            addCriterion("`comment` not between", value1, value2, "comment");
             return (Criteria) this;
         }
 

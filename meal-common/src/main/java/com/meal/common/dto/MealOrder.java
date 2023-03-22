@@ -29,7 +29,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    private Integer id;
+    private Long id;
 
     /**
      *
@@ -38,7 +38,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      *
@@ -291,7 +291,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -303,7 +303,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -315,7 +315,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
@@ -327,7 +327,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -1202,8 +1202,8 @@ public class MealOrder {
      * @mbg.generated
      */
     public enum Column {
-        id("id", "id", "INTEGER", false),
-        userId("user_id", "userId", "INTEGER", false),
+        id("id", "id", "BIGINT", false),
+        userId("user_id", "userId", "BIGINT", false),
         shopId("shop_id", "shopId", "BIGINT", false),
         orderSn("order_sn", "orderSn", "VARCHAR", false),
         orderStatus("order_status", "orderStatus", "SMALLINT", false),

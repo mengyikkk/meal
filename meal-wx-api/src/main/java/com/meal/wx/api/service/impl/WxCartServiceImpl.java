@@ -78,7 +78,6 @@ public class WxCartServiceImpl implements WxCartService {
         for (ShoppingCartVo product : products) {
             MealGoods goods = longMealGoodsMap.getOrDefault(product.getGoodsId(), null);
             if (Objects.isNull(goods)){
-                // TODO: 2023/03/20  do跟前端商讨如果某个商品失效
                 return ResultUtils.entityMessage(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage(),product.getGoodsId());
             }
             var cart = new MealCart();
@@ -96,7 +95,6 @@ public class WxCartServiceImpl implements WxCartService {
                 for (CartCalamityVo cartCalamityVo : product.getCartCalamityVos()) {
                     MealLittleCalamity littleCalamity = goodsByCalamity.getOrDefault(cartCalamityVo.getCalamityId(), null);
                     if (Objects.isNull(littleCalamity)) {
-                        // TODO: 2023/03/20  do跟前端商讨如果小料失效
                         return ResultUtils.entityMessage(ResponseCode.CALAMITY_IS_INVALID,
                                 ResponseCode.CALAMITY_IS_INVALID.getMessage(),cartCalamityVo.getCalamityId());
                     }
