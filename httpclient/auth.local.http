@@ -127,3 +127,48 @@ Content-Type: application/json
   "iv": "dpRIcbq8B1H/HJoKkTPbXg==",
   "codePhone": "d9ac9bb37a8d9c1e7e3191eafe7df8c11e6d2c2c8adaa1d582077abe062404e6"
 }
+
+###
+
+POST http://localhost:9001/wx/order/submit
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "shopId": 1046003,
+  "message": "请尽快送达",
+  "shoppingCartVos": [
+    {
+      "goodsId": 1181004,
+      "number": 2,
+      "price": 7.00,
+      "orderCartCalamityVos": [
+        {
+          "calamityId": 251,
+          "calamityNumber": 1,
+          "calamityPrice": 10.00
+        }
+      ]
+    },
+    {
+      "goodsId": 1181005,
+      "number": 1,
+      "price": 7.00,
+      "orderCartCalamityVos": [
+        {
+          "calamityId": 253,
+          "calamityNumber": 2,
+          "calamityPrice": 10.00
+        },
+        {
+          "calamityId": 254,
+          "calamityNumber": 1,
+          "calamityPrice": 10.00
+        }
+      ]
+    }
+  ],
+  "orderPrice": 61.00,
+  "actualPrice": 61.00
+}
+

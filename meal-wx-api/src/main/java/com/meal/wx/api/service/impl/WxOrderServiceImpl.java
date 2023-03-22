@@ -114,7 +114,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             a.setOrderId(mealOrder.getId());
             a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
         }).collect(Collectors.toList())));
-        if (this.transactionExecutor.transaction(functions)) {
+        if (this.transactionExecutor.transaction(functions,1+mealOrderGoodsList.size()+mealOrderCalamityList.size())) {
             return ResultUtils.success();
         }
         return ResultUtils.unknown();
@@ -176,6 +176,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         return Optional.ofNullable(calamity).map(c -> {
             MealOrderGoodsCalamity mealOrderCalamity = new MealOrderGoodsCalamity();
             mealOrderCalamity.setCalamityId(calamity.getId());
+            mealOrderCalamity.setCalamitySn(calamity.getUnit());
             mealOrderCalamity.setCalamityName(calamity.getName());
             mealOrderCalamity.setPrice(orderCartCalamityVo.getCalamityPrice());
             mealOrderCalamity.setNumber(orderCartCalamityVo.getCalamityNumber());
