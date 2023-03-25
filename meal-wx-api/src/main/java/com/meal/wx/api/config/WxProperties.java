@@ -26,6 +26,8 @@ public class WxProperties {
     private String notifyUrl;
 
     private String keyPath;
+
+    private  String apiV3Key;
     /**
      * 设置微信小程序消息服务器配置的token
      */
@@ -119,6 +121,15 @@ public class WxProperties {
 
     public WxProperties setMsgDataFormat(String msgDataFormat) {
         this.msgDataFormat = msgDataFormat;
+        return this;
+    }
+
+    public String getApiV3Key() {
+        return apiV3Key;
+    }
+
+    public WxProperties setApiV3Key(String apiV3Key) {
+        this.apiV3Key = apiV3Key;
         return this;
     }
 }

@@ -20,8 +20,9 @@ public enum ResponseCode implements StateMapping<Integer> {
 //    ORDER_UNKNOWN ( 720),
 //    ORDER_INVALID ( 721),
     ORDER_CHECKOUT_FAIL ( 722,"订单价格check失败"),
+    ORDER_STATUS_FAIL ( 723,"订单状态错误,无法支付"),
 //    publORDER_CANCEL_FAIL ( 723),
-//    publORDER_PAY_FAIL ( 724),
+    ORDER_PAY_FAIL ( 724,"订单不能支付"),
     // 订单当前状态下不支持用户的操作，例如商品未发货状态用户执行确认收货是不可能的。
 //    ORDER_INVALID_OPERATION ( 725),
 //    ORDER_COMMENTED ( 726),

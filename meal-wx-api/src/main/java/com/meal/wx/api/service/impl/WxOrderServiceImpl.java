@@ -1,5 +1,13 @@
 package com.meal.wx.api.service.impl;
 
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.github.binarywang.wxpay.constant.WxPayConstants;
+import com.github.binarywang.wxpay.exception.WxPayException;
+import com.github.binarywang.wxpay.service.WxPayService;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.dto.*;
@@ -7,6 +15,7 @@ import com.meal.common.mapper.*;
 import com.meal.common.model.OrderCartCalamityVo;
 import com.meal.common.model.OrderCartVo;
 import com.meal.common.transaction.TransactionExecutor;
+import com.meal.common.utils.IpUtil;
 import com.meal.common.utils.MapperUtils;
 import com.meal.common.utils.ResultUtils;
 import com.meal.common.utils.SecurityUtils;
@@ -15,14 +24,18 @@ import com.meal.wx.api.util.OrderSnUtils;
 import com.meal.wx.api.util.OrderStatusEnum;
 import com.meal.wx.api.util.RefundStatusEnum;
 import com.meal.wx.api.util.ShipStatusEnum;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,6 +55,7 @@ public class WxOrderServiceImpl implements WxOrderService {
     @Resource
     private MealOrderGoodsMapper mealOrderGoodsMapper;
 
+
     @Resource
     private MealOrderGoodsCalamityMapper mealOrderGoodsCalamityMapper;
 
@@ -55,6 +69,8 @@ public class WxOrderServiceImpl implements WxOrderService {
     private MealLittleCalamityMapper mealLittleCalamityMapper;
     @Resource
     private TransactionExecutor transactionExecutor;
+    @Resource
+    private WxPayService wxPayService;
     private final Logger logger = LoggerFactory.getLogger(WxOrderServiceImpl.class);
 
     @Override
@@ -106,7 +122,8 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (goodsPrice.compareTo(wxOrderVo.getActualPrice()) != 0) {
             return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
         }
-        var mealOrder = this.createOrder(wxOrderVo, uid);
+        var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid,Boolean.FALSE);
+        var mealOrder = this.createOrder(wxOrderVo, user);
         functions.addFirst(nothing -> mealOrderMapper.insertSelective(mealOrder));
         functions.add(nothing -> mealOrderGoodsMapper.batchInsert(mealOrderGoodsList.stream().peek(e -> e.setOrderId(mealOrder.getId())).collect(Collectors.toList())));
         functions.addLast(nothing -> mealOrderGoodsCalamityMapper.batchInsert(mealOrderCalamityList.stream().peek(a -> {
@@ -119,13 +136,14 @@ public class WxOrderServiceImpl implements WxOrderService {
         return ResultUtils.unknown();
     }
 
-    private MealOrder createOrder(WxOrderVo wxOrderVo, Long userId) {
+
+
+    private MealOrder createOrder(WxOrderVo wxOrderVo, MealUser user) {
         // 通过MyBatis mapper查询对应的用户对象
-        var user = this.mealUserMapper.selectByPrimaryKey(userId);
         // 如果查询到的用户对象不为null，则创建一个新的订单对象，并设置订单属性
         return Optional.ofNullable(user).map(u -> {
                     MealOrder mealOrder = new MealOrder();
-                    mealOrder.setUserId(userId); // 用户ID
+                    mealOrder.setUserId(user.getId()); // 用户ID
                     mealOrder.setShopId(wxOrderVo.getShopId()); // 商铺ID
                     mealOrder.setOrderSn(OrderSnUtils.generateOrderSn("meal")); // 订单号
                     mealOrder.setOrderStatus(OrderStatusEnum.UNPAID.getMapping()); // 订单状态：待支付
@@ -181,6 +199,90 @@ public class WxOrderServiceImpl implements WxOrderService {
             mealOrderCalamity.setNumber(orderCartCalamityVo.getCalamityNumber());
             return mealOrderCalamity;
         }).orElseThrow(() -> new IllegalArgumentException("Invalid meal goods calamity"));
+    }
+
+    @Override
+    public Result<?> prepay(Long uid, Long orderId) {
+        if (Objects.isNull(orderId)){
+            return  ResultUtils.message(ResponseCode.PARAMETER_ERROR,ResponseCode.PARAMETER_ERROR.getMessage());
+        }
+        var example = new MealOrderExample();
+        example.createCriteria().andUserIdEqualTo(uid).andDeletedEqualTo(Boolean.FALSE).andIdEqualTo(orderId);
+        var order = this.mealOrderMapper.selectOneByExample(example);
+        if (Objects.isNull(order)){
+            return  ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL,ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
+        }
+        if (OrderStatusEnum.UNPAID.not(order.getOrderStatus())){
+            return  ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL,ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
+        }
+        var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid,Boolean.FALSE);
+        String wxOpenid = user.getWxOpenid();
+        if (Objects.isNull(wxOpenid)){
+            return  ResultUtils.message(ResponseCode.AUTH_OPENID_UNACCESS,ResponseCode.AUTH_OPENID_UNACCESS.getMessage());
+        }
+        WxPayMpOrderResult result = null;
+        try {
+            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+            orderRequest.setOutTradeNo(order.getOrderSn());
+            orderRequest.setOpenid(wxOpenid);
+            orderRequest.setBody("订单：" + order.getOrderSn());
+            // 元转成分
+            int fee = 0;
+            BigDecimal actualPrice = order.getActualPrice();
+            fee = actualPrice.multiply(new BigDecimal(100)).intValue();
+            orderRequest.setTotalFee(fee);
+            orderRequest.setSpbillCreateIp(user.getLastLoginIp());
+            result = wxPayService.createOrder(orderRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtils.message(ResponseCode.ORDER_PAY_FAIL, ResponseCode.ORDER_PAY_FAIL.getMessage());
+        }
+        return ResultUtils.success(result);
+    }
+
+    @Override
+    public Object payNotify(HttpServletRequest request, HttpServletResponse response) {
+        String xmlResult = null;
+        try {
+            xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return WxPayNotifyResponse.fail(e.getMessage());
+        }
+
+        WxPayOrderNotifyResult result = null;
+        try {
+            result = wxPayService.parseOrderNotifyResult(xmlResult);
+
+            if(!WxPayConstants.ResultCode.SUCCESS.equals(result.getResultCode())){
+                logger.error(xmlResult);
+                throw new WxPayException("微信通知支付失败！");
+            }
+            if(!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())){
+                logger.error(xmlResult);
+                throw new WxPayException("微信通知支付失败！");
+            }
+        } catch (WxPayException e) {
+            e.printStackTrace();
+            return WxPayNotifyResponse.fail(e.getMessage());
+        }
+
+        this.logger.info("处理腾讯支付平台的订单支付");
+        this.logger.info("结果:{}",result);
+        String orderSn = result.getOutTradeNo();
+        String payId = result.getTransactionId();
+
+        // 分转化成元
+        String totalFee = BaseWxPayResult.fenToYuan(result.getTotalFee());
+        MealOrder mealOrder = this.selectOrderBySn(orderSn);
+
+        return null;
+    }
+
+    private  MealOrder selectOrderBySn(String orderSn) {
+        var example = new MealOrderExample();
+        example.createCriteria().andOrderSnEqualTo(orderSn).andDeletedEqualTo(Boolean.FALSE);
+        return  this.mealOrderMapper.selectOneByExample(example);
     }
 }
 

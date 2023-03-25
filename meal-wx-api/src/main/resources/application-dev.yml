@@ -17,7 +17,12 @@ meal:
         appid: "wxff1a8500e8238674"
         appSecret: "a98a0f28b4edd080950b3bed61bcf881"
         token: #微信小程序消息服务器配置的token
-        aesKey: #微信小程序消息服务器配置的EncodingAESKey
+        aesKey: "fn2u4f5ty7huhf932hfhi4u3fh23rf3t"
+        mch-id: "1640664276"
+        mch-key: "ffiuq3hu34ufiuq4f3o4vi4r234fv425"
+        notify-url: "https://yangyua.com/wx/order/pay-notify"
+        api-v3-key: "fn2u4f5ty7huhf932hfhi4u3fh23rf3t"
+        key-path: "classpath:/cert/apiclient_cert.p12"
         msgDataFormat: JSON
 server:
   port: 9001
