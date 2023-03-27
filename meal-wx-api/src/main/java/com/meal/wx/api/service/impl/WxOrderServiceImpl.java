@@ -15,7 +15,6 @@ import com.meal.common.mapper.*;
 import com.meal.common.model.OrderCartCalamityVo;
 import com.meal.common.model.OrderCartVo;
 import com.meal.common.transaction.TransactionExecutor;
-import com.meal.common.utils.IpUtil;
 import com.meal.common.utils.MapperUtils;
 import com.meal.common.utils.ResultUtils;
 import com.meal.common.utils.SecurityUtils;
@@ -122,7 +121,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (goodsPrice.compareTo(wxOrderVo.getActualPrice()) != 0) {
             return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
         }
-        var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid,Boolean.FALSE);
+        var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
         var mealOrder = this.createOrder(wxOrderVo, user);
         functions.addFirst(nothing -> mealOrderMapper.insertSelective(mealOrder));
         functions.add(nothing -> mealOrderGoodsMapper.batchInsert(mealOrderGoodsList.stream().peek(e -> e.setOrderId(mealOrder.getId())).collect(Collectors.toList())));
@@ -130,12 +129,11 @@ public class WxOrderServiceImpl implements WxOrderService {
             a.setOrderId(mealOrder.getId());
             a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
         }).collect(Collectors.toList())));
-        if (this.transactionExecutor.transaction(functions,1+mealOrderGoodsList.size()+mealOrderCalamityList.size())) {
-            return ResultUtils.success();
+        if (this.transactionExecutor.transaction(functions, 1 + mealOrderGoodsList.size() + mealOrderCalamityList.size())) {
+            return this.prepaySon(user, mealOrder);
         }
         return ResultUtils.unknown();
     }
-
 
 
     private MealOrder createOrder(WxOrderVo wxOrderVo, MealUser user) {
@@ -203,24 +201,28 @@ public class WxOrderServiceImpl implements WxOrderService {
 
     @Override
     public Result<?> prepay(Long uid, Long orderId) {
-        if (Objects.isNull(orderId)){
-            return  ResultUtils.message(ResponseCode.PARAMETER_ERROR,ResponseCode.PARAMETER_ERROR.getMessage());
+        if (Objects.isNull(orderId)) {
+            return ResultUtils.message(ResponseCode.PARAMETER_ERROR, ResponseCode.PARAMETER_ERROR.getMessage());
         }
         var example = new MealOrderExample();
         example.createCriteria().andUserIdEqualTo(uid).andDeletedEqualTo(Boolean.FALSE).andIdEqualTo(orderId);
         var order = this.mealOrderMapper.selectOneByExample(example);
-        if (Objects.isNull(order)){
-            return  ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL,ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
+        if (Objects.isNull(order)) {
+            return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
         }
-        if (OrderStatusEnum.UNPAID.not(order.getOrderStatus())){
-            return  ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL,ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
+        if (OrderStatusEnum.UNPAID.not(order.getOrderStatus())) {
+            return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
         }
-        var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid,Boolean.FALSE);
+        var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
+        return this.prepaySon(user, order);
+    }
+
+    private Result<?> prepaySon(MealUser user, MealOrder order) {
         String wxOpenid = user.getWxOpenid();
-        if (Objects.isNull(wxOpenid)){
-            return  ResultUtils.message(ResponseCode.AUTH_OPENID_UNACCESS,ResponseCode.AUTH_OPENID_UNACCESS.getMessage());
+        if (Objects.isNull(wxOpenid)) {
+            return ResultUtils.message(ResponseCode.AUTH_OPENID_UNACCESS, ResponseCode.AUTH_OPENID_UNACCESS.getMessage());
         }
-        WxPayMpOrderResult result = null;
+        WxPayMpOrderResult result;
         try {
             WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
             orderRequest.setOutTradeNo(order.getOrderSn());
@@ -254,11 +256,11 @@ public class WxOrderServiceImpl implements WxOrderService {
         try {
             result = wxPayService.parseOrderNotifyResult(xmlResult);
 
-            if(!WxPayConstants.ResultCode.SUCCESS.equals(result.getResultCode())){
+            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getResultCode())) {
                 logger.error(xmlResult);
                 throw new WxPayException("微信通知支付失败！");
             }
-            if(!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())){
+            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
                 logger.error(xmlResult);
                 throw new WxPayException("微信通知支付失败！");
             }
@@ -266,23 +268,36 @@ public class WxOrderServiceImpl implements WxOrderService {
             e.printStackTrace();
             return WxPayNotifyResponse.fail(e.getMessage());
         }
-
         this.logger.info("处理腾讯支付平台的订单支付");
-        this.logger.info("结果:{}",result);
+        this.logger.info("结果:{}", result);
         String orderSn = result.getOutTradeNo();
         String payId = result.getTransactionId();
-
         // 分转化成元
         String totalFee = BaseWxPayResult.fenToYuan(result.getTotalFee());
         MealOrder mealOrder = this.selectOrderBySn(orderSn);
-
-        return null;
+        if (Objects.isNull(mealOrder)) {
+            return WxPayNotifyResponse.fail("订单不存在 sn=" + orderSn);
+        }
+        if (OrderStatusEnum.notPayed(mealOrder)) {
+            return WxPayNotifyResponse.success("订单已经处理成功!");
+        }
+        // 检查支付订单金额
+        if (!totalFee.equals(mealOrder.getActualPrice().toString())) {
+            return WxPayNotifyResponse.fail(mealOrder.getOrderSn() + " : 支付金额不符合 totalFee=" + totalFee);
+        }
+        mealOrder.setPayId(payId);
+        mealOrder.setPayTime(LocalDateTime.now());
+        mealOrder.setOrderStatus(OrderStatusEnum.PAID.getMapping());
+        if (this.mealOrderMapper.updateByPrimaryKey(mealOrder) < 1) {
+            return WxPayNotifyResponse.fail("更新数据已失效");
+        }
+        return WxPayNotifyResponse.success("处理成功!");
     }
 
-    private  MealOrder selectOrderBySn(String orderSn) {
+    private MealOrder selectOrderBySn(String orderSn) {
         var example = new MealOrderExample();
         example.createCriteria().andOrderSnEqualTo(orderSn).andDeletedEqualTo(Boolean.FALSE);
-        return  this.mealOrderMapper.selectOneByExample(example);
+        return this.mealOrderMapper.selectOneByExample(example);
     }
 }
 

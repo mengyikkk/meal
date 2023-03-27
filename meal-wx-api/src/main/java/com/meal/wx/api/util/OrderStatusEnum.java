@@ -1,6 +1,7 @@
 package com.meal.wx.api.util;
 
 import com.meal.common.StateMapping;
+import com.meal.common.dto.MealOrder;
 
 public enum OrderStatusEnum implements StateMapping<Short> {
     UNPAID((short) 0, "未支付"),
@@ -24,5 +25,9 @@ public enum OrderStatusEnum implements StateMapping<Short> {
 
     public String getMessage() {
         return message;
+    }
+    public static boolean notPayed(MealOrder order) {
+        return OrderStatusEnum.PAID.is(order.getOrderStatus()) ||OrderStatusEnum.COMPLETED.is(order.getOrderStatus())
+                || OrderStatusEnum.REFUNDED.is(order.getOrderStatus());
     }
 }

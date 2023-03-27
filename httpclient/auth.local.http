@@ -1,4 +1,4 @@
-POST http://localhost:9001/wx/auth/register
+POST {{host}}/wx/auth/register
 Content-Type: application/json
 
 {
@@ -23,34 +23,22 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:9001/wx/auth/refresh
+POST {{host}}/wx/auth/refresh
 Authorization:  {{token}}
 
 ###
-GET  http://localhost:9001/wx/auth
+GET  {{host}}/wx/auth
 Authorization: {{token}}
 
 ###
-POST http://localhost:9001/wx/shop/list
+POST {{host}}/wx/shop/list
 Authorization:  {{token}}
 Content-Type: application/json
 
 
 
 ###
-POST http://localhost:9001/wx/goods
-Authorization:  {{token}}
-Content-Type: application/json
-
-{
-  "shopId": 1046003,
-  "categoryId": 1036008,
-  "page": 1,
-  "limit": 10
-}
-
-###
-POST http://localhost:9001/wx/goods/little
+POST {{host}}/wx/goods
 Authorization:  {{token}}
 Content-Type: application/json
 
@@ -61,7 +49,18 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:9001/wx/cart/add
+POST {{host}}/wx/goods/little
+Authorization:  {{token}}
+Content-Type: application/json
+
+{
+  "shopId": 1046003,
+  "page": 1,
+  "limit": 10
+}
+
+###
+POST {{host}}/wx/cart/add
 Authorization:  {{token}}
 Content-Type: application/json
 
@@ -93,15 +92,15 @@ Content-Type: application/json
 }
 
 ###
-GET  http://localhost:9001/wx/cart/amount?shopId=1046003
+GET  {{host}}/wx/cart/amount?shopId=1046003
 Authorization: {{token}}
 
 ###
-GET  http://localhost:9001/wx/cart?shopId=1046003
+GET  {{host}}/wx/cart?shopId=1046003
 Authorization: {{token}}
 
 ###
-POST  http://localhost:9001/wx/cart/delete?shopId=1046003
+POST  {{host}}/wx/cart/delete?shopId=1046003
 Authorization: {{token}}
 
 ###
@@ -109,16 +108,16 @@ GET  {{host}}/wx/category?shopId=1046003
 Authorization: {{token}}
 
 ###
-GET  http://localhost:9001/wx/banner
+GET  {{host}}/wx/banner
 Authorization: {{token}}
 
 ###
-GET  http://localhost:9001/wx/auth/bind/1046003
+GET  {{host}}/wx/auth/bind/1046003
 Authorization: {{token}}
 
 ###
 
-POST http://localhost:9001/wx/auth/loginByWx
+POST {{host}}/wx/auth/loginByWx
 Content-Type: application/json
 
 {
@@ -130,7 +129,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:9001/wx/order/submit
+POST {{host}}/wx/order/submit
 Content-Type: application/json
 Authorization: {{token}}
 

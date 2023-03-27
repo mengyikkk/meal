@@ -744,9 +744,11 @@
             from meal_goods
             WHERE deleted = 0
             <if test="request.goodsName != null">AND `name` LIKE CONCAT('%',#{goodsName}, '%')</if>
-            AND (shop_id =0
-            <if test="request.shopId != null">OR shop_id = #{request.shopId}</if>
-            )
+            <if test="request.shopId != null">
+                AND (shop_id =0
+                OR shop_id = #{request.shopId
+            })
+            </if>
             <if test="request.goodsSn != null">AND goods_sn = #{request.goodsSn}</if>
             <if test="request.categoryId != null">AND category_id = #{request.categoryId}</if>
             <if test="request.isOnSale != null">AND is_on_sale = #{request.isOnSale}</if>
