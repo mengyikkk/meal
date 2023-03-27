@@ -15,7 +15,6 @@ import java.io.PrintWriter;
 
 /**
  * 没有权限访问时返回结果
- * @author ajie
  * @createTime 2021年07月27日 22:23:00
  */
 @Component

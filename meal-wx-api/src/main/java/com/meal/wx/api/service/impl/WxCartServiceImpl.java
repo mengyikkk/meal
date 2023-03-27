@@ -202,7 +202,8 @@ public class WxCartServiceImpl implements WxCartService {
         var example = new MealCartExample();
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         var exampleCalamity = new MealCartCalamityExample();
-        exampleCalamity.createCriteria().andCartIdIn(this.mealCartMapper.selectByExample(example).stream().map(MealCart::getId).collect(Collectors.toList())).andDeletedEqualTo(MealCartCalamity.NOT_DELETED);
+        exampleCalamity.createCriteria().andCartIdIn(this.mealCartMapper.selectByExample(example).stream().map(MealCart::getId)
+                .collect(Collectors.toList())).andDeletedEqualTo(MealCartCalamity.NOT_DELETED);
         this.mealCartCalamityMapper.deleteByExample(exampleCalamity);
         this.mealCartMapper.deleteByExample(example);
         return ResultUtils.success();
@@ -212,5 +213,14 @@ public class WxCartServiceImpl implements WxCartService {
         var example = new MealCartExample();
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         return this.mealCartMapper.countByExample(example);
+    }
+    public void deleteShoppingCart(Long uid, Long shopId, LinkedList<Function<Void, Integer>> functionsCart){
+        var example = new MealCartExample();
+        example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
+        var exampleCalamity = new MealCartCalamityExample();
+        exampleCalamity.createCriteria().andCartIdIn(this.mealCartMapper.selectByExample(example).stream().map(MealCart::getId)
+                .collect(Collectors.toList())).andDeletedEqualTo(MealCartCalamity.NOT_DELETED);
+        this.mealCartCalamityMapper.deleteByExample(exampleCalamity);
+        this.mealCartMapper.deleteByExample(example);
     }
 }

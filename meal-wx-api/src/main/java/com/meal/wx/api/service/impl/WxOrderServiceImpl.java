@@ -74,6 +74,8 @@ public class WxOrderServiceImpl implements WxOrderService {
     private WxPayService wxPayService;
     @Resource
     private MealOrderWxMapper mealOrderWxMapper;
+    @Resource
+    private WxCartServiceImpl wxCartService;
     private final Logger logger = LoggerFactory.getLogger(WxOrderServiceImpl.class);
 
     @Override
@@ -92,6 +94,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         }
         // 查找购物车中的商品信息
         LinkedList<Function<Void, Integer>> functions = new LinkedList<>();
+        LinkedList<Function<Void, Integer>> functionsCart = new LinkedList<>();
         var goodListVo = wxOrderVo.getShoppingCartVos();
         var shopId = wxOrderVo.getShopId();
         List<Long> goodListVoIds = goodListVo.stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList());
@@ -140,6 +143,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
         }).collect(Collectors.toList())));
         if (this.transactionExecutor.transaction(functions, 1 + mealOrderGoodsList.size() + mealOrderCalamityList.size())) {
+            //清空购物车
             return this.prepaySon(user, mealOrder);
         }
         return ResultUtils.unknown();
