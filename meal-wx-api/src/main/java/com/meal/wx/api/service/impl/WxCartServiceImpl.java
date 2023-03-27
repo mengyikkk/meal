@@ -2,9 +2,22 @@ package com.meal.wx.api.service.impl;
 
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
-import com.meal.common.dto.*;
-import com.meal.common.mapper.*;
-import com.meal.common.model.*;
+import com.meal.common.dto.MealCart;
+import com.meal.common.dto.MealCartCalamity;
+import com.meal.common.dto.MealCartCalamityExample;
+import com.meal.common.dto.MealCartExample;
+import com.meal.common.dto.MealGoods;
+import com.meal.common.dto.MealLittleCalamity;
+import com.meal.common.mapper.MealCartCalamityMapper;
+import com.meal.common.mapper.MealCartMapper;
+import com.meal.common.mapper.MealGoodsMapper;
+import com.meal.common.mapper.MealLittleCalamityMapper;
+import com.meal.common.mapper.MealShopMapper;
+import com.meal.common.model.CartCalamityVo;
+import com.meal.common.model.ShoppingCartVo;
+import com.meal.common.model.WxShopCartCalamitySonVo;
+import com.meal.common.model.WxShopCartResponseVo;
+import com.meal.common.model.WxShoppingCartVo;
 import com.meal.common.transaction.TransactionExecutor;
 import com.meal.common.utils.MapperUtils;
 import com.meal.common.utils.ResultUtils;
@@ -13,6 +26,7 @@ import com.meal.wx.api.service.WxCartService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +34,13 @@ import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -189,7 +209,6 @@ public class WxCartServiceImpl implements WxCartService {
     }
 
     @Override
-    @Transactional
     public Result<?> deleteShoppingCartList(Long uid, Long shopId) {
         {
             var shop = this.mealShopMapper.selectByPrimaryKeyWithLogicalDelete(shopId, Boolean.FALSE);
@@ -199,13 +218,8 @@ public class WxCartServiceImpl implements WxCartService {
             }
         }
         this.logger.info("[WxCartServiceImpl][deleteShoppingCartList]:store. uid: {} 清空购物车, ", uid);
-        var example = new MealCartExample();
-        example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
-        var exampleCalamity = new MealCartCalamityExample();
-        exampleCalamity.createCriteria().andCartIdIn(this.mealCartMapper.selectByExample(example).stream().map(MealCart::getId)
-                .collect(Collectors.toList())).andDeletedEqualTo(MealCartCalamity.NOT_DELETED);
-        this.mealCartCalamityMapper.deleteByExample(exampleCalamity);
-        this.mealCartMapper.deleteByExample(example);
+        WxCartService wxCartService = (WxCartService) AopContext.currentProxy();
+        wxCartService.deleteShoppingCart(uid, shopId);
         return ResultUtils.success();
     }
 
@@ -214,7 +228,10 @@ public class WxCartServiceImpl implements WxCartService {
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         return this.mealCartMapper.countByExample(example);
     }
-    public void deleteShoppingCart(Long uid, Long shopId, LinkedList<Function<Void, Integer>> functionsCart){
+
+    @Transactional
+    @Override
+    public void deleteShoppingCart(Long uid, Long shopId){
         var example = new MealCartExample();
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         var exampleCalamity = new MealCartCalamityExample();

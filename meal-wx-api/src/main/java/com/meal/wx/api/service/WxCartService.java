@@ -9,4 +9,6 @@ public interface WxCartService {
      Result<?> selectShoppingCartAmount(Long uid, Long shopId);
      Result<?> selectShoppingCartList(Long uid, Long shopId);
      Result<?> deleteShoppingCartList(Long uid, Long shopId);
+
+     void deleteShoppingCart(Long uid, Long shopId);
 }
