@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/wx/order")
@@ -40,5 +41,13 @@ public class WxOrderController {
     @PostMapping("/pay-notify")
     public Object payNotify(HttpServletRequest request, HttpServletResponse response) {
         return this.wxOrderService.payNotify(request, response);
+    }
+    @PostMapping("/refund/{orderId}")
+    public Object refund(@PathVariable("orderId") Long orderId) {
+        return this.wxOrderService.refund(SecurityUtils.getUserId(), orderId);
+    }
+    @GetMapping("/detail/{orderId}")
+    public  Result<?> detail(@PathVariable("orderId") Long orderId) {
+        return wxOrderService.detail(SecurityUtils.getUserId(), orderId);
     }
 }

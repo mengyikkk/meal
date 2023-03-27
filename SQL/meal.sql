@@ -308,3 +308,18 @@ CREATE TABLE `meal_order_goods_calamity` (
                                     KEY `goods_id` (`order_goods_id`),
                                     KEY `calamity_id` (`calamity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单小料表';
+
+CREATE TABLE `meal_order_wx` (
+                                    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                    `order_id` bigint(20) NOT NULL  COMMENT '订单表的订单ID',
+                                    `order_type` varchar(25) NOT NULL  COMMENT '订单种类',
+                                    `request_param` varchar(25) NOT NULL  COMMENT '请求wx_json',
+                                    `response_param` varchar(25) NOT NULL  COMMENT 'wx返回json',
+                                    `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                    `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+                                    `version` INT NOT NULL DEFAULT 0,
+                                    PRIMARY KEY (`id`),
+                                    KEY `order_id` (`order_id`),
+                                    KEY `order_type` (`order_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='微信日志表';

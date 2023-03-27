@@ -30,4 +30,8 @@ public enum OrderStatusEnum implements StateMapping<Short> {
         return OrderStatusEnum.PAID.is(order.getOrderStatus()) ||OrderStatusEnum.COMPLETED.is(order.getOrderStatus())
                 || OrderStatusEnum.REFUNDED.is(order.getOrderStatus());
     }
+    public static boolean isCanceled(MealOrder order) {
+        return OrderStatusEnum.PAID.is(order.getOrderStatus()) ||OrderStatusEnum.UNPAID.is(order.getOrderStatus());
+    }
+
 }

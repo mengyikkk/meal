@@ -10,5 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface WxOrderService {
     Result<?> submit(WxOrderVo wxOrderVo, Long uid);
     Result<?> prepay(Long uid,Long orderId);
+    Result<?> refund(Long uid,Long orderId);
+    Result<?> detail(Long uid,Long orderId);
     Object payNotify(HttpServletRequest request, HttpServletResponse response);
 }

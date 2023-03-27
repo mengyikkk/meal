@@ -1,11 +1,9 @@
 package com.meal.common.utils;
 
-import com.meal.common.dto.MealGoods;
-import com.meal.common.dto.MealGoodsExample;
-import com.meal.common.dto.MealLittleCalamity;
-import com.meal.common.dto.MealLittleCalamityExample;
+import com.meal.common.dto.*;
 import com.meal.common.mapper.MealGoodsMapper;
 import com.meal.common.mapper.MealLittleCalamityMapper;
+import com.meal.common.mapper.MealShopMapper;
 import org.springframework.util.ObjectUtils;
 
 import java.math.BigInteger;
@@ -37,5 +35,7 @@ public  final class MapperUtils {
         }
         return  mealLittleCalamityMapper.selectByExample(example).stream().collect(Collectors.toMap(MealLittleCalamity::getId, Function.identity()));
     }
-
+    public static Map<Long, MealShop> shopMapByIds(List<Long>ids, MealShopMapper mealShopMapper){
+       return mealShopMapper.selectByExample(new MealShopExample().createCriteria().andIdIn(ids).example()).stream().collect(Collectors.toMap(MealShop::getId,Function.identity()));
+    }
 }

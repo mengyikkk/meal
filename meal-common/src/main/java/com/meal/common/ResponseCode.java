@@ -23,6 +23,10 @@ public enum ResponseCode implements StateMapping<Integer> {
     ORDER_STATUS_FAIL ( 723,"订单状态错误,无法支付"),
 //    publORDER_CANCEL_FAIL ( 723),
     ORDER_PAY_FAIL ( 724,"订单不能支付"),
+    ORDER_REFUND_FAILED(621,"订单退款失败"),
+    ORDER_UPDATE_FAILED(622,"更新数据已失效"),
+    ORDER_CONFIRM_NOT_ALLOWED(623,"订单状态无法取消"),
+    ORDER_NOT_FIND(624,"找不到此笔订单"),
     // 订单当前状态下不支持用户的操作，例如商品未发货状态用户执行确认收货是不可能的。
 //    ORDER_INVALID_OPERATION ( 725),
 //    ORDER_COMMENTED ( 726),
