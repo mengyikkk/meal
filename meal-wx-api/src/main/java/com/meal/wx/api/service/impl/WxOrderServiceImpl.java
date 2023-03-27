@@ -20,6 +20,7 @@ import com.meal.common.utils.JsonUtils;
 import com.meal.common.utils.MapperUtils;
 import com.meal.common.utils.ResultUtils;
 import com.meal.common.utils.SecurityUtils;
+import com.meal.wx.api.service.WxCartService;
 import com.meal.wx.api.service.WxOrderService;
 import com.meal.wx.api.util.OrderSnUtils;
 import com.meal.wx.api.util.OrderStatusEnum;
@@ -75,7 +76,7 @@ public class WxOrderServiceImpl implements WxOrderService {
     @Resource
     private MealOrderWxMapper mealOrderWxMapper;
     @Resource
-    private WxCartServiceImpl wxCartService;
+    private WxCartService wxCartService;
     private final Logger logger = LoggerFactory.getLogger(WxOrderServiceImpl.class);
 
     @Override
@@ -144,6 +145,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         }).collect(Collectors.toList())));
         if (this.transactionExecutor.transaction(functions, 1 + mealOrderGoodsList.size() + mealOrderCalamityList.size())) {
             //清空购物车
+            this.wxCartService.deleteShoppingCart(uid,shopId);
             return this.prepaySon(user, mealOrder);
         }
         return ResultUtils.unknown();
@@ -193,6 +195,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     mealOrderGoods.setGoodsId(g.getId()); // 设置MealOrderGoods的goodsId字段为MealGoods的id
                     mealOrderGoods.setGoodsName(g.getName()); // 设置MealOrderGoods的goodsName字段为MealGoods的name
                     mealOrderGoods.setGoodsSn(g.getGoodsSn());// 设置MealOrderGoods的goodsSn字段为MealGoods的goodsSn
+                    mealOrderGoods.setUnit(g.getUnit());
                     mealOrderGoods.setNumber(shoppingCartVo.getNumber()); // 设置MealOrderGoods的number字段为OrderCartVo的number
                     mealOrderGoods.setPrice(g.getPrice()); // 设置MealOrderGoods的price字段为MealGoods的price
                     mealOrderGoods.setPicUrl(g.getPicUrl());
@@ -207,6 +210,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             mealOrderCalamity.setCalamityId(calamity.getId());
             mealOrderCalamity.setCalamitySn(calamity.getUnit());
             mealOrderCalamity.setCalamityName(calamity.getName());
+            mealOrderCalamity.setUnit(c.getUnit());
             mealOrderCalamity.setPrice(orderCartCalamityVo.getCalamityPrice());
             mealOrderCalamity.setNumber(orderCartCalamityVo.getCalamityNumber());
             return mealOrderCalamity;
@@ -336,8 +340,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             vo.setNickName(user.getNickname());
             vo.setOrderSn(validOrder.getOrderSn());
             vo.setShopName(shop.getName());
-            // TODO: 2023/03/27 这里需要填写商店电话信息
-            vo.setShopPhone(null);
+            vo.setShopPhone(shop.getPhone());
             vo.setMoney(validOrder.getActualPrice());
             vo.setOrderDate(validOrder.getAddTime());
             vo.setOrderDetailGoodsVos(listByGoods.stream().map(e -> {
@@ -345,8 +348,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 var goodsVo = new OrderDetailGoodsVo();
                 goodsVo.setGoodsMoney(e.getPrice().multiply(BigDecimal.valueOf(e.getNumber())));
                 goodsVo.setGoodsName(e.getGoodsName());
-                // TODO: 2023/03/27 这里需要填写商品单位信息
-                goodsVo.setUnit(null);
+                goodsVo.setUnit(e.getUnit());
                 goodsVo.setGoodsNumber(e.getNumber());
 
                 // 如果商品存在灾害商品信息，创建订单商品灾害的VO对象
@@ -356,8 +358,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 } else {
                     goodsVo.setOrderDetailCalamityVos(calamities.stream().map(a -> {
                         return new OrderDetailCalamityVo().setCalamityNumber(a.getNumber()).setCalamityName(a.getCalamityName())
-                                // TODO: 2023/03/27 这里需要填写灾害商品单位信息
-                                .setUnit("").setCalamityMoney(a.getPrice().multiply(BigDecimal.valueOf(a.getNumber())));
+                                .setUnit(a.getUnit()).setCalamityMoney(a.getPrice().multiply(BigDecimal.valueOf(a.getNumber())));
                     }).collect(Collectors.toList()));
                 }
                 return goodsVo;

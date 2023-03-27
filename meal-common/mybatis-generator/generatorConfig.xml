@@ -62,13 +62,13 @@
 <!--        <table tableName="meal_cart">-->
 <!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
-<!--        <table tableName="meal_order_goods_calamity">-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
-<!--        </table>-->
-<!--        <table tableName="meal_order_goods">-->
-<!--            <generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
-<!--        </table>-->
-        <table tableName="meal_order_wx">
+        <table tableName="meal_order_goods_calamity">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="meal_order_goods">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="meal_shop">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
     </context>
