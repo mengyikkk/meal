@@ -95,7 +95,6 @@ public class WxOrderServiceImpl implements WxOrderService {
         }
         // 查找购物车中的商品信息
         LinkedList<Function<Void, Integer>> functions = new LinkedList<>();
-        LinkedList<Function<Void, Integer>> functionsCart = new LinkedList<>();
         var goodListVo = wxOrderVo.getShoppingCartVos();
         var shopId = wxOrderVo.getShopId();
         List<Long> goodListVoIds = goodListVo.stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList());
@@ -197,7 +196,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     mealOrderGoods.setGoodsSn(g.getGoodsSn());// 设置MealOrderGoods的goodsSn字段为MealGoods的goodsSn
                     mealOrderGoods.setUnit(g.getUnit());
                     mealOrderGoods.setNumber(shoppingCartVo.getNumber()); // 设置MealOrderGoods的number字段为OrderCartVo的number
-                    mealOrderGoods.setPrice(g.getPrice()); // 设置MealOrderGoods的price字段为MealGoods的price
+                    mealOrderGoods.setPrice(g.getRetailPrice()); // 设置MealOrderGoods的price字段为MealGoods的price
                     mealOrderGoods.setPicUrl(g.getPicUrl());
                     return mealOrderGoods;
                 }) // 设置MealOrderGoods的picUrl字段为MealGoods的picUrl
@@ -346,7 +345,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             vo.setOrderDetailGoodsVos(listByGoods.stream().map(e -> {
                 // 创建订单商品的VO对象
                 var goodsVo = new OrderDetailGoodsVo();
-                goodsVo.setGoodsMoney(e.getPrice().multiply(BigDecimal.valueOf(e.getNumber())));
+                goodsVo.setGoodsMoney(e.getPrice());
                 goodsVo.setGoodsName(e.getGoodsName());
                 goodsVo.setUnit(e.getUnit());
                 goodsVo.setGoodsNumber(e.getNumber());
@@ -358,7 +357,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 } else {
                     goodsVo.setOrderDetailCalamityVos(calamities.stream().map(a -> {
                         return new OrderDetailCalamityVo().setCalamityNumber(a.getNumber()).setCalamityName(a.getCalamityName())
-                                .setUnit(a.getUnit()).setCalamityMoney(a.getPrice().multiply(BigDecimal.valueOf(a.getNumber())));
+                                .setUnit(a.getUnit()).setCalamityMoney(a.getPrice());
                     }).collect(Collectors.toList()));
                 }
                 return goodsVo;
@@ -388,6 +387,8 @@ public class WxOrderServiceImpl implements WxOrderService {
                 vo.setMoney(e.getActualPrice());
                 // 设置订单的添加时间
                 vo.setOrderDate(e.getAddTime());
+                vo.setOrderStatus(e.getOrderStatus());
+                vo.setOrderStatusMessage(OrderStatusEnum.find(e.getOrderStatus()).get().getMessage());
                 // 设置订单的 id
                 vo.setOrderId(e.getId());
                 // 设置店铺的头像 URL
@@ -398,7 +399,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             }).collect(Collectors.toList());
 
             // 将 OrderRecordVo 列表封装到 Result 对象中并返回
-            return ResultUtils.success(listVo);
+            return ResultUtils.successWithEntities(listVo, (long) listVo.size());
         }
     }
 
@@ -417,7 +418,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         log.setOrderId(order.getId());
 
         // 记录支付请求参数并输出日志
-        this.logger.info("订单:{},用户:{},正在调取微信支付", JsonUtils.toJsonKeepNullValue(user), JsonUtils.toJsonKeepNullValue(order));
+        this.logger.info("订单:{},用户:{},正在调取微信支付", JsonUtils.toJson(user), JsonUtils.toJson(order));
 
         // 获取用户的微信OpenID
         String wxOpenid = user.getWxOpenid();
@@ -448,7 +449,7 @@ public class WxOrderServiceImpl implements WxOrderService {
 
         // 记录支付响应结果并将记录对象存入数据库
         log.setResponseParam(JsonUtils.toJsonKeepNullValue(result));
-        this.mealOrderWxMapper.insert(log);
+        this.mealOrderWxMapper.insertSelective(log);
 
         // 返回支付结果
         return ResultUtils.success(result);

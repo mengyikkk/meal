@@ -46,8 +46,8 @@ public class WxOrderController {
     public Object refund(@PathVariable("orderId") Long orderId) {
         return this.wxOrderService.refund(SecurityUtils.getUserId(), orderId);
     }
-    @GetMapping("/detail/{orderId}")
-    public  Result<?> detail(@PathVariable("orderId") Long orderId) {
+    @GetMapping("/detail")
+    public  Result<?> detail(@RequestParam(required = false) Long orderId) {
         return wxOrderService.detail(SecurityUtils.getUserId(), orderId);
     }
 }

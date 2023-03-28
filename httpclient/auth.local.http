@@ -128,7 +128,6 @@ Content-Type: application/json
 }
 
 ###
-
 POST {{host}}/wx/order/submit
 Content-Type: application/json
 Authorization: {{token}}
@@ -170,4 +169,10 @@ Authorization: {{token}}
   "orderPrice": 61.00,
   "actualPrice": 61.00
 }
-
+###
+GET {{host}}/wx/order/detail?orderId=6
+Content-Type: application/json
+Authorization: {{token}}
+###
+POST  {{host}}/wx/order/prepay/6
+Authorization: {{token}}

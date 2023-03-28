@@ -82,8 +82,7 @@ public class WxCartServiceImpl implements WxCartService {
         //取出数据库有效的商品和小料
         Map<Long, MealGoods> longMealGoodsMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shoppingCartVo.getShopId(), cartGoodIds);
         //店铺小料集合 //商品对应小料集合
-        var goodsByCalamity = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, Collections.emptyList()
-                , new ArrayList<>(longMealGoodsMap.keySet()), shoppingCartVo.getShopId());
+        var goodsByCalamity = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, Collections.emptyList(), new ArrayList<>(longMealGoodsMap.keySet()), shoppingCartVo.getShopId());
 
         List<Function<Void, Integer>> functions = new LinkedList<>();
         var example = new MealCartExample();
@@ -97,8 +96,8 @@ public class WxCartServiceImpl implements WxCartService {
         Collections.reverse(products);
         for (ShoppingCartVo product : products) {
             MealGoods goods = longMealGoodsMap.getOrDefault(product.getGoodsId(), null);
-            if (Objects.isNull(goods)){
-                return ResultUtils.entityMessage(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage(),product.getGoodsId());
+            if (Objects.isNull(goods)) {
+                return ResultUtils.entityMessage(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage(), product.getGoodsId());
             }
             var cart = new MealCart();
             cart.setGoodsId(goods.getId());
@@ -115,8 +114,7 @@ public class WxCartServiceImpl implements WxCartService {
                 for (CartCalamityVo cartCalamityVo : product.getCartCalamityVos()) {
                     MealLittleCalamity littleCalamity = goodsByCalamity.getOrDefault(cartCalamityVo.getCalamityId(), null);
                     if (Objects.isNull(littleCalamity)) {
-                        return ResultUtils.entityMessage(ResponseCode.CALAMITY_IS_INVALID,
-                                ResponseCode.CALAMITY_IS_INVALID.getMessage(),cartCalamityVo.getCalamityId());
+                        return ResultUtils.entityMessage(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage(), cartCalamityVo.getCalamityId());
                     }
                     var cartCalamity = new MealCartCalamity();
                     cartCalamity.setCalamityId(littleCalamity.getId());
@@ -166,8 +164,7 @@ public class WxCartServiceImpl implements WxCartService {
         var cartCalamityMap = mealCartCalamities.stream().collect(Collectors.groupingBy(MealCartCalamity::getCartId));
         var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shopId, Collections.emptyList());
         //小料
-        var calamityMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCartCalamities.stream().map(MealCartCalamity::getCalamityId)
-                .collect(Collectors.toList()), new ArrayList<>(goodsByShopMap.keySet()), shopId);
+        var calamityMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCartCalamities.stream().map(MealCartCalamity::getCalamityId).collect(Collectors.toList()), new ArrayList<>(goodsByShopMap.keySet()), shopId);
         var result = mealCarts.stream().map(e -> {
             var vo = new WxShopCartResponseVo();
             var product = goodsByShopMap.getOrDefault(e.getGoodsId(), null);
@@ -231,13 +228,14 @@ public class WxCartServiceImpl implements WxCartService {
 
     @Transactional
     @Override
-    public void deleteShoppingCart(Long uid, Long shopId){
+    public void deleteShoppingCart(Long uid, Long shopId) {
         var example = new MealCartExample();
         example.createCriteria().andShopIdEqualTo(shopId).andUserIdEqualTo(uid).andDeletedEqualTo(MealCart.NOT_DELETED);
         var exampleCalamity = new MealCartCalamityExample();
-        exampleCalamity.createCriteria().andCartIdIn(this.mealCartMapper.selectByExample(example).stream().map(MealCart::getId)
-                .collect(Collectors.toList())).andDeletedEqualTo(MealCartCalamity.NOT_DELETED);
-        this.mealCartCalamityMapper.deleteByExample(exampleCalamity);
+        List<Long> cartIds = this.mealCartMapper.selectByExample(example).stream().map(MealCart::getId).collect(Collectors.toList());
+        if (ObjectUtils.isNotEmpty(cartIds)) {
+            this.mealCartCalamityMapper.deleteByExample(exampleCalamity);
+        }
         this.mealCartMapper.deleteByExample(example);
     }
 }

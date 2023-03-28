@@ -3,6 +3,10 @@ package com.meal.wx.api.util;
 import com.meal.common.StateMapping;
 import com.meal.common.dto.MealOrder;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+
 public enum OrderStatusEnum implements StateMapping<Short> {
     UNPAID((short) 0, "未支付"),
     PAID((short) 1, "已支付"),
@@ -33,5 +37,8 @@ public enum OrderStatusEnum implements StateMapping<Short> {
     public static boolean isCanceled(MealOrder order) {
         return OrderStatusEnum.PAID.is(order.getOrderStatus()) ||OrderStatusEnum.UNPAID.is(order.getOrderStatus());
     }
-
+    public static Optional<OrderStatusEnum> find(Short code){
+        Objects.requireNonNull(code);
+        return Arrays.stream(OrderStatusEnum.values()).filter(entity-> entity.is(code)).findFirst();
+    }
 }

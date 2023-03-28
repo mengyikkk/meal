@@ -1,5 +1,7 @@
 package com.meal.common.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -7,6 +9,7 @@ public class OrderRecordVo {
     private Long  orderId;
     private String shopName;
     private String shopAvatar;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderDate;
 
     private  Short  orderStatus;
