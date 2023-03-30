@@ -6,10 +6,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class WxGoodsResponseVo {
-    private Long id;
+    private Long goodsId;
     private String goodsSn;
 
-    private String name;
+    private String goodsName;
 
     private Boolean isOnSale;
 
@@ -20,18 +20,18 @@ public class WxGoodsResponseVo {
 
     private String unit;
 
-    private BigDecimal retailPrice;
+    private BigDecimal price;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime addTime;
 
     private String detail;
 
-    public Long getId() {
-        return id;
+    public Long getGoodsId() {
+        return goodsId;
     }
 
-    public WxGoodsResponseVo setId(Long id) {
-        this.id = id;
+    public WxGoodsResponseVo setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
         return this;
     }
 
@@ -44,12 +44,12 @@ public class WxGoodsResponseVo {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getGoodsName() {
+        return goodsName;
     }
 
-    public WxGoodsResponseVo setName(String name) {
-        this.name = name;
+    public WxGoodsResponseVo setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
         return this;
     }
 
@@ -89,12 +89,12 @@ public class WxGoodsResponseVo {
         return this;
     }
 
-    public BigDecimal getRetailPrice() {
-        return retailPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public WxGoodsResponseVo setRetailPrice(BigDecimal retailPrice) {
-        this.retailPrice = retailPrice;
+    public WxGoodsResponseVo setPrice(BigDecimal price) {
+        this.price = price;
         return this;
     }
 

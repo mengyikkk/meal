@@ -4,5 +4,5 @@ import com.meal.common.Result;
 
 public interface WxCategoryService {
 
-    Result<?> list(Long uid, Long shopId);
+    Result<?> list(Long uid, Long shopId,Integer isTimeOnSale);
 }

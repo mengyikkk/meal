@@ -3,7 +3,7 @@ package com.meal.common.model;
 import java.math.BigDecimal;
 
 public class WxLittleCalamityResponseVo {
-    private Long id;
+    private Long calamityId;
 
     /**
      *
@@ -12,7 +12,7 @@ public class WxLittleCalamityResponseVo {
      *
      * @mbg.generated
      */
-    private String name;
+    private String calamityName;
 
     private Long goodsId;
 
@@ -23,28 +23,12 @@ public class WxLittleCalamityResponseVo {
 
     private String unit;
 
-    private BigDecimal retailPrice;
+    private BigDecimal price;
 
     private Integer isTimeOnSale;
     private Boolean isOnSale;
 
-    public Long getId() {
-        return id;
-    }
 
-    public WxLittleCalamityResponseVo setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public WxLittleCalamityResponseVo setName(String name) {
-        this.name = name;
-        return this;
-    }
 
     public Long getGoodsId() {
         return goodsId;
@@ -91,14 +75,7 @@ public class WxLittleCalamityResponseVo {
         return this;
     }
 
-    public BigDecimal getRetailPrice() {
-        return retailPrice;
-    }
 
-    public WxLittleCalamityResponseVo setRetailPrice(BigDecimal retailPrice) {
-        this.retailPrice = retailPrice;
-        return this;
-    }
 
     public Integer getIsTimeOnSale() {
         return isTimeOnSale;
@@ -114,6 +91,42 @@ public class WxLittleCalamityResponseVo {
     }
 
     public WxLittleCalamityResponseVo setIsOnSale(Boolean onSale) {
+        isOnSale = onSale;
+        return this;
+    }
+
+    public Long getCalamityId() {
+        return calamityId;
+    }
+
+    public WxLittleCalamityResponseVo setCalamityId(Long calamityId) {
+        this.calamityId = calamityId;
+        return this;
+    }
+
+    public String getCalamityName() {
+        return calamityName;
+    }
+
+    public WxLittleCalamityResponseVo setCalamityName(String calamityName) {
+        this.calamityName = calamityName;
+        return this;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public WxLittleCalamityResponseVo setPrice(BigDecimal price) {
+        this.price = price;
+        return this;
+    }
+
+    public Boolean getOnSale() {
+        return isOnSale;
+    }
+
+    public WxLittleCalamityResponseVo setOnSale(Boolean onSale) {
         isOnSale = onSale;
         return this;
     }

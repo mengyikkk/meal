@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 跨域处理的配置类
  */
 @Configuration
-public class WebConfig  {
+public class WebConfig {
 
     @Bean
     public CorsFilter corsFilter()

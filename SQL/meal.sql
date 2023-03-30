@@ -201,6 +201,7 @@ CREATE TABLE `meal_category` (
                                      `icon_url` varchar(255) DEFAULT '' COMMENT '类目图标',
                                      `pic_url` varchar(255) DEFAULT '' COMMENT '类目图片',
                                      `sort_order` tinyint(3) DEFAULT '50' COMMENT '排序',
+                                     `is_time_on_sale` int(11) DEFAULT 0 COMMENT '1,早餐2,午餐 3,晚餐 0,全时段供应',
                                      `add_time` datetime  DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                      `update_time` datetime DEFAULT NULL COMMENT '更新时间'  ON UPDATE CURRENT_TIMESTAMP,
                                      `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',

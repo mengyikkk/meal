@@ -44,6 +44,12 @@
 | 713  | 商品失效           ||
 | 714  | 小料失效           ||
 | 708  | 小程序openId失效    ||
+| 722  | 订单价格check失败    ||
+| 723  | 订单状态错误,无法支付    ||
+| 724  | 订单不能支付         ||
+| 623  | 订单状态无法取消       ||
+| 624  | 找不到此笔订单        ||
+| 621  | 订单退款失败         ||
 | 709  | 小程序openId 无效绑定 ||
 | 2040 | 当前帐户同时被登录了两次   ||
 | 2050 | 当前帐户需要重新设置密码   ||
@@ -270,9 +276,9 @@ response:
    "description": null,
    "result": [
    {
-   "id": 1181004,
+   "goodsId": 1181004,
    "goodsSn": "1181004",
-   "name": "蛋肠粉",
+   "goodsName": "蛋肠粉",
    "isOnSale": true,
    "isTimeOnSale": 1,
    "picUrl": null,
@@ -283,9 +289,9 @@ response:
    "detail": "蛋肠粉"
    },
    {
-   "id": 1181005,
+   "goodsId": 1181005,
    "goodsSn": "1181005",
-   "name": "肉肠粉",
+   "goodsName": "肉肠粉",
    "isOnSale": true,
    "isTimeOnSale": 1,
    "picUrl": null,
@@ -299,9 +305,9 @@ response:
    "records": 2
    }
    ```
-    - `id`: integer。-- 商品id
+    - `goodsId`: integer。-- 商品id
     - `isOnSale`: boolean。 --是否贩卖 是
-    - `name`: string。--商品名
+    - `goodsName`: string。--商品名
     - `goodsSn`: string。--商品编号
     - `picUrl`: string。--商品图片url
     - `sortOrder`: integer。--排序
@@ -319,9 +325,9 @@ response:
    ```json
    {
    "shopId":1046003,
-   "littleCalamityId": 1,
+   "calamityId": 1,
    "isOnSale": true,
-   "goodsName": "蛋肠粉",
+   "calamityName": "蛋肠粉",
    "goodsId": "1",
    "isTimeOnSale": 1,
    "page": 1,
@@ -329,9 +335,9 @@ response:
    }
     ```
     - `shopId`: integer。--店铺id (必填)
-    - `littleCalamityId`: integer。--小料id 单独查询时可用(选填)
+    - `calamityId`: integer。--小料id 单独查询时可用(选填)
     - `isOnSale`: boolean。 --是否贩卖 单独查询时可用(选填)
-    - `goodsName`: string。--小料名 单独查询时可用(选填) 支持模糊查询
+    - `calamityName`: string。--小料名 单独查询时可用(选填) 支持模糊查询
     - `goodsId`: int。--商品id 单独查询时可用(选填)
     - `isTimeOnSale`: int。--时间段贩卖标识位. 1,早餐2,午餐 3,晚餐 0,全时段供应
     - `page`: int。--页数
@@ -344,8 +350,8 @@ response:
    "description": null,
    "result": [
    {
-   "id": 253,
-   "name": "萝卜干",
+   "calamityId": 253,
+   "calamityName": "萝卜干",
    "goodsId": 0,
    "picUrl": null,
    "shopId": 1046003,
@@ -356,8 +362,8 @@ response:
    "isOnSale": true
    },
    {
-   "id": 254,
-   "name": "xo酱",
+   "calamityId": 254,
+   "calamityName": "xo酱",
    "goodsId": 0,
    "picUrl": null,
    "shopId": 1046003,
@@ -371,8 +377,8 @@ response:
    "records": 4
    }
    ```
-    - `id`: integer。-- 小料id
-    - `name`: string。--商品名
+    - `calamityId`: integer。-- 小料id
+    - `calamityName`: string。--商品名
     - `brief`: string。--详细
     - `isOnSale`: boolean。 --是否贩卖
     - `goodsId`: string。--商品编号
@@ -713,3 +719,206 @@ response:
 - `token.token`: string。--token
 - `token.refresh`: string。--刷新token
 - `token.expire`: int。--过期时间 秒
+
+14. 提交订单
+
+   ```http request
+   POST {{host}}/wx/order/submit
+   Content-Type: application/json
+   Authorization: {{token}}
+   ```
+request:
+   ```json
+{
+   "shopId": 1046003,
+   "message": "请尽快送达",
+   "shoppingCartVos": [
+      {
+         "goodsId": 1181004,
+         "number": 2,
+         "price": 7.00,
+         "orderCartCalamityVos": [
+            {
+               "calamityId": 251,
+               "calamityNumber": 1,
+               "calamityPrice": 10.00
+            }
+         ]
+      },
+      {
+         "goodsId": 1181005,
+         "number": 1,
+         "price": 7.00,
+         "orderCartCalamityVos": [
+            {
+               "calamityId": 253,
+               "calamityNumber": 2,
+               "calamityPrice": 10.00
+            },
+            {
+               "calamityId": 254,
+               "calamityNumber": 1,
+               "calamityPrice": 10.00
+            }
+         ]
+      }
+   ],
+   "orderPrice": 61.00,
+   "actualPrice": 61.00
+}
+```
+- `shopId`:long。 店铺id (必填)
+- `message`:string。 备注 (非必填)
+- `shoppingCartVos`:list。 订单商品list
+- `shoppingCartVos.orderCartCalamityVos`:list。 订单小料list
+- `calamityPrice`:decimal。 小料费用(必填)  单价
+- `price`:decimal。 商品单独费用 不包含小料的单价
+
+response:
+
+ ```json
+{
+"code": 200,
+"description": null,
+"result": {
+"appId": "wxff1a8500e8238674",
+"timeStamp": "1680074902",
+"nonceStr": "EmaauQ5VeSCTp3Bt",
+"packageValue": "prepay_id=wx29152822575330db204a9bc9cc57d60000",
+"signType": "MD5",
+"paySign": "69C2CAB69CDFA94815240B050DDACF0E"
+},
+"records": null
+}
+```
+
+15. 提交再支付订单
+
+   ```http request
+   ###
+   POST  {{host}}/wx/order/prepay/6
+   Authorization: {{token}}
+   ```
+- `orderId`:long。 商品Id (必填)
+- 返回值和14.提交订单相同
+
+
+16. 商品详情(带orderId 是某个订单详细,不带orderId  是全部订单记录)
+
+   ```http request
+   GET {{host}}/wx/order/detail?orderId=6
+   Content-Type: application/json
+   Authorization: {{token}}
+   ```
+- `orderId`:long。 商品Id (必填)
+
+某个订单的response:
+
+ ```json
+{
+   "code": 200,
+   "description": null,
+   "result": {
+      "nickName": "test21",
+      "orderSn": "mealq00Udif",
+      "orderDate": "2023-03-28 12:46:32",
+      "orderDetailGoodsVos": [
+         {
+            "goodsName": "蛋肠粉",
+            "goodsNumber": 2,
+            "unit": "’份‘",
+            "goodsMoney": 7.00,
+            "orderDetailCalamityVos": [
+               {
+                  "calamityName": "蒜蓉酱油",
+                  "calamityNumber": 1,
+                  "unit": "’份‘",
+                  "calamityMoney": 10.00
+               }
+            ]
+         },
+         {
+            "goodsName": "肉肠粉",
+            "goodsNumber": 1,
+            "unit": "’份‘",
+            "goodsMoney": 7.00,
+            "orderDetailCalamityVos": [
+               {
+                  "calamityName": "萝卜干",
+                  "calamityNumber": 2,
+                  "unit": "’份‘",
+                  "calamityMoney": 10.00
+               },
+               {
+                  "calamityName": "xo酱",
+                  "calamityNumber": 1,
+                  "unit": "’份‘",
+                  "calamityMoney": 10.00
+               }
+            ]
+         }
+      ],
+      "count": 1,
+      "money": 61.00,
+      "shopName": "汇佳",
+      "shopPhone": ""
+   },
+   "records": null
+}
+ ```
+- `nickName`:string。 用户名 (必填)
+- `orderSn`:string。 订单编号 (非必填)
+- `orderDate`:date。 订单日期
+- `orderDetailGoodsVos`:list。 订单商品list
+- `orderDetailGoodsVos.orderDetailCalamityVos`:list。 订单小料list
+- `count`:订单笔数。 1
+- `money`:decimal。 订单费用
+- `shopName`:string。 店铺名
+- `shopPhone`:string。 店铺电话
+
+某个订单的response:
+
+ ```json
+{
+   "code": 200,
+   "description": null,
+   "result": [
+      {
+         "orderId": 10,
+         "shopName": "汇佳",
+         "shopAvatar": "",
+         "orderDate": "2023-03-29 16:28:19",
+         "orderStatus": 0,
+         "orderStatusMessage": "未支付",
+         "money": 61.00
+      },
+      {
+         "orderId": 9,
+         "shopName": "汇佳",
+         "shopAvatar": "",
+         "orderDate": "2023-03-29 16:25:49",
+         "orderStatus": 0,
+         "orderStatusMessage": "未支付",
+         "money": 61.00
+      },
+      {
+         "orderId": 8,
+         "shopName": "汇佳",
+         "shopAvatar": "",
+         "orderDate": "2023-03-29 16:25:27",
+         "orderStatus": 0,
+         "orderStatusMessage": "未支付",
+         "money": 61.00
+      }
+   ],
+   "records": 8
+}
+ ```
+- `orderId`:string。订单id
+- `shopAvatar`:string。 店铺头像url 
+- `orderDate`:date。 订单日期
+- `orderStatus`:int。 0, "未支付" 1, "已支付" 3, "订单完成" 4, "订单退款"
+- `orderStatusMessage`:string。 状态描述 可用可不用
+- `money`:decimal。 店铺名
+- `records`:long。 订单数
+

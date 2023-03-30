@@ -709,7 +709,8 @@
             select id
             from meal_little_calamity
             WHERE deleted = 0
-            <if test="request.goodsName != null">AND `name` LIKE CONCAT('%',#{goodsName}, '%')</if>
+            <if test="request.calamityName != null">AND `name` LIKE CONCAT('%',#{request.calamityName}, '%')</if>
+            <if test="request.calamityId != null">AND `id` =#{request.calamityId}</if>
             <if test="request.shopId != null">
                 AND (shop_id =0
                 OR shop_id = #{request.shopId}

@@ -8,6 +8,8 @@ public class WxCategoryVo {
     private Long id;
     private String name;
 
+    private Integer isTimeOnSale;
+
     private Long parentId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<WxCategoryVo> categoryVos;
@@ -45,6 +47,15 @@ public class WxCategoryVo {
 
     public WxCategoryVo setCategoryVos(List<WxCategoryVo> categoryVos) {
         this.categoryVos = categoryVos;
+        return this;
+    }
+
+    public Integer getIsTimeOnSale() {
+        return isTimeOnSale;
+    }
+
+    public WxCategoryVo setIsTimeOnSale(Integer isTimeOnSale) {
+        this.isTimeOnSale = isTimeOnSale;
         return this;
     }
 }

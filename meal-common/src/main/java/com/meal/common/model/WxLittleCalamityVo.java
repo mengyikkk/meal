@@ -4,12 +4,12 @@ import javax.validation.constraints.NotNull;
 
 public class WxLittleCalamityVo {
 
-    private Long littleCalamityId;
+    private Long calamityId;
     private Long goodsId;
     @NotNull
     private Long shopId;
 
-    private String goodsName;
+    private String calamityName;
 
     private  Long categoryId;
 
@@ -22,12 +22,12 @@ public class WxLittleCalamityVo {
     private Integer page;
     private Integer limit;
 
-    public Long getLittleCalamityId() {
-        return littleCalamityId;
+    public Long getCalamityId() {
+        return calamityId;
     }
 
-    public WxLittleCalamityVo setLittleCalamityId(Long littleCalamityId) {
-        this.littleCalamityId = littleCalamityId;
+    public WxLittleCalamityVo setCalamityId(Long calamityId) {
+        this.calamityId = calamityId;
         return this;
     }
 
@@ -51,12 +51,12 @@ public class WxLittleCalamityVo {
         return this;
     }
 
-    public String getGoodsName() {
-        return goodsName;
+    public String getCalamityName() {
+        return calamityName;
     }
 
-    public WxLittleCalamityVo setGoodsName(String goodsName) {
-        this.goodsName = goodsName;
+    public WxLittleCalamityVo setCalamityName(String calamityName) {
+        this.calamityName = calamityName;
         return this;
     }
 

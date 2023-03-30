@@ -92,7 +92,7 @@ Content-Type: application/json
 }
 
 ###
-GET  {{host}}/wx/cart/amount?shopId=1046003
+GET  {{host}}/wx/cart/amount?shopId=1046003&isTimeOnSale
 Authorization: {{token}}
 
 ###
@@ -170,7 +170,7 @@ Authorization: {{token}}
   "actualPrice": 61.00
 }
 ###
-GET {{host}}/wx/order/detail?orderId=6
+GET {{host}}/wx/order/detail
 Content-Type: application/json
 Authorization: {{token}}
 ###

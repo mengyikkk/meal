@@ -2,7 +2,9 @@ package com.meal.wx.api.service.impl;
 
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
+import com.meal.common.dto.MealGoods;
 import com.meal.common.dto.MealGoodsExample;
+import com.meal.common.dto.MealLittleCalamity;
 import com.meal.common.dto.MealLittleCalamityExample;
 import com.meal.common.mapper.MealGoodsMapper;
 import com.meal.common.mapper.MealLittleCalamityMapper;
@@ -25,6 +27,7 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class WxGoodsServiceImp implements WxGoodsService {
@@ -72,9 +75,18 @@ public class WxGoodsServiceImp implements WxGoodsService {
             offset = ((long) (vo.getPage() - 1) * limit);
         }
         var list = this.mealGoodsMapper.findMany(vo, limit, offset);
-        return ResultUtils.successWithEntities(BeanCopyUtils.copyBeanList(list, WxGoodsResponseVo.class), count);
+        return ResultUtils.successWithEntities(convert(list), count);
     }
 
+    private List<WxGoodsResponseVo> convert(List<MealGoods> goods){
+        return  goods.stream().map(e-> new WxGoodsResponseVo().setGoodsId(e.getId())
+                .setGoodsSn(e.getGoodsSn()).setGoodsName(e.getName())
+                                .setAddTime(e.getAddTime()).setIsOnSale(e.getIsOnSale()).setIsTimeOnSale(e.getIsTimeOnSale()).setPicUrl(e.getPicUrl()).setSortOrder(e.getSortOrder())
+                                .setUnit(e.getUnit()).setPrice(e.getRetailPrice()).setDetail(e
+                                        .getDetail())
+                )
+                .collect(Collectors.toList());
+    }
     @Override
     public Result<?> littleCalamityList(WxLittleCalamityVo vo) {
         {
@@ -115,9 +127,17 @@ public class WxGoodsServiceImp implements WxGoodsService {
             offset = ((long) (vo.getPage() - 1) * limit);
         }
         var list = this.mealLittleCalamityMapper.findMany(vo, limit, offset);
-        return ResultUtils.successWithEntities(BeanCopyUtils.copyBeanList(list, WxLittleCalamityResponseVo.class), count);
+        return ResultUtils.successWithEntities(this.convertCalamities(list), count);
     }
-
+    private List<WxLittleCalamityResponseVo> convertCalamities(List<MealLittleCalamity> goods){
+        return  goods.stream().map(e-> new WxLittleCalamityResponseVo().setGoodsId(e.getGoodsId())
+                        .setCalamityId(e.getId()).setCalamityName(e.getName())
+                        .setShopId(e.getShopId()).setIsOnSale(e.getIsOnSale()).setIsTimeOnSale(e.getIsTimeOnSale())
+                        .setPicUrl(e.getPicUrl())
+                        .setUnit(e.getUnit()).setPrice(e.getRetailPrice()).setBrief(e.getBrief())
+                )
+                .collect(Collectors.toList());
+    }
     private void process(MealGoodsExample.Criteria criteria, WxGoodsVo vo) {
 
         if (Objects.nonNull(vo.getGoodId())) {
@@ -143,8 +163,11 @@ public class WxGoodsServiceImp implements WxGoodsService {
         if (Objects.nonNull(vo.getGoodsId())) {
             criteria.andGoodsIdIn(List.of(0L,vo.getGoodsId()));
         }
-        if (Objects.nonNull(vo.getGoodsName())){
-            criteria.andNameLike("%"+vo.getGoodsName()+"%");
+        if (Objects.nonNull(vo.getCalamityId())){
+            criteria.andIdEqualTo(vo.getCalamityId());
+        }
+        if (Objects.nonNull(vo.getCalamityName())){
+            criteria.andNameLike("%"+vo.getCalamityName()+"%");
         }
         if (Objects.nonNull(vo.getIsOnSale())) {
             criteria.andIsOnSaleEqualTo(vo.getIsOnSale());

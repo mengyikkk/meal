@@ -144,7 +144,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         }).collect(Collectors.toList())));
         if (this.transactionExecutor.transaction(functions, 1 + mealOrderGoodsList.size() + mealOrderCalamityList.size())) {
             //清空购物车
-            this.wxCartService.deleteShoppingCart(uid,shopId);
+            this.wxCartService.deleteShoppingCart(uid, shopId);
             return this.prepaySon(user, mealOrder);
         }
         return ResultUtils.unknown();
@@ -226,7 +226,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
         }
         if (OrderStatusEnum.UNPAID.not(order.getOrderStatus())) {
-            return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
+            return ResultUtils.message(ResponseCode.ORDER_STATUS_FAIL, ResponseCode.ORDER_STATUS_FAIL.getMessage());
         }
         var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
         return this.prepaySon(user, order);
@@ -355,10 +355,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 if (ObjectUtils.isEmpty(calamities)) {
                     return goodsVo;
                 } else {
-                    goodsVo.setOrderDetailCalamityVos(calamities.stream().map(a -> {
-                        return new OrderDetailCalamityVo().setCalamityNumber(a.getNumber()).setCalamityName(a.getCalamityName())
-                                .setUnit(a.getUnit()).setCalamityMoney(a.getPrice());
-                    }).collect(Collectors.toList()));
+                    goodsVo.setOrderDetailCalamityVos(calamities.stream().map(a -> new OrderDetailCalamityVo().setCalamityNumber(a.getNumber()).setCalamityName(a.getCalamityName()).setUnit(a.getUnit()).setCalamityMoney(a.getPrice())).collect(Collectors.toList()));
                 }
                 return goodsVo;
             }).collect(Collectors.toList()));
@@ -375,8 +372,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(example);
 
             // 通过 MapperUtils 的 shopMapByIds 方法，将订单列表中所有的店铺 id 收集到列表中，并通过 mealShopMapper 查询得到店铺对象，将所有的店铺对象封装到 map 中，key 为店铺 id，value 为店铺对象
-            var shopMap = MapperUtils.shopMapByIds(mealOrders.stream().map(MealOrder::getShopId)
-                    .distinct().collect(Collectors.toList()), mealShopMapper);
+            var shopMap = MapperUtils.shopMapByIds(mealOrders.stream().map(MealOrder::getShopId).distinct().collect(Collectors.toList()), mealShopMapper);
 
             // 通过 map 和订单列表生成 OrderRecordVo 列表
             List<OrderRecordVo> listVo = mealOrders.stream().map(e -> {

@@ -30,7 +30,7 @@ public class WxCategoryServiceImpl implements WxCategoryService {
     private final Logger logger = LoggerFactory.getLogger(WxGoodsServiceImp.class);
 
     @Override
-    public Result<?> list(Long uid, Long shopId) {
+    public Result<?> list(Long uid, Long shopId,Integer isTimeOnSale) {
         {
             var shop = this.mealShopMapper.selectByPrimaryKeyWithLogicalDelete(shopId, Boolean.FALSE);
             if (Objects.isNull(shop)) {
@@ -39,7 +39,11 @@ public class WxCategoryServiceImpl implements WxCategoryService {
             }
         }
         var example = new MealCategoryExample();
-        example.createCriteria().andLogicalDeleted(Boolean.TRUE).andShopIdIn(List.of(0L, shopId));
+        MealCategoryExample.Criteria criteria = example.createCriteria();
+        criteria.andLogicalDeleted(Boolean.TRUE).andShopIdIn(List.of(0L, shopId));
+        if (Objects.nonNull(isTimeOnSale)){
+            criteria.andIsTimeOnSaleEqualTo(isTimeOnSale);
+        }
         var categoryList = this.mealCategoryMapper.selectByExample(example).stream().map(e -> {
             var vo = new WxCategoryVo();
             vo.setId(e.getId());
