@@ -579,12 +579,13 @@ request:
 11. 分类一览(支持多级分类)
 
    ```http request
-   GET http://localhost:9001/wx/category?shopId=1046003
+   GET http://localhost:9001/wx/category?shopId=6&isTimeOnSale=2
    Authorization: {{token}}
    ```
 request:
 
 - `shopId`: integer。--店铺id (必填)
+- `isTimeOnSale`: integer。--时间段贩卖 1,早餐2,午餐 3,晚餐 0,全时段供应
 response:
 
  ```json

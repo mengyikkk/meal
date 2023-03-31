@@ -14,8 +14,8 @@ public class WxCategoryController {
     @Resource
     private WxCategoryService wxCategoryService;
 
-    @PostMapping
-    public Result<?> list(@RequestParam Long shopId,@RequestParam Integer isTimeOnSale) {
+    @GetMapping
+    public Result<?> list(@RequestParam Long shopId,@RequestParam(required = false) Integer isTimeOnSale) {
         return this.wxCategoryService.list(SecurityUtils.getUserId(), shopId,isTimeOnSale);
     }
 }

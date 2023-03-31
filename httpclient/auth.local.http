@@ -43,7 +43,7 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "shopId": 1046003,
+  "shopId": 6,
   "page": 1,
   "limit": 10
 }
@@ -54,7 +54,7 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "shopId": 1046003,
+  "shopId": 6,
   "page": 1,
   "limit": 10
 }
@@ -104,7 +104,7 @@ POST  {{host}}/wx/cart/delete?shopId=1046003
 Authorization: {{token}}
 
 ###
-GET  {{host}}/wx/category?shopId=1046003
+GET  {{host}}/wx/category?shopId=6&isTimeOnSale=2
 Authorization: {{token}}
 
 ###

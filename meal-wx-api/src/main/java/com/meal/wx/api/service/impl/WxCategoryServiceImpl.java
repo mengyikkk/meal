@@ -48,6 +48,7 @@ public class WxCategoryServiceImpl implements WxCategoryService {
             var vo = new WxCategoryVo();
             vo.setId(e.getId());
             vo.setName(e.getName());
+            vo.setIsTimeOnSale(e.getIsTimeOnSale());
             vo.setParentId(e.getPid().longValue());
             return vo;
         }).collect(Collectors.toList());
