@@ -60,8 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         //3. 请求都需要进行认证之后才能访问，除白名单以外的资源
         http.authorizeRequests().antMatchers( "/wx/auth/register",
-                "/wx/auth/login","/wx/auth/loginByWx",
-                "/wx/auth/refresh").anonymous()
+                "/wx/auth/login","/wx/auth/loginByWx").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
                 .and()
