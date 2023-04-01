@@ -408,6 +408,7 @@ response:
    "goodsSn": "1181006",
    "goodsIsTime": true,
    "goodsName": "炒粉",
+   "categoryId": 1036007,
    "number": 1,
    "url": null,
    "unit": null,
@@ -430,6 +431,7 @@ response:
    {
    "goodsId": 1181004,
    "goodsSn": "1181004",
+   "categoryId": 1036007,
    "goodsIsTime": true,
    "goodsName": "蛋肠粉",
    "number": 1,
@@ -459,6 +461,7 @@ response:
     - `brief`: string。--详细
     - `isOnSale`: boolean。 --是否贩卖
     - `goodsId`: string。--商品id
+    - `categoryId`: long。--分类ID
     - `goodsIsTime`: boolean。-- 商品到期提示flag 可忽略
     - `goodsSn`: string。--商品编号
     - `url`: string。--商品url
@@ -627,7 +630,7 @@ response:
 11. banner一览
 
    ```http request
-   GET http://localhost:9001/wx/banner?shopId=1046003
+   GET http://localhost:9001/wx/banner?shopId=1046003&isTimeOnSale=2
    Authorization: {{token}}
    ```
 request:

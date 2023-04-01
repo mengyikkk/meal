@@ -17,6 +17,7 @@ public class WxGoodsResponseVo {
 
     private String picUrl;
     private Long sortOrder;
+    private Long categoryId;
 
     private String unit;
 
@@ -122,6 +123,15 @@ public class WxGoodsResponseVo {
 
     public WxGoodsResponseVo setSortOrder(Long sortOrder) {
         this.sortOrder = sortOrder;
+        return this;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public WxGoodsResponseVo setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
         return this;
     }
 }
