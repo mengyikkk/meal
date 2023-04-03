@@ -9,7 +9,7 @@ public class OrderCartCalamityVo {
     private Long calamityId;
     @Positive
     private Long calamityNumber;
-    private BigDecimal calamityPrice;
+    private BigDecimal price;
 
     public Long getCalamityId() {
         return calamityId;
@@ -29,12 +29,12 @@ public class OrderCartCalamityVo {
         return this;
     }
 
-    public BigDecimal getCalamityPrice() {
-        return calamityPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public OrderCartCalamityVo setCalamityPrice(BigDecimal calamityPrice) {
-        this.calamityPrice = calamityPrice;
+    public OrderCartCalamityVo setPrice(BigDecimal price) {
+        this.price = price;
         return this;
     }
 }

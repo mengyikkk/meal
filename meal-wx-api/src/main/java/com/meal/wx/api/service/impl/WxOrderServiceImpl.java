@@ -121,7 +121,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 //check 小料的价格
                 for (OrderCartCalamityVo calamityVo : calamityVos) {
                     var calamity = calamitiesMap.get(calamityVo.getCalamityId());
-                    if (Objects.isNull(calamity) || calamity.getRetailPrice().compareTo(calamityVo.getCalamityPrice()) != 0) {
+                    if (Objects.isNull(calamity) || calamity.getRetailPrice().compareTo(calamityVo.getPrice()) != 0) {
                         return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage());
                     }
                     MealOrderGoodsCalamity mealOrderGoodsCalamity = this.createMealOrderGoodsCalamity(calamity, calamityVo);
@@ -210,7 +210,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             mealOrderCalamity.setCalamitySn(calamity.getUnit());
             mealOrderCalamity.setCalamityName(calamity.getName());
             mealOrderCalamity.setUnit(c.getUnit());
-            mealOrderCalamity.setPrice(orderCartCalamityVo.getCalamityPrice());
+            mealOrderCalamity.setPrice(orderCartCalamityVo.getPrice());
             mealOrderCalamity.setNumber(orderCartCalamityVo.getCalamityNumber());
             return mealOrderCalamity;
         }).orElseThrow(() -> new IllegalArgumentException("Invalid meal goods calamity"));

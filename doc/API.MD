@@ -745,7 +745,7 @@ request:
             {
                "calamityId": 251,
                "calamityNumber": 1,
-               "calamityPrice": 10.00
+               "price": 10.00
             }
          ]
       },
@@ -757,12 +757,12 @@ request:
             {
                "calamityId": 253,
                "calamityNumber": 2,
-               "calamityPrice": 10.00
+               "price": 10.00
             },
             {
                "calamityId": 254,
                "calamityNumber": 1,
-               "calamityPrice": 10.00
+               "price": 10.00
             }
          ]
       }
@@ -775,7 +775,7 @@ request:
 - `message`:string。 备注 (非必填)
 - `goods`:list。 订单商品list
 - `goods.cartCalamityVos`:list。 订单小料list
-- `calamityPrice`:decimal。 小料费用(必填)  单价
+- `cartCalamityVos.price`:decimal。 小料费用(必填)  单价
 - `price`:decimal。 商品单独费用 不包含小料的单价
 
 response:
