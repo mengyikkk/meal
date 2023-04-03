@@ -741,7 +741,7 @@ request:
          "goodsId": 1181004,
          "number": 2,
          "price": 7.00,
-         "goods": [
+         "cartCalamityVos": [
             {
                "calamityId": 251,
                "calamityNumber": 1,
@@ -773,8 +773,8 @@ request:
 ```
 - `shopId`:long。 店铺id (必填)
 - `message`:string。 备注 (非必填)
-- `shoppingCartVos`:list。 订单商品list
-- `shoppingCartVos.orderCartCalamityVos`:list。 订单小料list
+- `goods`:list。 订单商品list
+- `goods.cartCalamityVos`:list。 订单小料list
 - `calamityPrice`:decimal。 小料费用(必填)  单价
 - `price`:decimal。 商品单独费用 不包含小料的单价
 
