@@ -736,7 +736,7 @@ request:
 {
    "shopId": 1046003,
    "message": "请尽快送达",
-   "shoppingCartVos": [
+   "goods": [
       {
          "goodsId": 1181004,
          "number": 2,
@@ -753,7 +753,7 @@ request:
          "goodsId": 1181005,
          "number": 1,
          "price": 7.00,
-         "orderCartCalamityVos": [
+         "cartCalamityVos": [
             {
                "calamityId": 253,
                "calamityNumber": 2,

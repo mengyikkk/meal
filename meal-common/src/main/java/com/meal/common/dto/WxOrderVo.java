@@ -12,11 +12,10 @@ import java.util.List;
 public class WxOrderVo {
     @NotNull
     private Long shopId; //店铺id
-    @NotBlank
     private String message; // 订单备注
 
     @NotEmpty
-    private List<@Valid OrderCartVo> shoppingCartVos;//购物车列表
+    private List<@Valid OrderCartVo> goods;//购物车列表
     @NotNull
     private BigDecimal orderPrice; //订单总费用
     @NotNull
@@ -42,12 +41,12 @@ public class WxOrderVo {
         return this;
     }
 
-    public List<OrderCartVo> getShoppingCartVos() {
-        return shoppingCartVos;
+    public List<OrderCartVo> getGoods() {
+        return goods;
     }
 
-    public WxOrderVo setShoppingCartVos(List<OrderCartVo> shoppingCartVos) {
-        this.shoppingCartVos = shoppingCartVos;
+    public WxOrderVo setGoods(List<OrderCartVo> goods) {
+        this.goods = goods;
         return this;
     }
 

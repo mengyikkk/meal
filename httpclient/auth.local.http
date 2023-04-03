@@ -54,9 +54,8 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "shopId": 6,
-  "page": 1,
-  "limit": 10
+  "shopId": 6
+
 }
 
 ###
@@ -65,42 +64,71 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "shopId": 1046003,
-  "goods": [
+  "goodsId": 1181101,
+  "goodsSn": "",
+  "goodsName": "肉肠粉",
+  "isOnSale": true,
+  "isTimeOnSale": 1,
+  "picUrl": null,
+  "sortOrder": 1,
+  "categoryId": 1036011,
+  "unit": "份",
+  "price": 7,
+  "addTime": "2023-03-31 18:22:10",
+  "detail": "肉肠粉",
+  "cartCalamityVos": [
     {
-      "goodsId": "1181004",
-      "goodsSn": "1181004",
-      "goodsName": "蛋肠粉",
-      "checked": "true",
-      "number": "1",
-      "cartCalamityVos": [
-        {
-          "calamityId": 251,
-          "calamityName": "蒜蓉酱油",
-          "calamityNumber": 2
-        }
-      ]
-    },
-    {
-      "goodsId": "1181005",
-      "goodsSn": "1181005",
-      "goodsName": "肉肠粉",
-      "checked": "true",
-      "number": "1"
+      "calamityId": 258,
+      "calamityName": "剁椒酱",
+      "goodsId": 1181101,
+      "picUrl": null,
+      "shopId": 6,
+      "brief": "剁椒酱",
+      "unit": "’份‘",
+      "price": 0,
+      "isTimeOnSale": 1,
+      "isOnSale": true,
+      "onSale": true
     }
   ]
 }
+#{
+#  "shopId": 6,
+#  "goods": [
+#    {
+#      "goodsId": "1181100",
+#      "goodsSn": "1181100",
+#      "goodsName": "猪舌拼猪耳饭",
+#      "checked": "true",
+#      "number": "1",
+#      "cartCalamityVos": [
+#        {
+#          "calamityId": 362,
+#          "calamityName": "蒜蓉酱油",
+#          "calamityNumber": 2
+#        }
+#      ]
+#    },
+#    {
+#      "goodsId": "1181013",
+#      "goodsSn": "1181013",
+#      "goodsName": "西红柿炒蛋饭",
+#      "checked": "true",
+#      "number": "1"
+#    }
+#  ]
+#}
 
 ###
-GET  {{host}}/wx/cart/amount?shopId=1046003&isTimeOnSale
+GET  {{host}}/wx/cart/amount?shopId=6&isTimeOnSale
 Authorization: {{token}}
 
 ###
-GET  {{host}}/wx/cart?shopId=1046003
+GET  {{host}}/wx/cart?shopId=6
 Authorization: {{token}}
 
 ###
-POST  {{host}}/wx/cart/delete?shopId=1046003
+POST  {{host}}/wx/cart/delete?shopId=6
 Authorization: {{token}}
 
 ###

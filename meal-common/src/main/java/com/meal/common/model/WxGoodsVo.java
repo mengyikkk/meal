@@ -14,7 +14,6 @@ public class WxGoodsVo {
 
 
     private Boolean isOnSale;
-
     private Integer isTimeOnSale;
     private Integer sortOrder;
 

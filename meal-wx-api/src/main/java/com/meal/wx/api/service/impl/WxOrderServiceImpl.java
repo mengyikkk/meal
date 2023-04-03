@@ -95,7 +95,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         }
         // 查找购物车中的商品信息
         LinkedList<Function<Void, Integer>> functions = new LinkedList<>();
-        var goodListVo = wxOrderVo.getShoppingCartVos();
+        var goodListVo = wxOrderVo.getGoods();
         var shopId = wxOrderVo.getShopId();
         List<Long> goodListVoIds = goodListVo.stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList());
         var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, wxOrderVo.getShopId(), goodListVoIds);
@@ -116,7 +116,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             mealOrderGoodsList.add(this.createOrderGoods(good, shoppingCartVo));
             goodsPrice = goodsPrice.add(good.getRetailPrice().multiply(BigDecimal.valueOf(shoppingCartVo.getNumber())));
             // 检查购物车中的小料是否有效
-            var calamityVos = shoppingCartVo.getOrderCartCalamityVos();
+            var calamityVos = shoppingCartVo.getCartCalamityVos();
             if (ObjectUtils.isNotEmpty(calamityVos)) {
                 //check 小料的价格
                 for (OrderCartCalamityVo calamityVo : calamityVos) {
