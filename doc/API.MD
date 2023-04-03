@@ -741,7 +741,7 @@ request:
          "goodsId": 1181004,
          "number": 2,
          "price": 7.00,
-         "orderCartCalamityVos": [
+         "goods": [
             {
                "calamityId": 251,
                "calamityNumber": 1,
