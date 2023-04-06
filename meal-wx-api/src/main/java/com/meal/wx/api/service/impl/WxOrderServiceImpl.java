@@ -93,56 +93,60 @@ public class WxOrderServiceImpl implements WxOrderService {
             this.logger.warn("Service-Order[WxOrderVo][block]:shop. uid: {}, request: {}", SecurityUtils.getUserId(), wxOrderVo);
             return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
         }
+        int size = wxOrderVo.getOrders().size();
+        var shopId = wxOrderVo.getShopId();
         // 查找购物车中的商品信息
         LinkedList<Function<Void, Integer>> functions = new LinkedList<>();
-        var goodListVo = wxOrderVo.getGoods();
-        var shopId = wxOrderVo.getShopId();
-        List<Long> goodListVoIds = goodListVo.stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList());
-        var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, wxOrderVo.getShopId(), goodListVoIds);
-        Set<Long> goodsByShopIds = goodsByShopMap.keySet();
-        // 查找购物车中的小料信息
-        var calamitiesMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, Collections.emptyList(), new ArrayList<>(goodsByShopIds), shopId);
-        List<MealOrderGoods> mealOrderGoodsList = new ArrayList<>();
-        List<MealOrderGoodsCalamity> mealOrderCalamityList = new ArrayList<>();
-        BigDecimal goodsPrice = BigDecimal.ZERO;
-        // 遍历购物车中的商品
-        for (OrderCartVo shoppingCartVo : goodListVo) {
-            // 检查购物车中的商品是否有效
-            var good = goodsByShopMap.get(shoppingCartVo.getGoodsId());
-            if (Objects.isNull(good) || good.getRetailPrice().compareTo(shoppingCartVo.getPrice()) != 0) {
-                return ResultUtils.message(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage());
-            }
-            // 将商品信息加入订单商品列表中，并累加订单价格
-            mealOrderGoodsList.add(this.createOrderGoods(good, shoppingCartVo));
-            goodsPrice = goodsPrice.add(good.getRetailPrice().multiply(BigDecimal.valueOf(shoppingCartVo.getNumber())));
-            // 检查购物车中的小料是否有效
-            var calamityVos = shoppingCartVo.getCartCalamityVos();
-            if (ObjectUtils.isNotEmpty(calamityVos)) {
-                //check 小料的价格
-                for (OrderCartCalamityVo calamityVo : calamityVos) {
-                    var calamity = calamitiesMap.get(calamityVo.getCalamityId());
-                    if (Objects.isNull(calamity) || calamity.getRetailPrice().compareTo(calamityVo.getPrice()) != 0) {
-                        return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage());
+        for (WxOrderSonVo order : wxOrderVo.getOrders()) {
+            var goodListVo = order.getGoods();
+            List<Long> goodListVoIds = goodListVo.stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList());
+            var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, wxOrderVo.getShopId(), goodListVoIds);
+            Set<Long> goodsByShopIds = goodsByShopMap.keySet();
+            var calamitiesMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, Collections.emptyList(), new ArrayList<>(goodsByShopIds), shopId);
+            List<MealOrderGoods> mealOrderGoodsList = new ArrayList<>();
+            List<MealOrderGoodsCalamity> mealOrderCalamityList = new ArrayList<>();
+            BigDecimal goodsPrice = BigDecimal.ZERO;
+            // 遍历购物车中的商品
+            for (OrderCartVo shoppingCartVo : goodListVo) {
+                // 检查购物车中的商品是否有效
+                var good = goodsByShopMap.get(shoppingCartVo.getGoodsId());
+                if (Objects.isNull(good) || good.getRetailPrice().compareTo(shoppingCartVo.getPrice()) != 0) {
+                    return ResultUtils.message(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage());
+                }
+                // 将商品信息加入订单商品列表中，并累加订单价格
+                mealOrderGoodsList.add(this.createOrderGoods(good, shoppingCartVo));
+                goodsPrice = goodsPrice.add(good.getRetailPrice().multiply(BigDecimal.valueOf(shoppingCartVo.getNumber())));
+                // 检查购物车中的小料是否有效
+                var calamityVos = shoppingCartVo.getCartCalamityVos();
+                if (ObjectUtils.isNotEmpty(calamityVos)) {
+                    //check 小料的价格
+                    for (OrderCartCalamityVo calamityVo : calamityVos) {
+                        var calamity = calamitiesMap.get(calamityVo.getCalamityId());
+                        if (Objects.isNull(calamity) || calamity.getRetailPrice().compareTo(calamityVo.getPrice()) != 0) {
+                            return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage());
+                        }
+                        MealOrderGoodsCalamity mealOrderGoodsCalamity = this.createMealOrderGoodsCalamity(calamity, calamityVo);
+                        mealOrderGoodsCalamity.setOrderGoodsId((long) goodListVoIds.indexOf(shoppingCartVo.getGoodsId()));
+                        mealOrderCalamityList.add(mealOrderGoodsCalamity);
+                        goodsPrice = goodsPrice.add(calamity.getRetailPrice().multiply(BigDecimal.valueOf(calamityVo.getCalamityNumber())));
                     }
-                    MealOrderGoodsCalamity mealOrderGoodsCalamity = this.createMealOrderGoodsCalamity(calamity, calamityVo);
-                    mealOrderGoodsCalamity.setOrderGoodsId((long) goodListVoIds.indexOf(shoppingCartVo.getGoodsId()));
-                    mealOrderCalamityList.add(mealOrderGoodsCalamity);
-                    goodsPrice = goodsPrice.add(calamity.getRetailPrice().multiply(BigDecimal.valueOf(calamityVo.getCalamityNumber())));
                 }
             }
+            if (goodsPrice.compareTo(wxOrderVo.getActualPrice()) != 0) {
+                return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
+            }
+            var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
+            var mealOrder = this.createOrder(wxOrderVo, user);
+            functions.addFirst(nothing -> mealOrderMapper.insertSelective(mealOrder));
+            functions.add(nothing -> mealOrderGoodsMapper.batchInsert(mealOrderGoodsList.stream().peek(e -> e.setOrderId(mealOrder.getId())).collect(Collectors.toList())));
+            functions.addLast(nothing -> mealOrderGoodsCalamityMapper.batchInsert(mealOrderCalamityList.stream().peek(a -> {
+                a.setOrderId(mealOrder.getId());
+                a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
+            }).collect(Collectors.toList())));
+            size+= mealOrderGoodsList.size();
+            size+= mealOrderCalamityList.size();
         }
-        if (goodsPrice.compareTo(wxOrderVo.getActualPrice()) != 0) {
-            return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
-        }
-        var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
-        var mealOrder = this.createOrder(wxOrderVo, user);
-        functions.addFirst(nothing -> mealOrderMapper.insertSelective(mealOrder));
-        functions.add(nothing -> mealOrderGoodsMapper.batchInsert(mealOrderGoodsList.stream().peek(e -> e.setOrderId(mealOrder.getId())).collect(Collectors.toList())));
-        functions.addLast(nothing -> mealOrderGoodsCalamityMapper.batchInsert(mealOrderCalamityList.stream().peek(a -> {
-            a.setOrderId(mealOrder.getId());
-            a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
-        }).collect(Collectors.toList())));
-        if (this.transactionExecutor.transaction(functions, 1 + mealOrderGoodsList.size() + mealOrderCalamityList.size())) {
+        if (this.transactionExecutor.transaction(functions, size)) {
             //清空购物车
             this.wxCartService.deleteShoppingCart(uid, shopId);
             return this.prepaySon(user, mealOrder);
@@ -187,6 +191,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 // 如果查询到的用户对象为null，则抛出IllegalArgumentException异常
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
     }
+
 
     private MealOrderGoods createOrderGoods(MealGoods good, OrderCartVo shoppingCartVo) {
         return Optional.ofNullable(good).map(g -> {
@@ -454,6 +459,8 @@ public class WxOrderServiceImpl implements WxOrderService {
     @Override
     public Object payNotify(HttpServletRequest request, HttpServletResponse response) {
         // 从 request 中读取微信支付平台的支付通知
+        this.logger.info("微信回调:{}", request.toString());
+
         String xmlResult = null;
         try {
             xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
@@ -467,7 +474,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         try {
             // 解析微信支付平台的支付通知
             result = wxPayService.parseOrderNotifyResult(xmlResult);
-
+            this.logger.info("微信回调报文:{}", JsonUtils.toJson(result));
             // 检查支付通知的返回结果和业务结果，如果不成功则记录错误日志并抛出异常
             if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getResultCode()) || !WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
                 logger.error(xmlResult);
@@ -488,11 +495,18 @@ public class WxOrderServiceImpl implements WxOrderService {
 
         // 根据订单号查询订单信息
         MealOrder mealOrder = this.selectOrderBySn(orderSn);
+        // 创建支付记录对象并设置初始值
+        MealOrderWx log = new MealOrderWx();
+        // 记录支付请求参数并输出日志
         if (Objects.isNull(mealOrder)) {
-            logger.error("订单不存在 sn={}", orderSn);
+
+            this.logger.error("订单不存在 sn={}", orderSn);
             // 订单不存在，返回通知失败
             return WxPayNotifyResponse.fail("订单不存在 sn=" + orderSn);
         }
+        log.setOrderType("ORDER_NOTIFY");
+        log.setOrderId(mealOrder.getId());
+        log.setRequestParam(JsonUtils.toJson(result));
         if (OrderStatusEnum.notPayed(mealOrder)) {
             logger.warn("订单已经处理成功sn={}", orderSn);
             // 如果订单已经处理成功，则直接返回通知成功
@@ -507,11 +521,15 @@ public class WxOrderServiceImpl implements WxOrderService {
         mealOrder.setPayId(payId);
         mealOrder.setPayTime(LocalDateTime.now());
         mealOrder.setOrderStatus(OrderStatusEnum.PAID.getMapping());
+        var example = new MealOrderExample();
+        example.createCriteria().andIdEqualTo(mealOrder.getId()).andOrderStatusEqualTo(OrderStatusEnum.UNPAID.getMapping());
         // 更新订单信息到数据库
-        if (this.mealOrderMapper.updateByPrimaryKey(mealOrder) < 1) {
+        if (this.mealOrderMapper.updateByExample(mealOrder, example) < 1) {
             logger.error("更新订单:{}数据已失效", orderSn);
             return WxPayNotifyResponse.fail("更新数据已失效");
         }
+        this.logger.info("此订单支付成功:{}", mealOrder.getId());
+        this.mealOrderWxMapper.insertSelective(log);
         // 返回通知成功
         return WxPayNotifyResponse.success("处理成功!");
     }

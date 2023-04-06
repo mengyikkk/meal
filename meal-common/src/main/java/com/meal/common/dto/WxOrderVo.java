@@ -15,7 +15,7 @@ public class WxOrderVo {
     private String message; // 订单备注
 
     @NotEmpty
-    private List<@Valid OrderCartVo> goods;//购物车列表
+    private List<@Valid WxOrderSonVo> orders;//购物车列表
     @NotNull
     private BigDecimal orderPrice; //订单总费用
     @NotNull
@@ -41,12 +41,12 @@ public class WxOrderVo {
         return this;
     }
 
-    public List<OrderCartVo> getGoods() {
-        return goods;
+    public List<WxOrderSonVo> getOrders() {
+        return orders;
     }
 
-    public WxOrderVo setGoods(List<OrderCartVo> goods) {
-        this.goods = goods;
+    public WxOrderVo setOrders(List<WxOrderSonVo> orders) {
+        this.orders = orders;
         return this;
     }
 

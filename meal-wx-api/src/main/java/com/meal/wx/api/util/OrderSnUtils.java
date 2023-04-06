@@ -10,7 +10,7 @@ public  class OrderSnUtils {
     public  static String generateOrderSn(String prefix) {
         // 固定前缀
         // 订单号长度
-        int length = 11;
+        int length = 18;
         // 随机字符串
         String randomStr = RandomStringUtils.randomAlphanumeric(length - prefix.length());
         // 拼接订单号
