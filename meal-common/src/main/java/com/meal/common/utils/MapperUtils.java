@@ -28,11 +28,12 @@ public final class MapperUtils {
         return mealGoodsMapper.selectByExample(example).stream().collect(Collectors.toMap(MealGoods::getId, Function.identity()));
     }
 
-    public static List<MealGoods> checkGoodsByIsTimeOnSale(MealGoodsMapper mealGoodsMapper, Long shopId, List<Long> goodIds, Integer isTimeOnSale) {
+    public static Map<Integer,List<MealGoods>> checkGoodsByIsTimeOnSale(MealGoodsMapper mealGoodsMapper, Long shopId,
+                                                            List<Long> goodIds) {
         var example = new MealGoodsExample();
         MealGoodsExample.Criteria criteria = example.createCriteria();
-        criteria.andShopIdIn(List.of(shopId, 0L)).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value()).andIsOnSaleEqualTo(Boolean.TRUE).andIsTimeOnSaleEqualTo(isTimeOnSale);
-        return mealGoodsMapper.selectByExample(example).stream().filter(e -> goodIds.contains(e.getId())).collect(Collectors.toList());
+        criteria.andShopIdIn(List.of(shopId, 0L)).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value()).andIsOnSaleEqualTo(Boolean.TRUE);
+        return mealGoodsMapper.selectByExample(example).stream().collect(Collectors.groupingBy(MealGoods::getIsTimeOnSale));
     }
 
     public static Map<Long, MealLittleCalamity> calamityMapByShopAndGoods(MealLittleCalamityMapper mealLittleCalamityMapper, List<Long> ids, List<Long> goodIds, Long shopIds) {

@@ -102,11 +102,14 @@ public class WxOrderServiceImpl implements WxOrderService {
         LinkedList<Function<Void, Integer>> functions = new LinkedList<>();
         //找到所有订单的商品集合
         List<MealGoods> goodsByAllOrder = new ArrayList<>();
+        List<Long> goodIds = orders.stream().flatMap(e -> e.getGoods().stream()).map(OrderCartVo::getGoodsId).collect(Collectors.toList());
+        var mapByIsTimeOnSale = MapperUtils.checkGoodsByIsTimeOnSale(mealGoodsMapper, shopId, goodIds);
         //check 提供订单的商品是否属于某个时间段
         for (WxOrderSonVo order : orders) {
-            var list = MapperUtils.checkGoodsByIsTimeOnSale(mealGoodsMapper, shopId, order.getGoods().stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList()), order.getIsTimeOnSale());
-            if (list.stream().map(MealGoods::getId).collect(Collectors.toSet()).containsAll(order.getGoods().stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList()))) {
-                goodsByAllOrder.addAll(list);
+            List<MealGoods> mealGoods = mapByIsTimeOnSale.get(order.getIsTimeOnSale());
+            if (mealGoods.stream().map(MealGoods::getId).collect(Collectors.toSet())
+                    .containsAll(order.getGoods().stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList()))) {
+                goodsByAllOrder.addAll(mealGoods);
             } else {
                 return ResultUtils.message(ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL, ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL.getMessage());
             }
@@ -471,7 +474,8 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 返回支付结果
         return ResultUtils.success(result);
     }
-//    private Result<?> combineSon(MealUser user, List<MealOrder> orders) {
+
+    //    private Result<?> combineSon(MealUser user, List<MealOrder> orders) {
 //        // 创建支付记录对象并设置初始值
 //        MealOrderWx log = new MealOrderWx();
 //        log.setOrderType("ORDER");
