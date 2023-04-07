@@ -3,6 +3,7 @@ package com.meal.wx.api.service.impl;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
+import com.github.binarywang.wxpay.bean.request.CombineTransactionsRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
@@ -93,28 +94,43 @@ public class WxOrderServiceImpl implements WxOrderService {
             this.logger.warn("Service-Order[WxOrderVo][block]:shop. uid: {}, request: {}", SecurityUtils.getUserId(), wxOrderVo);
             return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
         }
-        int size = wxOrderVo.getOrders().size();
+        var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
+        List<WxOrderSonVo> orders = wxOrderVo.getOrders();
+        int size = orders.size();
         var shopId = wxOrderVo.getShopId();
         // 查找购物车中的商品信息
         LinkedList<Function<Void, Integer>> functions = new LinkedList<>();
-        for (WxOrderSonVo order : wxOrderVo.getOrders()) {
-            var goodListVo = order.getGoods();
-            List<Long> goodListVoIds = goodListVo.stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList());
-            var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, wxOrderVo.getShopId(), goodListVoIds);
-            Set<Long> goodsByShopIds = goodsByShopMap.keySet();
-            var calamitiesMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, Collections.emptyList(), new ArrayList<>(goodsByShopIds), shopId);
-            List<MealOrderGoods> mealOrderGoodsList = new ArrayList<>();
-            List<MealOrderGoodsCalamity> mealOrderCalamityList = new ArrayList<>();
+        //找到所有订单的商品集合
+        List<MealGoods> goodsByAllOrder = new ArrayList<>();
+        //check 提供订单的商品是否属于某个时间段
+        for (WxOrderSonVo order : orders) {
+            var list = MapperUtils.checkGoodsByIsTimeOnSale(mealGoodsMapper, shopId, order.getGoods().stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList()), order.getIsTimeOnSale());
+            if (list.stream().map(MealGoods::getId).collect(Collectors.toSet()).containsAll(order.getGoods().stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList()))) {
+                goodsByAllOrder.addAll(list);
+            } else {
+                return ResultUtils.message(ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL, ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL.getMessage());
+            }
+        }
+        //取出订单中所有商品的信息
+        List<Long> goodListVoIds = goodsByAllOrder.stream().map(MealGoods::getId).collect(Collectors.toList());
+        var goodsByShopMap = goodsByAllOrder.stream().collect(Collectors.toMap(MealGoods::getId, Function.identity()));
+        var calamitiesMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, Collections.emptyList(), goodListVoIds, shopId);
+        List<MealOrderGoods> mealOrderGoodsList = new ArrayList<>();
+        List<MealOrder> mealOrders = new ArrayList<>();
+        List<MealOrderGoodsCalamity> mealOrderCalamityList = new ArrayList<>();
+        BigDecimal orderPrice = BigDecimal.ZERO;
+        // 遍历购物车中的商品
+        for (WxOrderSonVo order : orders) {
+            var mealOrder = this.createOrder(order, user, wxOrderVo.getShopId(), wxOrderVo.getMessage());
             BigDecimal goodsPrice = BigDecimal.ZERO;
-            // 遍历购物车中的商品
-            for (OrderCartVo shoppingCartVo : goodListVo) {
+            for (OrderCartVo shoppingCartVo : order.getGoods()) {
                 // 检查购物车中的商品是否有效
                 var good = goodsByShopMap.get(shoppingCartVo.getGoodsId());
                 if (Objects.isNull(good) || good.getRetailPrice().compareTo(shoppingCartVo.getPrice()) != 0) {
                     return ResultUtils.message(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage());
                 }
                 // 将商品信息加入订单商品列表中，并累加订单价格
-                mealOrderGoodsList.add(this.createOrderGoods(good, shoppingCartVo));
+                mealOrderGoodsList.add(this.createOrderGoods(good, shoppingCartVo, (long) orders.indexOf(order)));
                 goodsPrice = goodsPrice.add(good.getRetailPrice().multiply(BigDecimal.valueOf(shoppingCartVo.getNumber())));
                 // 检查购物车中的小料是否有效
                 var calamityVos = shoppingCartVo.getCartCalamityVos();
@@ -132,44 +148,46 @@ public class WxOrderServiceImpl implements WxOrderService {
                     }
                 }
             }
-            if (goodsPrice.compareTo(wxOrderVo.getActualPrice()) != 0) {
+            if (goodsPrice.compareTo(order.getActualPrice()) != 0) {
                 return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
             }
-            var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
-            var mealOrder = this.createOrder(wxOrderVo, user);
-            functions.addFirst(nothing -> mealOrderMapper.insertSelective(mealOrder));
-            functions.add(nothing -> mealOrderGoodsMapper.batchInsert(mealOrderGoodsList.stream().peek(e -> e.setOrderId(mealOrder.getId())).collect(Collectors.toList())));
-            functions.addLast(nothing -> mealOrderGoodsCalamityMapper.batchInsert(mealOrderCalamityList.stream().peek(a -> {
-                a.setOrderId(mealOrder.getId());
-                a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
-            }).collect(Collectors.toList())));
-            size+= mealOrderGoodsList.size();
-            size+= mealOrderCalamityList.size();
+            mealOrders.add(mealOrder);
+            orderPrice = orderPrice.add(goodsPrice);
         }
+        if (orderPrice.compareTo(wxOrderVo.getActualPrice()) != 0) {
+            return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
+        }
+        functions.addFirst(nothing -> mealOrderMapper.batchInsert(mealOrders));
+        functions.add(nothing -> mealOrderGoodsMapper.batchInsert(mealOrderGoodsList.stream().peek(e -> e.setOrderId(mealOrders.get(Math.toIntExact(e.getOrderId())).getId())).collect(Collectors.toList())));
+        functions.addLast(nothing -> mealOrderGoodsCalamityMapper.batchInsert(mealOrderCalamityList.stream().peek(a -> {
+            a.setOrderId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getOrderId());
+            a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
+        }).collect(Collectors.toList())));
+        size += mealOrderGoodsList.size();
+        size += mealOrderCalamityList.size();
         if (this.transactionExecutor.transaction(functions, size)) {
             //清空购物车
             this.wxCartService.deleteShoppingCart(uid, shopId);
-            return this.prepaySon(user, mealOrder);
         }
         return ResultUtils.unknown();
     }
 
 
-    private MealOrder createOrder(WxOrderVo wxOrderVo, MealUser user) {
+    private MealOrder createOrder(WxOrderSonVo wxOrderVo, MealUser user, Long shopId, String message) {
         // 通过MyBatis mapper查询对应的用户对象
         // 如果查询到的用户对象不为null，则创建一个新的订单对象，并设置订单属性
         return Optional.ofNullable(user).map(u -> {
                     MealOrder mealOrder = new MealOrder();
                     mealOrder.setUserId(user.getId()); // 用户ID
-                    mealOrder.setShopId(wxOrderVo.getShopId()); // 商铺ID
-                    mealOrder.setOrderSn(OrderSnUtils.generateOrderSn("meal")); // 订单号
+                    mealOrder.setShopId(shopId); // 商铺ID
+                    mealOrder.setOrderSn(OrderSnUtils.generateOrderSn("meal", mealOrderMapper)); // 订单号
                     mealOrder.setOrderStatus(OrderStatusEnum.UNPAID.getMapping()); // 订单状态：待支付
                     mealOrder.setShipStatus(ShipStatusEnum.NOT_SHIP.getMapping()); // 发货状态：未发货
                     mealOrder.setRefundStatus(RefundStatusEnum.CAN_APPLY.getMapping()); // 退款状态：可以申请
                     mealOrder.setConsignee(u.getNickname()); // 收货人
                     mealOrder.setMobile(u.getMobile()); // 收货人电话
                     mealOrder.setAddress(""); // 收货地址
-                    mealOrder.setMessage(wxOrderVo.getMessage()); // 订单留言
+                    mealOrder.setMessage(message); // 订单留言
                     mealOrder.setGoodsPrice(wxOrderVo.getOrderPrice()); // 商品总价
                     mealOrder.setFreightPrice(BigDecimal.ZERO); // 运费
                     mealOrder.setCouponPrice(BigDecimal.ZERO); // 优惠券抵扣金额
@@ -177,15 +195,14 @@ public class WxOrderServiceImpl implements WxOrderService {
                     mealOrder.setActualPrice(wxOrderVo.getActualPrice()); // 实际支付金额
                     mealOrder.setPayId(null); // 支付ID
                     mealOrder.setPayTime(null); // 支付时间
-                    mealOrder.setShipSn(OrderSnUtils.generateOrderSn("mealShip")); // 发货单号
+                    mealOrder.setShipSn(OrderSnUtils.generateOrderShipSn(wxOrderVo.getIsTimeOnSale(), mealOrderMapper)); //
+                    // 发货单号
                     mealOrder.setShipTime(null); // 发货时间
                     mealOrder.setRefundAmount(null); // 退款金额
                     mealOrder.setRefundContent(null); // 退款原因
                     mealOrder.setRefundTime(null); // 退款时间
                     mealOrder.setConfirmTime(null); // 确认收货时间
                     mealOrder.setEndTime(null); // 订单完成时间
-                    mealOrder.setAddTime(LocalDateTime.now()); // 订单添加时间
-                    mealOrder.setUpdateTime(LocalDateTime.now()); // 订单更新时间
                     return mealOrder;
                 })
                 // 如果查询到的用户对象为null，则抛出IllegalArgumentException异常
@@ -193,10 +210,11 @@ public class WxOrderServiceImpl implements WxOrderService {
     }
 
 
-    private MealOrderGoods createOrderGoods(MealGoods good, OrderCartVo shoppingCartVo) {
+    private MealOrderGoods createOrderGoods(MealGoods good, OrderCartVo shoppingCartVo, Long orderIndex) {
         return Optional.ofNullable(good).map(g -> {
                     MealOrderGoods mealOrderGoods = new MealOrderGoods();
                     mealOrderGoods.setGoodsId(g.getId()); // 设置MealOrderGoods的goodsId字段为MealGoods的id
+                    mealOrderGoods.setOrderId(orderIndex);
                     mealOrderGoods.setGoodsName(g.getName()); // 设置MealOrderGoods的goodsName字段为MealGoods的name
                     mealOrderGoods.setGoodsSn(g.getGoodsSn());// 设置MealOrderGoods的goodsSn字段为MealGoods的goodsSn
                     mealOrderGoods.setUnit(g.getUnit());
@@ -258,7 +276,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         mealWx.setOrderType("REFUND");
         if (OrderStatusEnum.PAID.is(order.getOrderStatus())) {
             WxPayRefundResult wxPayRefundResult = doWxRefund(order, mealWx);
-            if (wxPayRefundResult == null || wxPayRefundResult.getReturnCode().equals("SUCCESS")) {
+            if (wxPayRefundResult == null || wxPayRefundResult.getReturnCode().equals("SUCCESS") || !wxPayRefundResult.getResultCode().equals("SUCCESS")) {
                 return ResultUtils.message(ResponseCode.ORDER_REFUND_FAILED, ResponseCode.ORDER_REFUND_FAILED.getMessage());
             }
             mealWx.setResponseParam(JsonUtils.toJsonKeepNullValue(wxPayRefundResult));
@@ -354,7 +372,6 @@ public class WxOrderServiceImpl implements WxOrderService {
                 goodsVo.setGoodsName(e.getGoodsName());
                 goodsVo.setUnit(e.getUnit());
                 goodsVo.setGoodsNumber(e.getNumber());
-
                 // 如果商品存在灾害商品信息，创建订单商品灾害的VO对象
                 var calamities = goodsIdByCalamity.get(e.getId());
                 if (ObjectUtils.isEmpty(calamities)) {
@@ -416,7 +433,6 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 创建支付记录对象并设置初始值
         MealOrderWx log = new MealOrderWx();
         log.setOrderType("ORDER");
-        log.setOrderId(order.getId());
 
         // 记录支付请求参数并输出日志
         this.logger.info("订单:{},用户:{},正在调取微信支付", JsonUtils.toJson(user), JsonUtils.toJson(order));
@@ -455,7 +471,55 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 返回支付结果
         return ResultUtils.success(result);
     }
-
+//    private Result<?> combineSon(MealUser user, List<MealOrder> orders) {
+//        // 创建支付记录对象并设置初始值
+//        MealOrderWx log = new MealOrderWx();
+//        log.setOrderType("ORDER");
+//
+//        // 记录支付请求参数并输出日志
+//        this.logger.info("订单:{},用户:{},正在调取微信支付", JsonUtils.toJson(user), JsonUtils.toJson(order));
+//
+//        // 获取用户的微信OpenID
+//        String wxOpenid = user.getWxOpenid();
+//        if (Objects.isNull(wxOpenid)) {
+//            // 如果OpenID为空，返回错误结果
+//            return ResultUtils.message(ResponseCode.AUTH_OPENID_UNACCESS, ResponseCode.AUTH_OPENID_UNACCESS.getMessage());
+//        }
+//
+//        // 调用微信支付服务创建订单，并将结果存入result变量
+//        WxPayMpOrderResult result;
+//        CombineTransactionsRequest request;
+//        List<CombineTransactionsRequest.SubOrders> subOrders = request.getSubOrders();
+//
+//        orders.stream().map(e->{
+//            CombineTransactionsRequest.SubOrders  order = new CombineTransactionsRequest.SubOrders();
+//            int fee = e.getActualPrice().multiply(new BigDecimal(100)).intValue();
+//        })
+//        try {
+//            // 创建微信统一下单请求对象，并设置各个参数
+//            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+//            orderRequest.setOutTradeNo(order.getOrderSn()); // 设置商户订单号
+//            orderRequest.setOpenid(wxOpenid); // 设置用户的微信OpenID
+//            orderRequest.setBody("订单：" + order.getOrderSn()); // 设置订单描述
+//            // 将元转换成分
+//            int fee = order.getActualPrice().multiply(new BigDecimal(100)).intValue();
+//            orderRequest.setTotalFee(fee); // 设置订单总金额（单位为分）
+//            orderRequest.setSpbillCreateIp(user.getLastLoginIp()); // 设置客户端IP
+//            log.setRequestParam(JsonUtils.toJsonKeepNullValue(orderRequest)); // 记录请求参数
+//            result = wxPayService.createOrder(orderRequest); // 调用微信支付服务创建订单
+//        } catch (Exception e) {
+//            // 如果创建订单失败，返回错误结果
+//            e.printStackTrace();
+//            return ResultUtils.message(ResponseCode.ORDER_PAY_FAIL, ResponseCode.ORDER_PAY_FAIL.getMessage());
+//        }
+//
+//        // 记录支付响应结果并将记录对象存入数据库
+//        log.setResponseParam(JsonUtils.toJsonKeepNullValue(result));
+//        this.mealOrderWxMapper.insertSelective(log);
+//
+//        // 返回支付结果
+//        return ResultUtils.success(result);
+//    }
     @Override
     public Object payNotify(HttpServletRequest request, HttpServletResponse response) {
         // 从 request 中读取微信支付平台的支付通知

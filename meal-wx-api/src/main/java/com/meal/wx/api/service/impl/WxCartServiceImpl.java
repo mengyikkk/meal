@@ -177,6 +177,7 @@ public class WxCartServiceImpl implements WxCartService {
                 vo.setUrl(product.getPicUrl());
                 vo.setPrice(product.getRetailPrice());
                 vo.setGoodsName(product.getName());
+                vo.setIsTimeOnSale(product.getIsTimeOnSale());
             }
             var cartCalamityByCartId = cartCalamityMap.getOrDefault(e.getId(), Collections.emptyList());
             List<WxShopCartCalamitySonVo> resultCalamityVos = new ArrayList<>();

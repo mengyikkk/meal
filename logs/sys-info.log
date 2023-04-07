@@ -1,0 +1,133 @@
+14:17:16.431 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 15944 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+14:17:16.434 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+14:17:16.501 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+14:17:17.480 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+14:17:17.481 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+14:17:17.481 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+14:17:17.541 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+14:17:17.652 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+14:17:25.513 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+14:17:27.183 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+14:17:27.201 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 11.35 seconds (JVM running for 11.982)
+14:17:27.378 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:17:27.732 [RMI TCP Connection(3)-192.168.100.137] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+14:22:32.688 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:28:15.112 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:28:48.368 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+14:28:48.369 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 17926 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+14:28:48.370 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+14:29:00.565 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+14:29:00.566 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 17972 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+14:29:00.567 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+14:29:01.572 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+14:29:01.572 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+14:29:01.573 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+14:29:01.626 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+14:29:01.737 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+14:29:07.088 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+14:29:08.727 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+14:29:08.743 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 8.454 seconds (JVM running for 9.155)
+14:29:08.913 [RMI TCP Connection(7)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+14:29:08.919 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:34:09.002 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:39:10.063 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:44:11.094 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:46:45.179 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2032] - {dataSource-1} closing ...
+14:46:45.182 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2104] - {dataSource-1} closed
+14:46:48.671 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 20997 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+14:46:48.676 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+14:46:48.766 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+14:46:49.808 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+14:46:49.808 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+14:46:49.808 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+14:46:49.865 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+14:46:49.973 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+14:46:54.963 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+14:46:56.586 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+14:46:56.602 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 8.291 seconds (JVM running for 9.048)
+14:46:56.770 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:46:57.004 [RMI TCP Connection(2)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+14:52:39.529 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+14:57:41.137 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:02:43.604 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:07:45.144 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:24:04.735 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:29:06.204 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:34:07.913 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:39:09.611 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:44:10.754 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:49:11.956 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[17,18]
+15:54:13.511 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+15:54:43.860 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2032] - {dataSource-1} closing ...
+15:54:43.863 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2104] - {dataSource-1} closed
+17:11:33.645 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+17:11:33.652 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 45088 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+17:11:33.652 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+17:11:34.727 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+17:11:34.727 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+17:11:34.727 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+17:11:34.781 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+17:11:34.896 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+17:11:41.770 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+17:11:43.273 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+17:11:43.291 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 9.915 seconds (JVM running for 10.884)
+17:11:43.465 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:11:43.712 [RMI TCP Connection(3)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+17:16:44.656 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:21:46.052 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:25:09.305 [http-nio-9001-exec-3] INFO  c.m.w.a.s.i.WxAuthServiceImpl - [login,274] - 登录成功，在security对象中存入13876410945登陆者信息
+17:26:47.408 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:31:48.412 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:36:49.438 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:41:53.450 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+17:41:53.452 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 50417 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+17:41:53.453 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+17:41:54.500 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+17:41:54.501 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+17:41:54.501 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+17:41:54.571 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+17:41:54.701 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+17:42:00.239 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+17:42:01.923 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+17:42:01.942 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 8.728 seconds (JVM running for 9.282)
+17:42:02.100 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:42:02.465 [RMI TCP Connection(3)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+17:42:05.371 [http-nio-9001-exec-1] INFO  c.m.w.a.c.WxShopController - [list,24] - user:15,查询店铺
+17:43:13.157 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 50674 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+17:43:13.158 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+17:43:13.159 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+17:43:14.130 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+17:43:14.130 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+17:43:14.130 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+17:43:14.181 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+17:43:14.290 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+17:43:18.829 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+17:43:20.241 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+17:43:20.257 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 7.335 seconds (JVM running for 7.849)
+17:43:20.436 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:43:20.739 [RMI TCP Connection(1)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+17:43:28.525 [http-nio-9001-exec-1] INFO  c.m.w.a.c.WxShopController - [list,24] - user:15,查询店铺
+17:44:15.479 [http-nio-9001-exec-3] INFO  c.m.w.a.c.WxShopController - [list,24] - user:15,查询店铺
+17:48:24.614 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:51:16.128 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+17:51:16.130 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 52164 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+17:51:16.131 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+17:51:17.101 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+17:51:17.102 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+17:51:17.102 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+17:51:17.157 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+17:51:17.269 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+17:51:47.087 [background-preinit] INFO  o.h.v.i.util.Version - [<clinit>,21] - HV000001: Hibernate Validator 6.1.5.Final
+17:51:47.089 [main] INFO  c.m.w.a.Application - [logStarting,55] - Starting Application using Java 13.0.9 on iMac-2.local with PID 52252 (/Users/youlemei/IdeaProjects/ebi/meal/meal-wx-api/target/classes started by youlemei in /Users/youlemei/IdeaProjects/ebi/meal)
+17:51:47.089 [main] INFO  c.m.w.a.Application - [logStartupProfileInfo,663] - The following profiles are active: dev,db
+17:51:48.028 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["http-nio-9001"]
+17:51:48.029 [main] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+17:51:48.029 [main] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+17:51:48.083 [main] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+17:51:48.187 [main] INFO  c.a.d.s.b.a.DruidDataSourceAutoConfigure - [dataSource,56] - Init DruidDataSource
+17:51:52.835 [main] INFO  c.a.d.p.DruidDataSource - [init,985] - {dataSource-1} inited
+17:51:54.442 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
+17:51:54.460 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 7.609 seconds (JVM running for 8.11)
+17:51:54.618 [scheduling-1] INFO  c.m.w.a.t.SchedulerTask - [cancelTimeoutOrders,34] - 这些订单准备取消:[]
+17:51:54.663 [RMI TCP Connection(1)-127.0.0.1] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+17:51:56.712 [http-nio-9001-exec-1] INFO  c.m.w.a.c.WxShopController - [list,24] - user:15,查询店铺

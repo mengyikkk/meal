@@ -20,7 +20,14 @@ public class WxShopServiceImpl implements WxShopService {
     @Override
     public Result<?> shop(ShopRequestVo request) {
         var example = new MealShopExample();
-        example.createCriteria().andDeletedEqualTo(Boolean.FALSE);
+        MealShopExample.Criteria criteria = example.createCriteria();
+        criteria.andDeletedEqualTo(Boolean.FALSE);
+        if (Objects.nonNull(request)&& Objects.nonNull(request.getShopId())){
+            criteria.andIdEqualTo(request.getShopId());
+        }
+        if (Objects.nonNull(request)&& Objects.nonNull(request.getShopName())){
+            criteria.andNameLike("%" +request.getShopName()+"%" );
+        }
         var count=this.mealShopMapper.countByExample(example);
         if (count==0){
             return ResultUtils.successWithEntities(null,count);

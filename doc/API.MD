@@ -216,7 +216,9 @@ response:
     "name": "汇佳",
     "desc": "鼎丰大厦便利店",
     "picUrl": "",
-    "sortOrder": 1,
+    "sortOrder": 1, 
+    "startTime": "09:00:00",
+    "endTime": "22:00:00",
     "addTime": "2023-02-16 10:56:55"
     },
     {
@@ -225,6 +227,8 @@ response:
     "desc": "向西路",
     "picUrl": "",
     "sortOrder": 2,
+    "startTime": "09:00:00",
+    "endTime": "22:00:00",
     "addTime": "2023-02-16 10:59:16"
     }
     ],
@@ -236,6 +240,8 @@ response:
     - `desc`: string。--描述
     - `picUrl`:string --店铺url
     - `addTime`: date。--店铺创建时间
+    - `startTime`: time。--开店时间
+    - `endTime`: time。--闭店时间
 
 5. 商品一览 分页(目前商品一览 只是单纯商品一览 没有覆盖某个商品的小料信息 后续可增加) 支持 商品id查询 商品名模糊查询 支持分类id单独查询
    有效商品查询 贩卖时间段查询
@@ -734,49 +740,88 @@ response:
 request:
    ```json
 {
-   "shopId": 1046003,
+   "shopId": 6,
    "message": "请尽快送达",
-   "goods": [
+   "orders": [
       {
-         "goodsId": 1181004,
-         "number": 2,
-         "price": 7.00,
-         "cartCalamityVos": [
+         "goods": [
             {
-               "calamityId": 251,
-               "calamityNumber": 1,
-               "price": 10.00
-            }
-         ]
-      },
-      {
-         "goodsId": 1181005,
-         "number": 1,
-         "price": 7.00,
-         "cartCalamityVos": [
-            {
-               "calamityId": 253,
-               "calamityNumber": 2,
-               "price": 10.00
+               "goodsId": 1181007,
+               "number": 2,
+               "price": 10.00,
+               "cartCalamityVos": [
+                  {
+                     "calamityId": 299,
+                     "calamityNumber": 1,
+                     "price": 0.00
+                  }
+               ]
             },
             {
-               "calamityId": 254,
-               "calamityNumber": 1,
-               "price": 10.00
+               "goodsId": 1181011,
+               "number": 1,
+               "price": 10.00,
+               "cartCalamityVos": [
+                  {
+                     "calamityId": 298,
+                     "calamityNumber": 2,
+                     "price": 0.00
+                  }
+               ]
             }
-         ]
+         ],
+         "orderPrice": 30.00,
+         "actualPrice": 30.00,
+         "isTimeOnSale": 2
+      },
+      {
+         "goods": [
+            {
+               "goodsId": 1181102,
+               "number": 2,
+               "price": 5.00,
+               "cartCalamityVos": [
+                  {
+                     "calamityId": 257,
+                     "calamityNumber": 1,
+                     "price": 0.00
+                  }
+               ]
+            },
+            {
+               "goodsId": 1181103,
+               "number": 1,
+               "price": 5.00,
+               "cartCalamityVos": [
+                  {
+                     "calamityId": 261,
+                     "calamityNumber": 2,
+                     "price": 0.00
+                  }
+               ]
+            }
+         ],
+         "orderPrice": 15.00,
+         "actualPrice": 15.00,
+         "isTimeOnSale": 1
       }
    ],
-   "orderPrice": 61.00,
-   "actualPrice": 61.00
+   "orderPrice": 45.00,
+   "actualPrice": 45.00
 }
 ```
 - `shopId`:long。 店铺id (必填)
 - `message`:string。 备注 (非必填)
-- `goods`:list。 订单商品list
-- `goods.cartCalamityVos`:list。 订单小料list
+- `orders`:list。 订单list(按早中晚拆分为三笔订单)
+- `orders.goods`:list。 订单商品list
+- `orders.goods.cartCalamityVos`:list。 订单小料list
 - `cartCalamityVos.price`:decimal。 小料费用(必填)  单价
-- `price`:decimal。 商品单独费用 不包含小料的单价
+- `orders.goods.price`:decimal。 商品单独费用 不包含小料的单价
+- `orders.goods.cartCalamityVos.price`:decimal。 小料单价默认给 0 不包含小料的单价
+- `orders.orderPrice`:decimal。 单笔订单总费用 
+- `orders.actualPrice`:decimal。 单笔订单实际费用 //目前是 orders.orderPrice
+- `orderPrice`:decimal。 订单实际费用 
+- `actualPrice`:decimal。 订单实际费用  //目前是 orderPrice
 
 response:
 

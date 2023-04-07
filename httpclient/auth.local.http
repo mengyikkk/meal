@@ -35,6 +35,9 @@ POST {{host}}/wx/shop/list
 Authorization:  {{token}}
 Content-Type: application/json
 
+{
+  "shopId" :6
+}
 
 
 ###
@@ -55,7 +58,6 @@ Content-Type: application/json
 
 {
   "shopId": 6
-
 }
 
 ###
@@ -64,63 +66,42 @@ Authorization:  {{token}}
 Content-Type: application/json
 
 {
-  "goodsId": 1181101,
-  "goodsSn": "",
-  "goodsName": "肉肠粉",
-  "isOnSale": true,
-  "isTimeOnSale": 1,
-  "picUrl": null,
-  "sortOrder": 1,
-  "categoryId": 1036011,
-  "unit": "份",
-  "price": 7,
-  "addTime": "2023-03-31 18:22:10",
-  "detail": "肉肠粉",
-  "cartCalamityVos": [
+  "shopId": 6,
+  "goods": [
     {
-      "calamityId": 258,
-      "calamityName": "剁椒酱",
-      "goodsId": 1181101,
-      "picUrl": null,
-      "shopId": 6,
-      "brief": "剁椒酱",
-      "unit": "’份‘",
-      "price": 0,
-      "isTimeOnSale": 1,
-      "isOnSale": true,
-      "onSale": true
+      "goodsId": "1181007",
+      "goodsSn": "1181007",
+      "goodsName": "辣椒炒肉饭",
+      "checked": "true",
+      "number": "2",
+      "cartCalamityVos": [
+        {
+          "calamityId": 299,
+          "calamityName": "酸梅汁",
+          "calamityNumber": 2
+        }
+      ]
+    },
+    {
+      "goodsId": "1181102",
+      "goodsSn": "1181102",
+      "goodsName": "蛋肠粉",
+      "checked": "true",
+      "number": "1"
+    },
+    {
+      "goodsId": "1181009",
+      "goodsSn": "1181009",
+      "goodsName": "西红柿盖浇面",
+      "checked": "true",
+      "number": "1"
     }
   ]
 }
-#{
-#  "shopId": 6,
-#  "goods": [
-#    {
-#      "goodsId": "1181100",
-#      "goodsSn": "1181100",
-#      "goodsName": "猪舌拼猪耳饭",
-#      "checked": "true",
-#      "number": "1",
-#      "cartCalamityVos": [
-#        {
-#          "calamityId": 362,
-#          "calamityName": "蒜蓉酱油",
-#          "calamityNumber": 2
-#        }
-#      ]
-#    },
-#    {
-#      "goodsId": "1181013",
-#      "goodsSn": "1181013",
-#      "goodsName": "西红柿炒蛋饭",
-#      "checked": "true",
-#      "number": "1"
-#    }
-#  ]
-#}
+
 
 ###
-GET  {{host}}/wx/cart/amount?shopId=6&isTimeOnSale
+GET  {{host}}/wx/cart/amount?shopId=6
 Authorization: {{token}}
 
 ###
@@ -161,46 +142,81 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "shopId": 1046003,
+  "shopId": 6,
   "message": "请尽快送达",
-  "shoppingCartVos": [
+  "orders": [
     {
-      "goodsId": 1181004,
-      "number": 2,
-      "price": 7.00,
-      "orderCartCalamityVos": [
+      "goods": [
         {
-          "calamityId": 251,
-          "calamityNumber": 1,
-          "calamityPrice": 10.00
-        }
-      ]
-    },
-    {
-      "goodsId": 1181005,
-      "number": 1,
-      "price": 7.00,
-      "orderCartCalamityVos": [
-        {
-          "calamityId": 253,
-          "calamityNumber": 2,
-          "calamityPrice": 10.00
+          "goodsId": 1181007,
+          "number": 2,
+          "price": 10.00,
+          "cartCalamityVos": [
+            {
+              "calamityId": 299,
+              "calamityNumber": 1,
+              "price": 0.00
+            }
+          ]
         },
         {
-          "calamityId": 254,
-          "calamityNumber": 1,
-          "calamityPrice": 10.00
+          "goodsId": 1181011,
+          "number": 1,
+          "price": 10.00,
+          "cartCalamityVos": [
+            {
+              "calamityId": 298,
+              "calamityNumber": 2,
+              "price": 0.00
+            }
+          ]
         }
-      ]
+      ],
+      "orderPrice": 30.00,
+      "actualPrice": 30.00,
+      "isTimeOnSale": 2
+    },
+    {
+      "goods": [
+        {
+          "goodsId": 1181102,
+          "number": 2,
+          "price": 5.00,
+          "cartCalamityVos": [
+            {
+              "calamityId": 257,
+              "calamityNumber": 1,
+              "price": 0.00
+            }
+          ]
+        },
+        {
+          "goodsId": 1181103,
+          "number": 1,
+          "price": 5.00,
+          "cartCalamityVos": [
+            {
+              "calamityId": 261,
+              "calamityNumber": 2,
+              "price": 0.00
+            }
+          ]
+        }
+      ],
+      "orderPrice": 15.00,
+      "actualPrice": 15.00,
+      "isTimeOnSale": 1
     }
   ],
-  "orderPrice": 61.00,
-  "actualPrice": 61.00
+  "orderPrice": 45.00,
+  "actualPrice": 45.00
 }
+
 ###
 GET {{host}}/wx/order/detail
 Content-Type: application/json
 Authorization: {{token}}
+
 ###
 POST  {{host}}/wx/order/prepay/6
 Authorization: {{token}}

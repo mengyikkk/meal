@@ -3,6 +3,7 @@ package com.meal.common.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class ShopResponseVo {
     private Long id;
@@ -52,6 +53,10 @@ public class ShopResponseVo {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime addTime;
+    @JsonFormat(pattern = "HH:mm:ss")
+    private LocalTime startTime;
+    @JsonFormat(pattern = "HH:mm:ss")
+    private  LocalTime endTime;
 
     public Long getId() {
         return id;
@@ -104,6 +109,24 @@ public class ShopResponseVo {
 
     public ShopResponseVo setAddTime(LocalDateTime addTime) {
         this.addTime = addTime;
+        return this;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public ShopResponseVo setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+        return this;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public ShopResponseVo setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
         return this;
     }
 }

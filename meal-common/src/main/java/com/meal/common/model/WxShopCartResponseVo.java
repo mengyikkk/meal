@@ -63,6 +63,8 @@ public class WxShopCartResponseVo {
 
     private Boolean errStatus;
 
+    private Integer isTimeOnSale;
+
     public Long getGoodsId() {
         return goodsId;
     }
@@ -159,6 +161,15 @@ public class WxShopCartResponseVo {
 
     public WxShopCartResponseVo setPrice(BigDecimal price) {
         this.price = price;
+        return this;
+    }
+
+    public Integer getIsTimeOnSale() {
+        return isTimeOnSale;
+    }
+
+    public WxShopCartResponseVo setIsTimeOnSale(Integer isTimeOnSale) {
+        this.isTimeOnSale = isTimeOnSale;
         return this;
     }
 }

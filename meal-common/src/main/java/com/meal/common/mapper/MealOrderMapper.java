@@ -3,6 +3,8 @@ package com.meal.common.mapper;
 import com.meal.common.dto.MealOrder;
 import com.meal.common.dto.MealOrderExample;
 import java.util.List;
+
+import com.meal.common.dto.MealOrderGoods;
 import org.apache.ibatis.annotations.Param;
 
 public interface MealOrderMapper {
@@ -149,4 +151,10 @@ public interface MealOrderMapper {
      * @mbg.generated
      */
     int logicalDeleteByPrimaryKey(Long id);
+
+    int batchInsert(List<MealOrder> items);
+
+    boolean hasOrderByOrderSn(@Param("orderSn")String orderSn);
+
+    boolean hasOrderByShip(@Param("shipSn")String shipSn);
 }

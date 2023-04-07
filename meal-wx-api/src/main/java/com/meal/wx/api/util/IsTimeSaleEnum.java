@@ -6,7 +6,6 @@ public enum IsTimeSaleEnum implements StateMapping<Integer> {
     BREAKFAST(1),
     LUNCH(2),
     DINNER(3),
-
     ;
     private final Integer code;
 
