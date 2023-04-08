@@ -32,7 +32,7 @@ public final class MapperUtils {
                                                             List<Long> goodIds) {
         var example = new MealGoodsExample();
         MealGoodsExample.Criteria criteria = example.createCriteria();
-        criteria.andShopIdIn(List.of(shopId, 0L)).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value()).andIsOnSaleEqualTo(Boolean.TRUE);
+        criteria.andShopIdIn(List.of(shopId, 0L)).andDeletedEqualTo(MealGoods.Deleted.NOT_DELETED.value()).andIdIn(goodIds).andIsOnSaleEqualTo(Boolean.TRUE);
         return mealGoodsMapper.selectByExample(example).stream().collect(Collectors.groupingBy(MealGoods::getIsTimeOnSale));
     }
 
