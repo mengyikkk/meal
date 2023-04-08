@@ -397,7 +397,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             var ordersMap = mealOrders.stream().collect(Collectors.groupingBy(MealOrder::getOrderSn));
             List<OrderRecordVo> listVo = ordersMap.keySet().stream().map(e -> {
                 var orders = ordersMap.get(e);
-                var actualPrice = orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add)
+                var actualPrice = orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
                 MealOrder order = orders.get(0);
                 var shop = shopMap.get(order.getShopId());
                 var vo = new OrderRecordVo();
