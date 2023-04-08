@@ -14,8 +14,7 @@ public class OrderDetailsVo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderDate;
 
-    private List<OrderDetailGoodsVo> orderDetailGoodsVos;
-
+    private List<OrderDetailSonVo> orders;
     private Long count;
 
     private BigDecimal money;
@@ -69,12 +68,12 @@ public class OrderDetailsVo {
         return this;
     }
 
-    public List<OrderDetailGoodsVo> getOrderDetailGoodsVos() {
-        return orderDetailGoodsVos;
+    public List<OrderDetailSonVo> getOrders() {
+        return orders;
     }
 
-    public OrderDetailsVo setOrderDetailGoodsVos(List<OrderDetailGoodsVo> orderDetailGoodsVos) {
-        this.orderDetailGoodsVos = orderDetailGoodsVos;
+    public OrderDetailsVo setOrders(List<OrderDetailSonVo> orders) {
+        this.orders = orders;
         return this;
     }
 

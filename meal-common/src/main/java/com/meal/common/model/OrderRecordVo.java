@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class OrderRecordVo {
-    private Long  orderId;
+    private String orderSn;
     private String shopName;
     private String shopAvatar;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -16,12 +16,16 @@ public class OrderRecordVo {
     private String orderStatusMessage;
     private BigDecimal money;
 
-    public Long getOrderId() {
-        return orderId;
+    private String shipSnByBreakFast;
+    private String shipSnByLunch;
+    private String shipSnByDinner;
+
+    public String getOrderSn() {
+        return orderSn;
     }
 
-    public OrderRecordVo setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public OrderRecordVo setOrderSn(String orderSn) {
+        this.orderSn = orderSn;
         return this;
     }
 
@@ -76,6 +80,33 @@ public class OrderRecordVo {
 
     public OrderRecordVo setMoney(BigDecimal money) {
         this.money = money;
+        return this;
+    }
+
+    public String getShipSnByBreakFast() {
+        return shipSnByBreakFast;
+    }
+
+    public OrderRecordVo setShipSnByBreakFast(String shipSnByBreakFast) {
+        this.shipSnByBreakFast = shipSnByBreakFast;
+        return this;
+    }
+
+    public String getShipSnByLunch() {
+        return shipSnByLunch;
+    }
+
+    public OrderRecordVo setShipSnByLunch(String shipSnByLunch) {
+        this.shipSnByLunch = shipSnByLunch;
+        return this;
+    }
+
+    public String getShipSnByDinner() {
+        return shipSnByDinner;
+    }
+
+    public OrderRecordVo setShipSnByDinner(String shipSnByDinner) {
+        this.shipSnByDinner = shipSnByDinner;
         return this;
     }
 }

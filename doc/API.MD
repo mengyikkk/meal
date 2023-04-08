@@ -925,7 +925,7 @@ response:
 - `shopName`:string。 店铺名
 - `shopPhone`:string。 店铺电话
 
-某个订单的response:
+订单历史的response:
 
  ```json
 {
@@ -969,5 +969,5 @@ response:
 - `orderStatus`:int。 0, "未支付" 1, "已支付" 3, "订单完成" 4, "订单退款"
 - `orderStatusMessage`:string。 状态描述 可用可不用
 - `money`:decimal。 店铺名
-- `records`:long。 订单数
+- `records`:long。 订单数q
 

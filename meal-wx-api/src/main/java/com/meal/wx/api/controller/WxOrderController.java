@@ -23,9 +23,9 @@ public class WxOrderController {
         return this.wxOrderService.submit(wxOrder, SecurityUtils.getUserId());
     }
 
-    @PostMapping("/prepay/{orderId}")
-    public Result<?> prepay(@PathVariable("orderId") Long orderId) {
-        return this.wxOrderService.prepay(SecurityUtils.getUserId(),orderId);
+    @PostMapping("/prepay/{orderSn}")
+    public Result<?> prepay(@PathVariable("orderSn") String orderSn) {
+        return this.wxOrderService.prepay(SecurityUtils.getUserId(),orderSn);
     }
 
 
@@ -42,12 +42,12 @@ public class WxOrderController {
     public Object payNotify(HttpServletRequest request, HttpServletResponse response) {
         return this.wxOrderService.payNotify(request, response);
     }
-    @PostMapping("/refund/{orderId}")
-    public Object refund(@PathVariable("orderId") Long orderId) {
-        return this.wxOrderService.refund(SecurityUtils.getUserId(), orderId);
+    @PostMapping("/refund/{orderSn}")
+    public Object refund(@PathVariable("orderSn") String orderSn) {
+        return this.wxOrderService.refund(SecurityUtils.getUserId(), orderSn);
     }
     @GetMapping("/detail")
-    public  Result<?> detail(@RequestParam(required = false) Long orderId) {
-        return wxOrderService.detail(SecurityUtils.getUserId(), orderId);
+    public  Result<?> detail(@RequestParam(required = false) String orderSn) {
+        return wxOrderService.detail(SecurityUtils.getUserId(), orderSn);
     }
 }
