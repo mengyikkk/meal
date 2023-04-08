@@ -124,7 +124,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         BigDecimal orderPrice = BigDecimal.ZERO;
         // 遍历购物车中的商品
         for (WxOrderSonVo order : orders) {
-            var mealOrder = this.createOrder(order, user, wxOrderVo.getShopId(), wxOrderVo.getMessage());
+            var mealOrder = this.createOrder(order, user, wxOrderVo.getShopId(), wxOrderVo.getMessage(), OrderSnUtils.generateOrderSn("meal", mealOrderMapper));
             BigDecimal goodsPrice = BigDecimal.ZERO;
             for (OrderCartVo shoppingCartVo : order.getGoods()) {
                 // 检查购物车中的商品是否有效
@@ -176,14 +176,14 @@ public class WxOrderServiceImpl implements WxOrderService {
     }
 
 
-    private MealOrder createOrder(WxOrderSonVo wxOrderVo, MealUser user, Long shopId, String message) {
+    private MealOrder createOrder(WxOrderSonVo wxOrderVo, MealUser user, Long shopId, String message, String orderSn) {
         // 通过MyBatis mapper查询对应的用户对象
         // 如果查询到的用户对象不为null，则创建一个新的订单对象，并设置订单属性
         return Optional.ofNullable(user).map(u -> {
                     MealOrder mealOrder = new MealOrder();
                     mealOrder.setUserId(user.getId()); // 用户ID
                     mealOrder.setShopId(shopId); // 商铺ID
-                    mealOrder.setOrderSn(OrderSnUtils.generateOrderSn("meal", mealOrderMapper)); // 订单号
+                    mealOrder.setOrderSn(orderSn); // 订单号
                     mealOrder.setOrderStatus(OrderStatusEnum.UNPAID.getMapping()); // 订单状态：待支付
                     mealOrder.setShipStatus(ShipStatusEnum.NOT_SHIP.getMapping()); // 发货状态：未发货
                     mealOrder.setRefundStatus(RefundStatusEnum.CAN_APPLY.getMapping()); // 退款状态：可以申请

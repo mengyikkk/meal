@@ -783,7 +783,7 @@
     </select>
     <select id="hasOrderByShip" resultType="java.lang.Boolean">
         SELECT EXISTS(select 1 from meal_order
-                      where ship_sn =  #{shipSn} LIMIT 1)
+                      where ship_sn =  #{shipSn}  and to_days(add_time) = to_days(now()) LIMIT 1)
     </select>
     <update id="logicalDeleteByExample" parameterType="map">
         <!--
