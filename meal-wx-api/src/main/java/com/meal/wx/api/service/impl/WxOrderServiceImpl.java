@@ -274,8 +274,8 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (!OrderStatusEnum.isCanceled(order)) {
             return ResultUtils.message(ResponseCode.ORDER_CONFIRM_NOT_ALLOWED, ResponseCode.ORDER_CONFIRM_NOT_ALLOWED.getMessage());
         }
-        var mealWx = new MealOrderWx();
-        mealWx.setOrderId(order.getId());
+        var mealWx = new MealOrderWxWithBLOBs();
+        mealWx.setOrderSn(orderSn);
         mealWx.setOrderType("REFUND");
         if (OrderStatusEnum.PAID.is(order.getOrderStatus())) {
             WxPayRefundResult wxPayRefundResult = doWxRefund(orderSn, orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add), mealWx);
@@ -318,7 +318,7 @@ public class WxOrderServiceImpl implements WxOrderService {
      *
      * @return 微信退款结果
      */
-    private WxPayRefundResult doWxRefund(String orderSn, BigDecimal actualPrice, MealOrderWx mealOrderWx) {
+    private WxPayRefundResult doWxRefund(String orderSn, BigDecimal actualPrice, MealOrderWxWithBLOBs mealOrderWx) {
         WxPayRefundRequest wxPayRefundRequest = new WxPayRefundRequest();
         wxPayRefundRequest.setOutTradeNo(orderSn);
         wxPayRefundRequest.setOutRefundNo("refund_" + orderSn);
@@ -390,7 +390,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             // 在 example 对象上创建查询条件：查询用户 id 等于 uid，且未被删除的订单
             example.createCriteria().andUserIdEqualTo(uid).andDeletedEqualTo(Boolean.FALSE);
             // 按订单添加时间倒序排序
-            example.setOrderByClause("add_time desc");
+            example.setOrderByClause("add_time DESC");
             // 通过 mealOrderMapper 的 selectByExample 方法查询订单列表
             List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(example);
             var shopMap = MapperUtils.shopMapByIds(mealOrders.stream().map(MealOrder::getShopId).distinct().collect(Collectors.toList()), mealShopMapper);
@@ -425,7 +425,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     }
                 });
                 return vo;
-            }).collect(Collectors.toList());
+            }).sorted(Comparator.comparing(OrderRecordVo::getOrderDate).reversed()).collect(Collectors.toList());
             // 将 OrderRecordVo 列表封装到 Result 对象中并返回
             return ResultUtils.successWithEntities(listVo, (long) listVo.size());
         }
@@ -440,9 +440,9 @@ public class WxOrderServiceImpl implements WxOrderService {
      */
     private Result<?> prepaySon(MealUser user, String orderSn, BigDecimal actualPrice) {
         // 创建支付记录对象并设置初始值
-        MealOrderWx log = new MealOrderWx();
+        MealOrderWxWithBLOBs log = new MealOrderWxWithBLOBs();
         log.setOrderType("ORDER");
-
+        log.setOrderSn(orderSn);
         // 记录支付请求参数并输出日志
         this.logger.info("用户:{},订单编号:{},正在调取微信支付", JsonUtils.toJson(user), orderSn);
         // 获取用户的微信OpenID
@@ -566,18 +566,20 @@ public class WxOrderServiceImpl implements WxOrderService {
         String totalFee = BaseWxPayResult.fenToYuan(result.getTotalFee());
 
         // 根据订单号查询订单信息
-        MealOrder mealOrder = this.selectOrderBySn(orderSn);
+        var mealOrders = this.selectOrderBySn(orderSn);
+        BigDecimal actualPrice = mealOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var mealOrder = mealOrders.get(0);
         // 创建支付记录对象并设置初始值
-        MealOrderWx log = new MealOrderWx();
+        MealOrderWxWithBLOBs log = new MealOrderWxWithBLOBs();
         // 记录支付请求参数并输出日志
-        if (Objects.isNull(mealOrder)) {
+        if (ObjectUtils.isEmpty(mealOrders)) {
 
             this.logger.error("订单不存在 sn={}", orderSn);
             // 订单不存在，返回通知失败
             return WxPayNotifyResponse.fail("订单不存在 sn=" + orderSn);
         }
         log.setOrderType("ORDER_NOTIFY");
-        log.setOrderId(mealOrder.getId());
+        log.setOrderSn(mealOrder.getOrderSn());
         log.setRequestParam(JsonUtils.toJson(result));
         if (OrderStatusEnum.notPayed(mealOrder)) {
             logger.warn("订单已经处理成功sn={}", orderSn);
@@ -585,32 +587,33 @@ public class WxOrderServiceImpl implements WxOrderService {
             return WxPayNotifyResponse.success("订单已经处理成功!");
         }
         // 检查支付订单金额是否正确，如果不正确则返回通知失败
-        if (!totalFee.equals(mealOrder.getActualPrice().toString())) {
+        if (!totalFee.equals(actualPrice.toString())) {
             logger.error("sn={}支付金额不符合 totalFe e={}", orderSn, totalFee);
             return WxPayNotifyResponse.fail(mealOrder.getOrderSn() + " : 支付金额不符合 totalFee=" + totalFee);
         }
+        var mealOrderNew = new MealOrder();
         // 更新订单状态为已支付
-        mealOrder.setPayId(payId);
-        mealOrder.setPayTime(LocalDateTime.now());
-        mealOrder.setOrderStatus(OrderStatusEnum.PAID.getMapping());
+        mealOrderNew.setPayId(payId);
+        mealOrderNew.setPayTime(LocalDateTime.now());
+        mealOrderNew.setOrderStatus(OrderStatusEnum.PAID.getMapping());
         var example = new MealOrderExample();
-        example.createCriteria().andIdEqualTo(mealOrder.getId()).andOrderStatusEqualTo(OrderStatusEnum.UNPAID.getMapping());
+        example.createCriteria().andOrderSnEqualTo(mealOrder.getOrderSn()).andOrderStatusEqualTo(OrderStatusEnum.UNPAID.getMapping());
         // 更新订单信息到数据库
-        if (this.mealOrderMapper.updateByExample(mealOrder, example) < 1) {
+        if (this.mealOrderMapper.updateByExample(mealOrderNew, example) < mealOrders.size()) {
             logger.error("更新订单:{}数据已失效", orderSn);
             return WxPayNotifyResponse.fail("更新数据已失效");
         }
-        this.logger.info("此订单支付成功:{}", mealOrder.getId());
+        this.logger.info("此订单支付成功:{}", mealOrder.getOrderSn());
         this.mealOrderWxMapper.insertSelective(log);
         // 返回通知成功
         return WxPayNotifyResponse.success("处理成功!");
     }
 
 
-    private MealOrder selectOrderBySn(String orderSn) {
+    private List<MealOrder> selectOrderBySn(String orderSn) {
         var example = new MealOrderExample();
         example.createCriteria().andOrderSnEqualTo(orderSn).andDeletedEqualTo(Boolean.FALSE);
-        return this.mealOrderMapper.selectOneByExample(example);
+        return this.mealOrderMapper.selectByExample(example);
     }
 }
 

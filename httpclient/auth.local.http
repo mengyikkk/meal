@@ -213,7 +213,7 @@ Authorization: {{token}}
 }
 
 ###
-GET {{host}}/wx/order/detail
+GET {{host}}/wx/order/detail?orderSn=mealPK4i0tb2y7wxgR
 Content-Type: application/json
 Authorization: {{token}}
 
