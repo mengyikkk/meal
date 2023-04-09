@@ -10,6 +10,10 @@ public class OrderDetailSonVo {
 
     private BigDecimal money;
 
+    private String shipSn;
+
+    private Integer  isTimeOnSale;
+
     public List<OrderDetailGoodsVo> getOrderDetailGoodsVos() {
         return orderDetailGoodsVos;
     }
@@ -34,6 +38,24 @@ public class OrderDetailSonVo {
 
     public OrderDetailSonVo setMoney(BigDecimal money) {
         this.money = money;
+        return this;
+    }
+
+    public String getShipSn() {
+        return shipSn;
+    }
+
+    public OrderDetailSonVo setShipSn(String shipSn) {
+        this.shipSn = shipSn;
+        return this;
+    }
+
+    public Integer getIsTimeOnSale() {
+        return isTimeOnSale;
+    }
+
+    public OrderDetailSonVo setIsTimeOnSale(Integer isTimeOnSale) {
+        this.isTimeOnSale = isTimeOnSale;
         return this;
     }
 }

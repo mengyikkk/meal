@@ -381,6 +381,10 @@ public class WxOrderServiceImpl implements WxOrderService {
                 }).collect(Collectors.toList()));
                 orderDetailSonVo.setCount((long) mealOrderGoods.size());
                 orderDetailSonVo.setMoney(e.getActualPrice());
+                orderDetailSonVo.setShipSn(e.getShipSn());
+                if (Objects.nonNull(orderDetailSonVo.getShipSn())){
+                    orderDetailSonVo.setIsTimeOnSale(Integer.valueOf(orderDetailSonVo.getShipSn().substring(0, 1)));
+                }
                 return orderDetailSonVo;
             }).collect(Collectors.toList()));
             return ResultUtils.success(vo);

@@ -213,10 +213,11 @@ Authorization: {{token}}
 }
 
 ###
-GET {{host}}/wx/order/detail?orderSn=mealPK4i0tb2y7wxgR
+GET {{host}}/wx/order/detail?orderSn=mealnkAa5A4Mgff0GP
+#GET {{host}}/wx/order/detail
 Content-Type: application/json
 Authorization: {{token}}
 
 ###
-POST  {{host}}/wx/order/prepay/6
+POST  {{host}}/wx/order/prepay/mealnkAa5A4Mgff0GP
 Authorization: {{token}}
