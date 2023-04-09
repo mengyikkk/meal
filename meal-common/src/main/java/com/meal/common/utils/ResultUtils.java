@@ -139,6 +139,7 @@ public final class ResultUtils {
         return entity(ResponseCode.SUCCESS, result);
     }
 
+
     public static<E> Result<E> unknown() {
         return code(ResponseCode.UNKNOWN);
     }

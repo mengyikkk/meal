@@ -13,11 +13,7 @@ import com.meal.common.mapper.MealCartMapper;
 import com.meal.common.mapper.MealGoodsMapper;
 import com.meal.common.mapper.MealLittleCalamityMapper;
 import com.meal.common.mapper.MealShopMapper;
-import com.meal.common.model.CartCalamityVo;
-import com.meal.common.model.ShoppingCartVo;
-import com.meal.common.model.WxShopCartCalamitySonVo;
-import com.meal.common.model.WxShopCartResponseVo;
-import com.meal.common.model.WxShoppingCartVo;
+import com.meal.common.model.*;
 import com.meal.common.transaction.TransactionExecutor;
 import com.meal.common.utils.MapperUtils;
 import com.meal.common.utils.ResultUtils;
@@ -50,6 +46,8 @@ public class WxCartServiceImpl implements WxCartService {
     private Validator validator;
     @Resource
     private MealCartMapper mealCartMapper;
+    @Resource
+    private  WxCartService wxCartService;
     @Resource
     private MealGoodsMapper mealGoodsMapper;
     @Resource
@@ -87,7 +85,6 @@ public class WxCartServiceImpl implements WxCartService {
         List<Function<Void, Integer>> functions = new LinkedList<>();
         var example = new MealCartExample();
         example.createCriteria().andUserIdEqualTo(uid);
-        //刪除用戶收藏數據
         functions.add(nothing -> {
             mealCartMapper.deleteByExample(example);
             return 1;
@@ -165,7 +162,7 @@ public class WxCartServiceImpl implements WxCartService {
         var goodsByShopMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shopId, Collections.emptyList());
         //小料
         var calamityMap = MapperUtils.calamityMapByShopAndGoods(mealLittleCalamityMapper, mealCartCalamities.stream().map(MealCartCalamity::getCalamityId).collect(Collectors.toList()), new ArrayList<>(goodsByShopMap.keySet()), shopId);
-        var result = mealCarts.stream().map(e -> {
+        List<WxShopCartResponseVo> responseVos = mealCarts.stream().map(e -> {
             var vo = new WxShopCartResponseVo();
             var product = goodsByShopMap.getOrDefault(e.getGoodsId(), null);
             if (Objects.isNull(product)) {
@@ -203,7 +200,16 @@ public class WxCartServiceImpl implements WxCartService {
             }
             return vo.setGoodsId(e.getGoodsId()).setGoodsName(e.getGoodsName()).setGoodsIsTime(e.getGoodsIsTime()).setChecked(e.getChecked()).setGoodsName(e.getGoodsName()).setNumber(e.getNumber()).setGoodsSn(e.getGoodsSn());
         }).collect(Collectors.toList());
-        return ResultUtils.successWithEntities(result, this.count(uid, shopId));
+        var resultMap = responseVos.stream().filter(c->Objects.nonNull(c.getIsTimeOnSale())).collect(Collectors.groupingBy(WxShopCartResponseVo::getIsTimeOnSale));
+        var result =resultMap.keySet().stream().map(e->{
+            var vo = new WxShoppingCartOrderVo();
+            vo.setGoods(resultMap.get(e));
+            vo.setIsTimeOnSale(e);
+            return vo;
+        }).collect(Collectors.toList());
+        var resultVo = new WxCartResponseAllVo().setErrGoods(responseVos.stream().filter(e->Objects.isNull(e.getIsTimeOnSale())).collect(Collectors.toList()))
+                .setOrders(result).setCounts(this.count(uid, shopId));
+        return ResultUtils.success(resultVo);
     }
 
     @Override
@@ -216,7 +222,6 @@ public class WxCartServiceImpl implements WxCartService {
             }
         }
         this.logger.info("[WxCartServiceImpl][deleteShoppingCartList]:store. uid: {} 清空购物车, ", uid);
-        WxCartService wxCartService = (WxCartService) AopContext.currentProxy();
         wxCartService.deleteShoppingCart(uid, shopId);
         return ResultUtils.success();
     }

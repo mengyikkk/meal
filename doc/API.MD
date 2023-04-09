@@ -396,7 +396,7 @@ response:
 7. 购物车一览
 
     ```http request
-   GET  http://localhost:9001/wx/cart?shopId=1046003
+   GET  {{host}}/wx/cart?shopId=6
    Authorization: {{token}}
     ```
    request:
@@ -408,60 +408,92 @@ response:
    {
    "code": 200,
    "description": null,
-   "result": [
+   "result": {
+   "orders": [
    {
-   "goodsId": 1181006,
-   "goodsSn": "1181006",
-   "goodsIsTime": true,
-   "goodsName": "炒粉",
-   "categoryId": 1036007,
-   "number": 1,
-   "url": null,
-   "unit": null,
-   "checked": true,
-   "price": null,
-   "errStatus": true
-   },
+   "goods": [
    {
-   "goodsId": 1181005,
-   "goodsSn": "1181005",
-   "goodsIsTime": true,
-   "goodsName": "肉肠粉",
-   "number": 1,
-   "url": null,
-   "unit": "份",
-   "checked": true,
-   "price": 7.00,
-   "errStatus": false
-   },
-   {
-   "goodsId": 1181004,
-   "goodsSn": "1181004",
-   "categoryId": 1036007,
+   "goodsId": 1181102,
+   "goodsSn": "1181102",
    "goodsIsTime": true,
    "goodsName": "蛋肠粉",
    "number": 1,
    "url": null,
    "unit": "份",
    "checked": true,
-   "price": 7.00,
+   "price": 5.00,
+   "errStatus": false,
+   "isTimeOnSale": 1
+   }
+   ],
+   "isTimeOnSale": 1
+   },
+   {
+   "goods": [
+   {
+   "goodsId": 1181011,
+   "goodsSn": "1181011",
+   "goodsIsTime": true,
+   "goodsName": "烧鸭饭",
+   "number": 1,
+   "url": null,
+   "unit": "份",
+   "checked": true,
+   "price": 10.00,
+   "errStatus": false,
+   "isTimeOnSale": 2
+   },
+   {
+   "goodsId": 1181007,
+   "goodsSn": "1181007",
+   "goodsIsTime": true,
+   "goodsName": "辣椒炒肉饭",
+   "number": 2,
+   "url": null,
+   "unit": "份",
+   "checked": true,
+   "price": 10.00,
    "calamityVos": [
    {
-   "calamityId": 251,
-   "calamityName": "蒜蓉酱油",
-   "calamityNumber": null,
+   "calamityId": 299,
+   "calamityName": "酸梅汁",
+   "calamityNumber": 2,
    "calamityUnit": "’份‘",
    "calamityUrl": null,
    "errStatus": false,
    "calamityPrice": 0.00
    }
    ],
-   "errStatus": false
+   "errStatus": false,
+   "isTimeOnSale": 2
    }
    ],
-   "records": 3
+   "isTimeOnSale": 2
+   }
+   ],
+   "errGoods": [
+   {
+   "goodsId": 1181103,
+   "goodsSn": "1181103",
+   "goodsIsTime": true,
+   "goodsName": "炒米粉",
+   "number": 1,
+   "url": null,
+   "unit": null,
+   "checked": true,
+   "price": null,
+   "errStatus": true,
+   "isTimeOnSale": null
+   }
+   ],
+   "counts": 4
+   },
+   "records": null
    }
    ```
+    - `orders`: list。-- 购物车有效list
+    - `errGoods`: list。-- 购物车失效list(没有失效的商品时不会传这个errGoods)
+    - `counts`: long。-- 购物车共有多少商品(包含失效)
     - `id`: integer。-- 小料id
     - `name`: string。--商品名
     - `brief`: string。--详细
@@ -487,7 +519,7 @@ response:
 
 8. 购物车 单子数量
     ```http request
-   GET  http://localhost:9001/wx/cart?shopId=1046003
+   GET  {{host}}/wx/cart/amount?shopId=6
    Authorization: {{token}}
     ```
    request:
@@ -814,6 +846,7 @@ request:
 - `message`:string。 备注 (非必填)
 - `orders`:list。 订单list(按早中晚拆分为三笔订单)
 - `orders.goods`:list。 订单商品list
+- `orders.isTimeOnSale.`:integer。 --时间段贩卖 1,早餐2,午餐 3,晚餐 0,全时段供应
 - `orders.goods.cartCalamityVos`:list。 订单小料list
 - `cartCalamityVos.price`:decimal。 小料费用(必填)  单价
 - `orders.goods.price`:decimal。 商品单独费用 不包含小料的单价
@@ -845,21 +878,21 @@ response:
 
    ```http request
    ###
-   POST  {{host}}/wx/order/prepay/6
+   POST  {{host}}/wx/order/prepay/mealnkAa5A4Mgff0GP
    Authorization: {{token}}
    ```
-- `orderId`:long。 商品Id (必填)
+- `orderSn`:long。 商品编号 (必填)
 - 返回值和14.提交订单相同
 
 
 16. 商品详情(带orderId 是某个订单详细,不带orderId  是全部订单记录)
 
    ```http request
-   GET {{host}}/wx/order/detail?orderId=6
+   GET {{host}}/wx/order/detail?orderSn=mealnkAa5A4Mgff0GP
    Content-Type: application/json
    Authorization: {{token}}
    ```
-- `orderId`:long。 商品Id (必填)
+- `orderId`:long。 商品Id (选填)
 
 某个订单的response:
 
@@ -869,58 +902,98 @@ response:
    "description": null,
    "result": {
       "nickName": "test21",
-      "orderSn": "mealq00Udif",
-      "orderDate": "2023-03-28 12:46:32",
-      "orderDetailGoodsVos": [
+      "orders": [
          {
-            "goodsName": "蛋肠粉",
-            "goodsNumber": 2,
-            "unit": "’份‘",
-            "goodsMoney": 7.00,
-            "orderDetailCalamityVos": [
+            "orderDetailGoodsVos": [
                {
-                  "calamityName": "蒜蓉酱油",
-                  "calamityNumber": 1,
+                  "goodsName": "辣椒炒肉饭",
+                  "goodsNumber": 2,
                   "unit": "’份‘",
-                  "calamityMoney": 10.00
-               }
-            ]
-         },
-         {
-            "goodsName": "肉肠粉",
-            "goodsNumber": 1,
-            "unit": "’份‘",
-            "goodsMoney": 7.00,
-            "orderDetailCalamityVos": [
-               {
-                  "calamityName": "萝卜干",
-                  "calamityNumber": 2,
-                  "unit": "’份‘",
-                  "calamityMoney": 10.00
+                  "goodsMoney": 10.00,
+                  "orderDetailCalamityVos": [
+                     {
+                        "calamityName": "酸梅汁",
+                        "calamityNumber": 1,
+                        "unit": "’份‘",
+                        "calamityMoney": 0.00
+                     }
+                  ]
                },
                {
-                  "calamityName": "xo酱",
-                  "calamityNumber": 1,
+                  "goodsName": "烧鸭饭",
+                  "goodsNumber": 1,
                   "unit": "’份‘",
-                  "calamityMoney": 10.00
+                  "goodsMoney": 10.00,
+                  "orderDetailCalamityVos": [
+                     {
+                        "calamityName": "酸梅汁",
+                        "calamityNumber": 2,
+                        "unit": "’份‘",
+                        "calamityMoney": 0.00
+                     }
+                  ]
                }
-            ]
+            ],
+            "count": 2,
+            "money": 30.00,
+            "shipSn": "2484",
+            "isTimeOnSale": 2
+         },
+         {
+            "orderDetailGoodsVos": [
+               {
+                  "goodsName": "蛋肠粉",
+                  "goodsNumber": 2,
+                  "unit": "’份‘",
+                  "goodsMoney": 5.00,
+                  "orderDetailCalamityVos": [
+                     {
+                        "calamityName": "萝卜干",
+                        "calamityNumber": 1,
+                        "unit": "’份‘",
+                        "calamityMoney": 0.00
+                     }
+                  ]
+               },
+               {
+                  "goodsName": "炒米粉",
+                  "goodsNumber": 1,
+                  "unit": "’份‘",
+                  "goodsMoney": 5.00,
+                  "orderDetailCalamityVos": [
+                     {
+                        "calamityName": "剁椒酱",
+                        "calamityNumber": 2,
+                        "unit": "’份‘",
+                        "calamityMoney": 0.00
+                     }
+                  ]
+               }
+            ],
+            "count": 2,
+            "money": 15.00,
+            "shipSn": "1765",
+            "isTimeOnSale": 1
          }
       ],
       "count": 1,
-      "money": 61.00,
-      "shopName": "汇佳",
-      "shopPhone": ""
+      "shopName": "汇佳便利店",
+      "shopPhone": "13686812902"
    },
    "records": null
 }
  ```
-- `nickName`:string。 用户名 (必填)
+- `nickName`:string。 用户名 
+- `orders`:list。 订单list 
+- `orders.shipSn`:string。 取餐码 
+- `orders.isTimeOnSale`:integer。 订单早午晚区分 
+- `orders`:list。 订单详细list 
 - `orderSn`:string。 订单编号 (非必填)
 - `orderDate`:date。 订单日期
-- `orderDetailGoodsVos`:list。 订单商品list
+- `oorders.rderDetailGoodsVos`:list。 订单商品list
 - `orderDetailGoodsVos.orderDetailCalamityVos`:list。 订单小料list
-- `count`:订单笔数。 1
+- `orders.count`:订单笔数。 1
+- `orders.money`:decimal。 订单费用
 - `money`:decimal。 订单费用
 - `shopName`:string。 店铺名
 - `shopPhone`:string。 店铺电话
@@ -933,41 +1006,329 @@ response:
    "description": null,
    "result": [
       {
-         "orderId": 10,
-         "shopName": "汇佳",
+         "orderSn": "mealmRkXlx3cxop8nX",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-09 19:29:23",
+         "orderStatus": 0,
+         "orderStatusMessage": "未支付",
+         "money": 45.00,
+         "shipSnByBreakFast": "1240",
+         "shipSnByLunch": "2289",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealnkAa5A4Mgff0GP",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-09 12:45:17",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 45.00,
+         "shipSnByBreakFast": "1765",
+         "shipSnByLunch": "2484",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "meal0VT4Q58PxjecIc",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-09 12:45:04",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 45.00,
+         "shipSnByBreakFast": "1721",
+         "shipSnByLunch": "2921",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealPK4i0tb2y7wxgR",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-08 16:27:36",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 45.00,
+         "shipSnByBreakFast": "1315",
+         "shipSnByLunch": "2702",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealEZsT83fgQfE52N",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-08 16:24:51",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 45.00,
+         "shipSnByBreakFast": "1802",
+         "shipSnByLunch": "2147",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealdwoMfKggOHODnd",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-08 16:00:49",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 45.00,
+         "shipSnByBreakFast": "1426",
+         "shipSnByLunch": "2248",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "meal6nNQer5CKhSrlO",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-08 15:55:15",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 15.00,
+         "shipSnByBreakFast": "1445",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealb5v1HFPlyVjLnb",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-08 15:55:15",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 30.00,
+         "shipSnByBreakFast": null,
+         "shipSnByLunch": "2857",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealnPbC93oDAilYvk",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-08 15:52:59",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 15.00,
+         "shipSnByBreakFast": "1148",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "meal1OcgqVkIYlH7wG",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-08 15:52:59",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 30.00,
+         "shipSnByBreakFast": null,
+         "shipSnByLunch": "2276",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "meal5sOhYKgHlt0RMQ",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-07 13:47:21",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 15.00,
+         "shipSnByBreakFast": "1413",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealms8SHvy5Lmkj7v",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-07 13:47:21",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 30.00,
+         "shipSnByBreakFast": null,
+         "shipSnByLunch": "2904",
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "meal0PnsADf",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-03 23:09:57",
+         "orderStatus": 1,
+         "orderStatusMessage": "已支付",
+         "money": 7.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealLm0x2aQ",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-03 22:57:15",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 7.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealijrSNwW",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-03 22:56:16",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 7.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealGGUx6VO",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-03 22:54:55",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 7.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealPr6ynO7",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-03 22:54:06",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 7.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealb4LGXau",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-04-03 22:53:55",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 7.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealKY8begV",
+         "shopName": "汇佳便利店",
          "shopAvatar": "",
          "orderDate": "2023-03-29 16:28:19",
-         "orderStatus": 0,
-         "orderStatusMessage": "未支付",
-         "money": 61.00
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 61.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
       },
       {
-         "orderId": 9,
-         "shopName": "汇佳",
+         "orderSn": "mealsLcjzuR",
+         "shopName": "汇佳便利店",
          "shopAvatar": "",
          "orderDate": "2023-03-29 16:25:49",
-         "orderStatus": 0,
-         "orderStatusMessage": "未支付",
-         "money": 61.00
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 61.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
       },
       {
-         "orderId": 8,
-         "shopName": "汇佳",
+         "orderSn": "mealYgguQ7b",
+         "shopName": "汇佳便利店",
          "shopAvatar": "",
          "orderDate": "2023-03-29 16:25:27",
-         "orderStatus": 0,
-         "orderStatusMessage": "未支付",
-         "money": 61.00
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 61.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "meallDU5hRr",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-03-28 13:50:43",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 61.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealq00Udif",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-03-28 12:46:32",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 61.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealAscbSwn",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-03-28 12:42:37",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 61.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "meal5Uw0SiS",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-03-28 12:01:01",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 61.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
+      },
+      {
+         "orderSn": "mealnktIkgr",
+         "shopName": "汇佳便利店",
+         "shopAvatar": "",
+         "orderDate": "2023-03-28 11:59:18",
+         "orderStatus": 4,
+         "orderStatusMessage": "订单退款",
+         "money": 61.00,
+         "shipSnByBreakFast": "1111",
+         "shipSnByLunch": null,
+         "shipSnByDinner": null
       }
    ],
-   "records": 8
+   "records": 26
 }
  ```
-- `orderId`:string。订单id
+- `orderSn`:string。订单编号
 - `shopAvatar`:string。 店铺头像url 
 - `orderDate`:date。 订单日期
 - `orderStatus`:int。 0, "未支付" 1, "已支付" 3, "订单完成" 4, "订单退款"
 - `orderStatusMessage`:string。 状态描述 可用可不用
 - `money`:decimal。 店铺名
 - `records`:long。 订单数q
+- `shipSnByBreakFast`:string。 早餐取餐码
+- `shipSnByLunch`:string。 午餐取餐码
+- `shipSnByDinner`:string。 晚餐取餐码
 

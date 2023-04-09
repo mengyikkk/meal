@@ -104,10 +104,14 @@ public class WxOrderServiceImpl implements WxOrderService {
         //check 提供订单的商品是否属于某个时间段
         for (WxOrderSonVo order : orders) {
             List<MealGoods> mealGoods = mapByIsTimeOnSale.get(order.getIsTimeOnSale());
-            if (mealGoods.stream().map(MealGoods::getId).collect(Collectors.toSet()).containsAll(order.getGoods().stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList()))) {
+            Set<Long> goods = mealGoods.stream().map(MealGoods::getId).collect(Collectors.toSet());
+            List<Long> orderGoodIds = order.getGoods().stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList());
+            if (goods.containsAll(orderGoodIds)) {
                 goodsByAllOrder.addAll(mealGoods);
             } else {
-                return ResultUtils.message(ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL, ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL.getMessage());
+                orderGoodIds.removeAll(goods);
+                this.logger.info("Service-Order[WxOrderVo][block]:shop. ids: {} 不属于isTimeONSale:{}",orderGoodIds,order.getIsTimeOnSale());
+                return ResultUtils.message(ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL,"商品ID:{"+ orderGoodIds +"}" +ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL.getMessage());
             }
         }
         //取出订单中所有商品的信息
@@ -358,6 +362,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             var vo = new OrderDetailsVo();
             vo.setNickName(user.getNickname());
             vo.setCount(1L);
+            vo.setMoney(validOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO,BigDecimal::add));
             vo.setShopName(shop.getName());
             vo.setShopPhone(shop.getPhone());
             vo.setOrders(validOrders.stream().map(e -> {

@@ -83,6 +83,13 @@ Content-Type: application/json
       ]
     },
     {
+      "goodsId": "1181011",
+      "goodsSn": "1181011",
+      "goodsName": "烧鸭饭",
+      "checked": "true",
+      "number": "1"
+    },
+    {
       "goodsId": "1181102",
       "goodsSn": "1181102",
       "goodsName": "蛋肠粉",
@@ -90,9 +97,9 @@ Content-Type: application/json
       "number": "1"
     },
     {
-      "goodsId": "1181009",
-      "goodsSn": "1181009",
-      "goodsName": "西红柿盖浇面",
+      "goodsId": "1181103",
+      "goodsSn": "1181103",
+      "goodsName": "炒米粉",
       "checked": "true",
       "number": "1"
     }
