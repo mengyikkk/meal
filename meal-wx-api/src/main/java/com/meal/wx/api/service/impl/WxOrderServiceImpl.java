@@ -37,7 +37,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -186,6 +188,8 @@ public class WxOrderServiceImpl implements WxOrderService {
                     mealOrder.setIsTimeOnSale(wxOrderVo.getIsTimeOnSale());
                     mealOrder.setUserId(user.getId()); // 用户ID
                     mealOrder.setShopId(shopId); // 商铺ID
+                    //设置 发货日期为明天
+                    mealOrder.setShipTime(LocalDateTime.now().plusDays(1));
                     mealOrder.setOrderSn(orderSn); // 订单号
                     mealOrder.setOrderStatus(OrderStatusEnum.UNPAID.getMapping()); // 订单状态：待支付
                     mealOrder.setShipStatus(ShipStatusEnum.NOT_SHIP.getMapping()); // 发货状态：未发货
@@ -624,6 +628,11 @@ public class WxOrderServiceImpl implements WxOrderService {
         example.createCriteria().andOrderSnEqualTo(orderSn).andDeletedEqualTo(Boolean.FALSE);
         return this.mealOrderMapper.selectByExample(example);
     }
+
+    public boolean isBetween2200And0600() {
+        return LocalTime.now().isAfter(LocalTime.of(22, 0)) || LocalTime.now().isBefore(LocalTime.of(6, 0));
+    }
+
 }
 
 

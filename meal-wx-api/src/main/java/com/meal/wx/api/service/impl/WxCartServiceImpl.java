@@ -169,7 +169,6 @@ public class WxCartServiceImpl implements WxCartService {
                 vo.setErrStatus(Boolean.TRUE);
                 vo.setGoodsName(e.getGoodsName());
             } else {
-                vo.setErrStatus(Boolean.FALSE);
                 vo.setUnit(product.getUnit());
                 vo.setUrl(product.getPicUrl());
                 vo.setPrice(product.getRetailPrice());
