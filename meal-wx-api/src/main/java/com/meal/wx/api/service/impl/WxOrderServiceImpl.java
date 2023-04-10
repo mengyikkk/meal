@@ -110,8 +110,8 @@ public class WxOrderServiceImpl implements WxOrderService {
                 goodsByAllOrder.addAll(mealGoods);
             } else {
                 orderGoodIds.removeAll(goods);
-                this.logger.info("Service-Order[WxOrderVo][block]:shop. ids: {} 不属于isTimeONSale:{}",orderGoodIds,order.getIsTimeOnSale());
-                return ResultUtils.message(ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL,"商品ID:{"+ orderGoodIds +"}" +ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL.getMessage());
+                this.logger.info("Service-Order[WxOrderVo][block]:shop. ids: {} 不属于isTimeONSale:{}", orderGoodIds, order.getIsTimeOnSale());
+                return ResultUtils.message(ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL, "商品ID:{" + orderGoodIds + "}" + ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL.getMessage());
             }
         }
         //取出订单中所有商品的信息
@@ -183,6 +183,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 如果查询到的用户对象不为null，则创建一个新的订单对象，并设置订单属性
         return Optional.ofNullable(user).map(u -> {
                     MealOrder mealOrder = new MealOrder();
+                    mealOrder.setIsTimeOnSale(wxOrderVo.getIsTimeOnSale());
                     mealOrder.setUserId(user.getId()); // 用户ID
                     mealOrder.setShopId(shopId); // 商铺ID
                     mealOrder.setOrderSn(orderSn); // 订单号
@@ -200,7 +201,6 @@ public class WxOrderServiceImpl implements WxOrderService {
                     mealOrder.setActualPrice(wxOrderVo.getActualPrice()); // 实际支付金额
                     mealOrder.setPayId(null); // 支付ID
                     mealOrder.setPayTime(null); // 支付时间
-                    mealOrder.setShipSn(OrderSnUtils.generateOrderShipSn(wxOrderVo.getIsTimeOnSale(), mealOrderMapper)); //
                     // 发货单号
                     mealOrder.setShipTime(null); // 发货时间
                     mealOrder.setRefundAmount(null); // 退款金额
@@ -362,7 +362,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             var vo = new OrderDetailsVo();
             vo.setNickName(user.getNickname());
             vo.setCount(1L);
-            vo.setMoney(validOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO,BigDecimal::add));
+            vo.setMoney(validOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
             vo.setShopName(shop.getName());
             vo.setShopPhone(shop.getPhone());
             vo.setOrders(validOrders.stream().map(e -> {
@@ -387,9 +387,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 orderDetailSonVo.setCount((long) mealOrderGoods.size());
                 orderDetailSonVo.setMoney(e.getActualPrice());
                 orderDetailSonVo.setShipSn(e.getShipSn());
-                if (Objects.nonNull(orderDetailSonVo.getShipSn())){
-                    orderDetailSonVo.setIsTimeOnSale(Integer.valueOf(orderDetailSonVo.getShipSn().substring(0, 1)));
-                }
+                orderDetailSonVo.setIsTimeOnSale(e.getIsTimeOnSale());
                 return orderDetailSonVo;
             }).collect(Collectors.toList()));
             return ResultUtils.success(vo);
@@ -424,12 +422,11 @@ public class WxOrderServiceImpl implements WxOrderService {
                 vo.setShopName(shop.getName());
                 orders.forEach(a -> {
                     String shipSn = a.getShipSn();
-                    String isTimeOnSale = shipSn.substring(0, 1);
-                    if (IsTimeSaleEnum.BREAKFAST.is(Integer.parseInt(isTimeOnSale))) {
+                    if (IsTimeSaleEnum.BREAKFAST.is(a.getIsTimeOnSale())) {
                         vo.setShipSnByBreakFast(shipSn);
-                    } else if (IsTimeSaleEnum.LUNCH.is(Integer.parseInt(isTimeOnSale))) {
+                    } else if (IsTimeSaleEnum.LUNCH.is(a.getIsTimeOnSale())) {
                         vo.setShipSnByLunch(shipSn);
-                    } else if (IsTimeSaleEnum.DINNER.is(Integer.parseInt(isTimeOnSale))) {
+                    } else if (IsTimeSaleEnum.DINNER.is(a.getIsTimeOnSale())) {
                         vo.setShipSnByDinner(shipSn);
                     }
                 });
@@ -600,15 +597,10 @@ public class WxOrderServiceImpl implements WxOrderService {
             logger.error("sn={}支付金额不符合 totalFe e={}", orderSn, totalFee);
             return WxPayNotifyResponse.fail(mealOrder.getOrderSn() + " : 支付金额不符合 totalFee=" + totalFee);
         }
-        var mealOrderNew = new MealOrder();
-        // 更新订单状态为已支付
-        mealOrderNew.setPayId(payId);
-        mealOrderNew.setPayTime(LocalDateTime.now());
-        mealOrderNew.setOrderStatus(OrderStatusEnum.PAID.getMapping());
-        var example = new MealOrderExample();
-        example.createCriteria().andOrderSnEqualTo(mealOrder.getOrderSn()).andOrderStatusEqualTo(OrderStatusEnum.UNPAID.getMapping());
+        //发放取餐码
+        shipProcess(mealOrders, payId);
         // 更新订单信息到数据库
-        if (this.mealOrderMapper.updateByExample(mealOrderNew, example) < mealOrders.size()) {
+        if (this.mealOrderMapper.batchUpdateOrders(mealOrders) < mealOrders.size()) {
             logger.error("更新订单:{}数据已失效", orderSn);
             return WxPayNotifyResponse.fail("更新数据已失效");
         }
@@ -618,6 +610,14 @@ public class WxOrderServiceImpl implements WxOrderService {
         return WxPayNotifyResponse.success("处理成功!");
     }
 
+    private void shipProcess(List<MealOrder> orders, String payId) {
+        orders.forEach(e -> {
+            e.setPayId(payId);
+            e.setPayTime(LocalDateTime.now());
+            e.setOrderStatus(OrderStatusEnum.PAID.getMapping());
+            e.setShipSn(OrderSnUtils.generateOrderShipSn(e.getIsTimeOnSale(), mealOrderMapper));
+        });
+    }
 
     private List<MealOrder> selectOrderBySn(String orderSn) {
         var example = new MealOrderExample();

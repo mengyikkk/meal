@@ -196,32 +196,20 @@ Authorization: {{token}}
               "price": 0.00
             }
           ]
-        },
-        {
-          "goodsId": 1181103,
-          "number": 1,
-          "price": 5.00,
-          "cartCalamityVos": [
-            {
-              "calamityId": 261,
-              "calamityNumber": 2,
-              "price": 0.00
-            }
-          ]
         }
       ],
-      "orderPrice": 15.00,
-      "actualPrice": 15.00,
+      "orderPrice": 10.00,
+      "actualPrice": 10.00,
       "isTimeOnSale": 1
     }
   ],
-  "orderPrice": 45.00,
-  "actualPrice": 45.00
+  "orderPrice": 40.00,
+  "actualPrice": 40.00
 }
 
 ###
-GET {{host}}/wx/order/detail?orderSn=mealnkAa5A4Mgff0GP
-#GET {{host}}/wx/order/detail
+#GET {{host}}/wx/order/detail?orderSn=mealnkAa5A4Mgff0GP
+GET {{host}}/wx/order/detail
 Content-Type: application/json
 Authorization: {{token}}
 

@@ -40,6 +40,6 @@ public class OrderSnUtils {
         return mealOrderMapper.hasOrderByShip(sn);
     }
     public static Boolean orderSn(MealOrderMapper mealOrderMapper, String sn) {
-        return mealOrderMapper.hasOrderByShip(sn);
+        return mealOrderMapper.hasOrderByOrderSn(sn);
     }
 }

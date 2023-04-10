@@ -159,4 +159,12 @@ public interface MealOrderMapper {
     boolean hasOrderByOrderSn(@Param("orderSn")String orderSn);
 
     boolean hasOrderByShip(@Param("shipSn")String shipSn);
+
+    /**
+     * 批量更新订单信息
+     *
+     * @param orderList 订单列表
+     * @return 更新的行数
+     */
+    int batchUpdateOrders(List<MealOrder> orderList);
 }

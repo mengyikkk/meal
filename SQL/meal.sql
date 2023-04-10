@@ -258,6 +258,7 @@ CREATE TABLE `meal_order` (
                                   `pay_time` datetime DEFAULT NULL COMMENT '微信付款时间',
                                   `ship_sn` varchar(63) DEFAULT NULL COMMENT '取货编号',
                                   `ship_time` datetime DEFAULT NULL COMMENT '取货时间',
+                                  `is_time_on_sale` int(11) DEFAULT 0 COMMENT '1,早餐2,午餐 3,晚餐 0,全时段供应',
                                   `refund_amount` decimal(10,2) DEFAULT NULL COMMENT '实际退款金额，（有可能退款金额小于实际支付金额）',
                                   `refund_content` varchar(127) DEFAULT NULL COMMENT '退款备注',
                                   `refund_time` datetime DEFAULT NULL COMMENT '退款时间',
