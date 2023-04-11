@@ -599,7 +599,7 @@ response:
   "description": null,
   "result": null,
   "records": null
-   }
+}
    ```
 
 10. 清空购物车
@@ -976,7 +976,9 @@ response:
     ],
     "count": 1,
     "shopName": "汇佳便利店",
-    "shopPhone": "13686812902"
+    "shopPhone": "13686812902",
+    "orderStatus": 4,
+    "orderStatusMessage": "订单退款"
   },
   "records": null
 }
@@ -996,6 +998,8 @@ response:
 - `money`:decimal。 订单费用
 - `shopName`:string。 店铺名
 - `shopPhone`:string。 店铺电话
+- `orderStatus`:int。 0, "未支付" 1, "已支付" 3, "订单完成" 4, "订单退款"
+- `orderStatusMessage`:string。 状态描述 可用可不用
 
 订单历史的response:
 
