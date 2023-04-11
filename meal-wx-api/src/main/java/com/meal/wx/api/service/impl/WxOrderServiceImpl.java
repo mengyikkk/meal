@@ -127,12 +127,11 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 遍历购物车中的商品
         var orderSn = OrderSnUtils.generateOrderSn("meal", mealOrderMapper);
         for (WxOrderSonVo order : orders) {
-            var mealOrder = this.createOrder(order, user, wxOrderVo.getShopId(), wxOrderVo.getMessage(), orderSn);
             BigDecimal goodsPrice = BigDecimal.ZERO;
             for (OrderCartVo shoppingCartVo : order.getGoods()) {
                 // 检查购物车中的商品是否有效
                 var good = goodsByShopMap.get(shoppingCartVo.getGoodsId());
-                if (Objects.isNull(good) || good.getRetailPrice().compareTo(shoppingCartVo.getPrice()) != 0) {
+                if (Objects.isNull(good)) {
                     return ResultUtils.message(ResponseCode.GOODS_INVALID, ResponseCode.GOODS_INVALID.getMessage());
                 }
                 // 将商品信息加入订单商品列表中，并累加订单价格
@@ -144,7 +143,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     //check 小料的价格
                     for (OrderCartCalamityVo calamityVo : calamityVos) {
                         var calamity = calamitiesMap.get(calamityVo.getCalamityId());
-                        if (Objects.isNull(calamity) || calamity.getRetailPrice().compareTo(calamityVo.getCalamityPrice()) != 0) {
+                        if (Objects.isNull(calamity)) {
                             return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage());
                         }
                         MealOrderGoodsCalamity mealOrderGoodsCalamity = this.createMealOrderGoodsCalamity(calamity, calamityVo);
@@ -154,9 +153,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     }
                 }
             }
-            if (goodsPrice.compareTo(order.getActualPrice()) != 0) {
-                return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
-            }
+            var mealOrder = this.createOrder(order, user, wxOrderVo.getShopId(), wxOrderVo.getMessage(), orderSn,goodsPrice);
             mealOrders.add(mealOrder);
             orderPrice = orderPrice.add(goodsPrice);
         }
@@ -165,23 +162,24 @@ public class WxOrderServiceImpl implements WxOrderService {
         }
         functions.addFirst(nothing -> mealOrderMapper.batchInsert(mealOrders));
         functions.add(nothing -> mealOrderGoodsMapper.batchInsert(mealOrderGoodsList.stream().peek(e -> e.setOrderId(mealOrders.get(Math.toIntExact(e.getOrderId())).getId())).collect(Collectors.toList())));
-        functions.addLast(nothing -> mealOrderGoodsCalamityMapper.batchInsert(mealOrderCalamityList.stream().peek(a -> {
-            a.setOrderId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getOrderId());
-            a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
-        }).collect(Collectors.toList())));
+        if (!mealOrderCalamityList.isEmpty()) {
+            functions.addLast(nothing -> mealOrderGoodsCalamityMapper.batchInsert(mealOrderCalamityList.stream().peek(a -> {
+                a.setOrderId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getOrderId());
+                a.setOrderGoodsId(mealOrderGoodsList.get(Math.toIntExact(a.getOrderGoodsId())).getId());
+            }).collect(Collectors.toList())));
+        }
         size += mealOrderGoodsList.size();
         size += mealOrderCalamityList.size();
         if (this.transactionExecutor.transaction(functions, size)) {
             //清空购物车
             this.wxCartService.deleteShoppingCart(uid, shopId);
-//            return this.prepaySon(user, orderSn, mealOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
             return ResultUtils.success(orderSn);
         }
         return ResultUtils.unknown();
     }
 
 
-    private MealOrder createOrder(WxOrderSonVo wxOrderVo, MealUser user, Long shopId, String message, String orderSn) {
+    private MealOrder createOrder(WxOrderSonVo wxOrderVo, MealUser user, Long shopId, String message, String orderSn,BigDecimal goodsPrice) {
         // 通过MyBatis mapper查询对应的用户对象
         // 如果查询到的用户对象不为null，则创建一个新的订单对象，并设置订单属性
         return Optional.ofNullable(user).map(u -> {
@@ -199,11 +197,11 @@ public class WxOrderServiceImpl implements WxOrderService {
                     mealOrder.setMobile(u.getMobile()); // 收货人电话
                     mealOrder.setAddress(""); // 收货地址
                     mealOrder.setMessage(message); // 订单留言
-                    mealOrder.setGoodsPrice(wxOrderVo.getOrderPrice()); // 商品总价
+                    mealOrder.setGoodsPrice(goodsPrice); // 商品总价
                     mealOrder.setFreightPrice(BigDecimal.ZERO); // 运费
                     mealOrder.setCouponPrice(BigDecimal.ZERO); // 优惠券抵扣金额
-                    mealOrder.setOrderPrice(wxOrderVo.getOrderPrice()); // 订单总价
-                    mealOrder.setActualPrice(wxOrderVo.getActualPrice()); // 实际支付金额
+                    mealOrder.setOrderPrice(goodsPrice); // 订单总价
+                    mealOrder.setActualPrice(goodsPrice); // 实际支付金额
                     mealOrder.setPayId(null); // 支付ID
                     mealOrder.setPayTime(null); // 支付时间
                     // 发货单号
@@ -243,7 +241,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             mealOrderCalamity.setCalamitySn(calamity.getUnit());
             mealOrderCalamity.setCalamityName(calamity.getName());
             mealOrderCalamity.setUnit(c.getUnit());
-            mealOrderCalamity.setPrice(orderCartCalamityVo.getCalamityPrice());
+            mealOrderCalamity.setPrice(calamity.getRetailPrice());
             mealOrderCalamity.setNumber(orderCartCalamityVo.getCalamityNumber());
             return mealOrderCalamity;
         }).orElseThrow(() -> new IllegalArgumentException("Invalid meal goods calamity"));

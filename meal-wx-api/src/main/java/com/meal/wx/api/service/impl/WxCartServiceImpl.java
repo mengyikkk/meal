@@ -76,6 +76,11 @@ public class WxCartServiceImpl implements WxCartService {
                 return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
             }
         }
+        if (shoppingCartVo.getGoods().isEmpty()){
+            //清空购物车
+            wxCartService.deleteShoppingCart(uid, shoppingCartVo.getShopId());
+            return  ResultUtils.success();
+        }
         List<Long> cartGoodIds = shoppingCartVo.getGoods().stream().map(ShoppingCartVo::getGoodsId).collect(Collectors.toList());
         //取出数据库有效的商品和小料
         Map<Long, MealGoods> longMealGoodsMap = MapperUtils.goodsMapByShop(mealGoodsMapper, shoppingCartVo.getShopId(), cartGoodIds);

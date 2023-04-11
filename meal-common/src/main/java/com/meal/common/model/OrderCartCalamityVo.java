@@ -1,15 +1,11 @@
 package com.meal.common.model;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-import java.math.BigDecimal;
 
 public class OrderCartCalamityVo {
     private Long calamityId;
     @Positive
     private Long calamityNumber;
-    private BigDecimal calamityPrice;
 
     public Long getCalamityId() {
         return calamityId;
@@ -29,12 +25,4 @@ public class OrderCartCalamityVo {
         return this;
     }
 
-    public BigDecimal getCalamityPrice() {
-        return calamityPrice;
-    }
-
-    public OrderCartCalamityVo setCalamityPrice(BigDecimal calamityPrice) {
-        this.calamityPrice = calamityPrice;
-        return this;
-    }
 }

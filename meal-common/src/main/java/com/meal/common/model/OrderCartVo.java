@@ -11,8 +11,7 @@ public class OrderCartVo {
     @NotNull
     @Positive
     private  Long number;
-    @NotNull
-    private BigDecimal price; //单价
+
 
     private List<OrderCartCalamityVo> calamityVos;
 
@@ -35,14 +34,6 @@ public class OrderCartVo {
         return this;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public OrderCartVo setPrice(BigDecimal price) {
-        this.price = price;
-        return this;
-    }
 
     public List<OrderCartCalamityVo> getCalamityVos() {
         return calamityVos;

@@ -95,13 +95,6 @@ Content-Type: application/json
       "goodsName": "蛋肠粉",
       "checked": "true",
       "number": "1"
-    },
-    {
-      "goodsId": "1181103",
-      "goodsSn": "1181103",
-      "goodsName": "炒米粉",
-      "checked": "true",
-      "number": "1"
     }
   ]
 }
@@ -157,30 +150,24 @@ Authorization: {{token}}
         {
           "goodsId": 1181007,
           "number": 2,
-          "price": 10.00,
-          "cartCalamityVos": [
+          "calamityVos": [
             {
               "calamityId": 299,
-              "calamityNumber": 1,
-              "price": 0.00
+              "calamityNumber": 1
             }
           ]
         },
         {
           "goodsId": 1181011,
           "number": 1,
-          "price": 10.00,
-          "cartCalamityVos": [
+          "calamityVos": [
             {
               "calamityId": 298,
-              "calamityNumber": 2,
-              "price": 0.00
+              "calamityNumber": 2
             }
           ]
         }
       ],
-      "orderPrice": 30.00,
-      "actualPrice": 30.00,
       "isTimeOnSale": 2
     },
     {
@@ -188,18 +175,14 @@ Authorization: {{token}}
         {
           "goodsId": 1181102,
           "number": 2,
-          "price": 5.00,
-          "cartCalamityVos": [
+          "calamityVos": [
             {
               "calamityId": 257,
-              "calamityNumber": 1,
-              "price": 0.00
+              "calamityNumber": 1
             }
           ]
         }
       ],
-      "orderPrice": 10.00,
-      "actualPrice": 10.00,
       "isTimeOnSale": 1
     }
   ],
@@ -216,3 +199,76 @@ Authorization: {{token}}
 ###
 POST  {{host}}/wx/order/prepay/mealnkAa5A4Mgff0GP
 Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "code": 200,
+  "description": null,
+  "result": {
+    "orders": [
+      {
+        "goods": [
+          {
+            "goodsId": 1181102,
+            "goodsSn": "1181102",
+            "goodsIsTime": true,
+            "goodsName": "蛋肠粉",
+            "number": 1,
+            "url": null,
+            "unit": "份",
+            "checked": true,
+            "price": 5.00,
+            "errStatus": null,
+            "isTimeOnSale": 1
+          }
+        ],
+        "isTimeOnSale": 1
+      },
+      {
+        "goods": [
+          {
+            "goodsId": 1181011,
+            "goodsSn": "1181011",
+            "goodsIsTime": true,
+            "goodsName": "烧鸭饭",
+            "number": 1,
+            "url": null,
+            "unit": "份",
+            "checked": true,
+            "price": 10.00,
+            "errStatus": null,
+            "isTimeOnSale": 2
+          },
+          {
+            "goodsId": 1181007,
+            "goodsSn": "1181007",
+            "goodsIsTime": true,
+            "goodsName": "辣椒炒肉饭",
+            "number": 2,
+            "url": null,
+            "unit": "份",
+            "checked": true,
+            "price": 10.00,
+            "calamityVos": [
+              {
+                "calamityId": 299,
+                "calamityName": "酸梅汁",
+                "calamityNumber": 2,
+                "calamityUnit": "’份‘",
+                "calamityUrl": null,
+                "errStatus": false,
+                "calamityPrice": 0.00
+              }
+            ],
+            "errStatus": null,
+            "isTimeOnSale": 2
+          }
+        ],
+        "isTimeOnSale": 2
+      }
+    ],
+    "errGoods": [],
+    "counts": 3
+  },
+  "records": null
+}

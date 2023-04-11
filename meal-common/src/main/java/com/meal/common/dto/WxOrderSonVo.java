@@ -11,10 +11,6 @@ import java.util.List;
 public class WxOrderSonVo {
     @NotEmpty
     private List<@Valid OrderCartVo> goods;//购物车列表
-    @NotNull
-    private BigDecimal orderPrice; //订单总费用
-    @NotNull
-    private  BigDecimal actualPrice; // 订单实际费用
 
     private Integer isTimeOnSale;
 
@@ -27,23 +23,6 @@ public class WxOrderSonVo {
         return this;
     }
 
-    public BigDecimal getOrderPrice() {
-        return orderPrice;
-    }
-
-    public WxOrderSonVo setOrderPrice(BigDecimal orderPrice) {
-        this.orderPrice = orderPrice;
-        return this;
-    }
-
-    public BigDecimal getActualPrice() {
-        return actualPrice;
-    }
-
-    public WxOrderSonVo setActualPrice(BigDecimal actualPrice) {
-        this.actualPrice = actualPrice;
-        return this;
-    }
 
     public Integer getIsTimeOnSale() {
         return isTimeOnSale;

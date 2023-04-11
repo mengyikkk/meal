@@ -7,7 +7,6 @@ import java.util.List;
 public class WxShoppingCartVo {
     @NotNull
     private  Long shopId;
-    @NotEmpty
     private List<ShoppingCartVo> goods;
 
     public Long getShopId() {
