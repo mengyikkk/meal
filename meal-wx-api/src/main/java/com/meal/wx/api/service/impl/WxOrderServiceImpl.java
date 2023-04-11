@@ -352,6 +352,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             var user = this.mealUserMapper.selectByPrimaryKey(uid);
             var shop = this.mealShopMapper.selectByPrimaryKey(validOrders.get(0).getShopId());
             var orderIds = validOrders.stream().map(MealOrder::getId).collect(Collectors.toList());
+
             // 查询订单商品和相关的灾害商品信息
             var orderGoodsExample = new MealOrderGoodsExample();
             orderGoodsExample.createCriteria().andOrderIdIn(orderIds);
@@ -365,6 +366,8 @@ public class WxOrderServiceImpl implements WxOrderService {
             var vo = new OrderDetailsVo();
             vo.setNickName(user.getNickname());
             vo.setCount(1L);
+            vo.setOrderStatus(validOrders.get(0).getOrderStatus());
+            vo.setOrderStatusMessage(OrderStatusEnum.find(validOrders.get(0).getOrderStatus()).get().getMessage());
             vo.setMoney(validOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
             vo.setShopName(shop.getName());
             vo.setShopPhone(shop.getPhone());

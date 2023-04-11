@@ -23,6 +23,10 @@ public class OrderDetailsVo {
 
     private String shopPhone;
 
+    private  Short orderStatus;
+    private String orderStatusMessage;
+
+
     public String getShopName() {
         return shopName;
     }
@@ -92,6 +96,24 @@ public class OrderDetailsVo {
 
     public OrderDetailsVo setMoney(BigDecimal money) {
         this.money = money;
+        return this;
+    }
+
+    public Short getOrderStatus() {
+        return orderStatus;
+    }
+
+    public OrderDetailsVo setOrderStatus(Short orderStatus) {
+        this.orderStatus = orderStatus;
+        return this;
+    }
+
+    public String getOrderStatusMessage() {
+        return orderStatusMessage;
+    }
+
+    public OrderDetailsVo setOrderStatusMessage(String orderStatusMessage) {
+        this.orderStatusMessage = orderStatusMessage;
         return this;
     }
 }
