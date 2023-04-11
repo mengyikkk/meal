@@ -139,12 +139,12 @@ public class WxOrderServiceImpl implements WxOrderService {
                 mealOrderGoodsList.add(this.createOrderGoods(good, shoppingCartVo, (long) orders.indexOf(order)));
                 goodsPrice = goodsPrice.add(good.getRetailPrice().multiply(BigDecimal.valueOf(shoppingCartVo.getNumber())));
                 // 检查购物车中的小料是否有效
-                var calamityVos = shoppingCartVo.getCartCalamityVos();
+                var calamityVos = shoppingCartVo.getCalamityVos();
                 if (ObjectUtils.isNotEmpty(calamityVos)) {
                     //check 小料的价格
                     for (OrderCartCalamityVo calamityVo : calamityVos) {
                         var calamity = calamitiesMap.get(calamityVo.getCalamityId());
-                        if (Objects.isNull(calamity) || calamity.getRetailPrice().compareTo(calamityVo.getPrice()) != 0) {
+                        if (Objects.isNull(calamity) || calamity.getRetailPrice().compareTo(calamityVo.getCalamityPrice()) != 0) {
                             return ResultUtils.message(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage());
                         }
                         MealOrderGoodsCalamity mealOrderGoodsCalamity = this.createMealOrderGoodsCalamity(calamity, calamityVo);
@@ -174,7 +174,8 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (this.transactionExecutor.transaction(functions, size)) {
             //清空购物车
             this.wxCartService.deleteShoppingCart(uid, shopId);
-            return this.prepaySon(user, orderSn, mealOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+//            return this.prepaySon(user, orderSn, mealOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+            return ResultUtils.success(orderSn);
         }
         return ResultUtils.unknown();
     }
@@ -242,7 +243,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             mealOrderCalamity.setCalamitySn(calamity.getUnit());
             mealOrderCalamity.setCalamityName(calamity.getName());
             mealOrderCalamity.setUnit(c.getUnit());
-            mealOrderCalamity.setPrice(orderCartCalamityVo.getPrice());
+            mealOrderCalamity.setPrice(orderCartCalamityVo.getCalamityPrice());
             mealOrderCalamity.setNumber(orderCartCalamityVo.getCalamityNumber());
             return mealOrderCalamity;
         }).orElseThrow(() -> new IllegalArgumentException("Invalid meal goods calamity"));

@@ -14,7 +14,7 @@ public class OrderCartVo {
     @NotNull
     private BigDecimal price; //单价
 
-    private List<OrderCartCalamityVo> cartCalamityVos;
+    private List<OrderCartCalamityVo> calamityVos;
 
     public Long getGoodsId() {
         return goodsId;
@@ -44,12 +44,12 @@ public class OrderCartVo {
         return this;
     }
 
-    public List<OrderCartCalamityVo> getCartCalamityVos() {
-        return cartCalamityVos;
+    public List<OrderCartCalamityVo> getCalamityVos() {
+        return calamityVos;
     }
 
-    public OrderCartVo setCartCalamityVos(List<OrderCartCalamityVo> cartCalamityVos) {
-        this.cartCalamityVos = cartCalamityVos;
+    public OrderCartVo setCalamityVos(List<OrderCartCalamityVo> calamityVos) {
+        this.calamityVos = calamityVos;
         return this;
     }
 }
