@@ -167,7 +167,7 @@ public class WxAuthServiceImpl implements WxAuthService {
                 return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
             }
         }
-        String phone;
+        String phone = null;
         String openId;
         String sessionKey;
         var wxUserService = this.wxService.getUserService();
@@ -177,39 +177,52 @@ public class WxAuthServiceImpl implements WxAuthService {
             openId = result.getOpenid();
             this.logger.info("获取到用户openId:{}", openId);
             sessionKey = result.getSessionKey();
-            WxMaPhoneNumberInfo phoneInfo = wxUserService.getPhoneNoInfo(info.getCodePhone());
-            phone = phoneInfo.getPurePhoneNumber();
-            this.logger.info("获取到用户Phone:{}", phone);
+            WxMaPhoneNumberInfo phoneInfo = null;
+            if ( Objects.nonNull(info.getCodePhone())) {
+                 phoneInfo = wxUserService.getPhoneNoInfo(info.getCodePhone());
+                 phone = phoneInfo.getPurePhoneNumber();
+                this.logger.info("获取到用户Phone:{}", phone);
+
+            }
             userWx = wxUserService.getUserInfo(sessionKey, info.getEncryptedData(), info.getIv());
             this.logger.info("获取到用户Phone:{}", JsonUtils.toJsonKeepNullValue(userWx));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtils.code(ResponseCode.AUTH_OPENID_UNACCESS);
         }
-        if (Objects.isNull(phone)) {
-            return ResultUtils.message(ResponseCode.AUTH_INVALID_MOBILE, "无效手机号");
-        }
+//        if (Objects.isNull(phone)) {
+//            return ResultUtils.message(ResponseCode.AUTH_INVALID_MOBILE, "无效手机号");
+//        }
         var example = new MealUserExample();
         example.createCriteria().andLogicalDeleted(Boolean.TRUE).andWxOpenidEqualTo(openId);
         var user = this.mealUserMapper.selectOneByExample(example);
+
         if (Objects.nonNull(user)) {    //已经注册过的用户处理
             this.logger.info("用户:{}已经注册过走更新流程", user.getUsername());
             if (!user.isEnabled()) {
                 return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, ("该账号未启用，请联系管理员！"));
             }
-            user.setMobile(phone);
             user.setUsername(openId);
             this.coverUserByWx(userWx, user);
             this.LastLogIn(user, request);
+            if (Objects.nonNull(phone)){
+                user.setMobile(phone);
+            }else{
+                user.setMobile(openId);
+            }
             if (this.mealUserMapper.updateByPrimaryKey(user) < 1) {
                 return ResultUtils.unknown();
             }
         } else {
             user = new MealUser();
             user.setUsername(openId);
-            user.setMobile(phone);
             user.setSessionKey(sessionKey);
             user.setWxOpenid(openId);
+            if (Objects.nonNull(phone)){
+                user.setMobile(phone);
+            }else{
+                user.setMobile(openId);
+            }
             this.coverUserByWx(userWx, user);
             this.LastLogIn(user, request);
             if (this.mealUserMapper.insertSelective(user) < 1) {
@@ -223,7 +236,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
         result.setShopId(this.getShopByBind(user.getId()));
-        this.logger.info("登录成功，在security对象中存入{}登陆者信息", phone);
+        this.logger.info("登录成功，在security对象中存入{}登陆者信息", openId);
         return ResultUtils.success(result);
     }
 

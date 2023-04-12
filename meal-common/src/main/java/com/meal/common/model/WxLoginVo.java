@@ -6,7 +6,6 @@ public class WxLoginVo {
     @NotBlank
     private String code;
 
-    @NotBlank
     private String codePhone;
 
     @NotBlank
