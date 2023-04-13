@@ -208,15 +208,6 @@ public class WxOrderServiceImpl implements WxOrderService {
                     mealOrder.setCouponPrice(BigDecimal.ZERO); // 优惠券抵扣金额
                     mealOrder.setOrderPrice(goodsPrice); // 订单总价
                     mealOrder.setActualPrice(goodsPrice); // 实际支付金额
-                    mealOrder.setPayId(null); // 支付ID
-                    mealOrder.setPayTime(null); // 支付时间
-                    // 发货单号
-                    mealOrder.setShipTime(null); // 发货时间
-                    mealOrder.setRefundAmount(null); // 退款金额
-                    mealOrder.setRefundContent(null); // 退款原因
-                    mealOrder.setRefundTime(null); // 退款时间
-                    mealOrder.setConfirmTime(null); // 确认收货时间
-                    mealOrder.setEndTime(null); // 订单完成时间
                     return mealOrder;
                 })
                 // 如果查询到的用户对象为null，则抛出IllegalArgumentException异常
@@ -620,14 +611,19 @@ public class WxOrderServiceImpl implements WxOrderService {
         //发放取餐码
         shipProcess(mealOrders, payId);
         // 更新订单信息到数据库
-        if (this.mealOrderMapper.batchUpdateOrders(mealOrders) < mealOrders.size()) {
-            logger.error("更新订单:{}数据已失效", orderSn);
-            return WxPayNotifyResponse.fail("更新数据已失效");
+        LinkedList<Function<Void, Integer>> functions = new LinkedList<>();
+        mealOrders.forEach(e->{
+            functions.add(nothing ->
+                mealOrderMapper.updateByPrimaryKeySelective(e));
+        });
+        if (this.transactionExecutor.transaction(functions)) {
+            //清空购物车
+            this.logger.info("此订单支付成功:{}", mealOrder.getOrderSn());
+            this.mealOrderWxMapper.insertSelective(log);
+            return WxPayNotifyResponse.success("处理成功!");
         }
-        this.logger.info("此订单支付成功:{}", mealOrder.getOrderSn());
-        this.mealOrderWxMapper.insertSelective(log);
         // 返回通知成功
-        return WxPayNotifyResponse.success("处理成功!");
+        return WxPayNotifyResponse.fail("订单更新失败!");
     }
 
     @Override

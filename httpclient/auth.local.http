@@ -179,8 +179,8 @@ Authorization: {{token}}
       "isTimeOnSale": 1
     }
   ],
-  "orderPrice": 40.00,
-  "actualPrice": 40.00
+  "orderPrice": 44.00,
+  "actualPrice": 44.00
 }
 
 ###
