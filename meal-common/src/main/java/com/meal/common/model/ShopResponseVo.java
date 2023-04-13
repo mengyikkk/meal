@@ -62,6 +62,8 @@ public class ShopResponseVo {
 
     private  Boolean flag;
 
+    private  String phone;
+
 
     public Long getId() {
         return id;
@@ -150,6 +152,15 @@ public class ShopResponseVo {
 
     public ShopResponseVo setFlag(Boolean flag) {
         this.flag = flag;
+        return this;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public ShopResponseVo setPhone(String phone) {
+        this.phone = phone;
         return this;
     }
 }

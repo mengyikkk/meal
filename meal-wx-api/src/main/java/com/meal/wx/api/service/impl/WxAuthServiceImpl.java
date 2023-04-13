@@ -167,49 +167,27 @@ public class WxAuthServiceImpl implements WxAuthService {
                 return ResultUtils.code(ResponseCode.PARAMETER_ERROR);
             }
         }
-        String phone = null;
         String openId;
         String sessionKey;
         var wxUserService = this.wxService.getUserService();
-        var userWx = new WxMaUserInfo();
         try {
             WxMaJscode2SessionResult result = wxUserService.getSessionInfo(info.getCode());
             openId = result.getOpenid();
-            this.logger.info("获取到用户openId:{}", openId);
             sessionKey = result.getSessionKey();
-            WxMaPhoneNumberInfo phoneInfo = null;
-            if ( Objects.nonNull(info.getCodePhone())) {
-                 phoneInfo = wxUserService.getPhoneNoInfo(info.getCodePhone());
-                 phone = phoneInfo.getPurePhoneNumber();
-                this.logger.info("获取到用户Phone:{}", phone);
-
-            }
-            userWx = wxUserService.getUserInfo(sessionKey, info.getEncryptedData(), info.getIv());
-            this.logger.info("获取到用户Phone:{}", JsonUtils.toJsonKeepNullValue(userWx));
+            this.logger.info("获取到用户openId:{}", openId);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtils.code(ResponseCode.AUTH_OPENID_UNACCESS);
         }
-//        if (Objects.isNull(phone)) {
-//            return ResultUtils.message(ResponseCode.AUTH_INVALID_MOBILE, "无效手机号");
-//        }
         var example = new MealUserExample();
         example.createCriteria().andLogicalDeleted(Boolean.TRUE).andWxOpenidEqualTo(openId);
         var user = this.mealUserMapper.selectOneByExample(example);
-
         if (Objects.nonNull(user)) {    //已经注册过的用户处理
             this.logger.info("用户:{}已经注册过走更新流程", user.getUsername());
             if (!user.isEnabled()) {
                 return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, ("该账号未启用，请联系管理员！"));
             }
-            user.setUsername(openId);
-            this.coverUserByWx(userWx, user);
             this.LastLogIn(user, request);
-            if (Objects.nonNull(phone)){
-                user.setMobile(phone);
-            }else{
-                user.setMobile(openId);
-            }
             if (this.mealUserMapper.updateByPrimaryKey(user) < 1) {
                 return ResultUtils.unknown();
             }
@@ -218,12 +196,8 @@ public class WxAuthServiceImpl implements WxAuthService {
             user.setUsername(openId);
             user.setSessionKey(sessionKey);
             user.setWxOpenid(openId);
-            if (Objects.nonNull(phone)){
-                user.setMobile(phone);
-            }else{
-                user.setMobile(openId);
-            }
-            this.coverUserByWx(userWx, user);
+            user.setMobile("");
+            user.setAvatar("");
             this.LastLogIn(user, request);
             if (this.mealUserMapper.insertSelective(user) < 1) {
                 return ResultUtils.unknown();

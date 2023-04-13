@@ -126,10 +126,7 @@ POST {{host}}/wx/auth/loginByWx
 Content-Type: application/json
 
 {
-  "code": "081tg80w33Fcf03BdE0w3RMpmP3tg80j",
-  "encryptedData": "g+GpXedQ0bQG/mg1pzs1bE544DNrC0fWg2M9pDq/dWpqbKk9Yi67h0Kl7B3KEdZhvy9ASdsSkAvARrGOzAFZ81IQz39RzYDm/bnfPx9YNHNRFxoymq8xpMWY8pJsp6px6NDDBYpuM3h4dGSAMx0KcvO1hOWZuGo3c8G1iPFIyNXAQDsPc4ugEGhj90DyCtqRz4Wp5BhFxC5xk3R1gnDP9BEarGkm7VioQqRCk3DavfY2d4/VfY5eN52+Lbn5wvyRwbvEEO4KVdA6eGOvZe2E0tauCutGYSLnCo5d0CUvLAYJZsgnkc1/SpK2zbfDFTnTzl4cCGsR2NlNFGaIbVFFLh6xKyIKuKXz54PK2oETAbZhkdxxNR33c7VcujFTO75w9xL9FPEoWdTs4DKDlUwQ2TJXZd7F8ClX6uxx5/yhFA/MYN7p4iWfaVzcI+kjoAq6ntvGR0ekljK+8FlT65duZA==",
-  "iv": "dpRIcbq8B1H/HJoKkTPbXg==",
-  "codePhone": "d9ac9bb37a8d9c1e7e3191eafe7df8c11e6d2c2c8adaa1d582077abe062404e6"
+  "code": "0e1Bz80w3wAqs03vPH0w3EKlo64Bz80y"
 }
 
 ###

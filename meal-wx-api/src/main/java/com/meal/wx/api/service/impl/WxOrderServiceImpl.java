@@ -448,7 +448,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 });
                 return vo;
             }).sorted(Comparator.comparing(OrderRecordVo::getOrderDate).reversed())
-                    .skip(limitVo != null && page != null ? (long) limitVo * page : 0)
+                    .skip(limitVo != null && page != null ? (long) limitVo * (page-1) : 0)
                     .limit(limitVo != null ? limitVo : ordersMap.size()).collect(Collectors.toList());
             return ResultUtils.successWithEntities(listVo, (long) ordersMap.size());
         }
