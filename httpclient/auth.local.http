@@ -3,10 +3,10 @@ Content-Type: application/json
 
 {
   "code": "123456",
-  "username": "13876410945",
+  "username": "13821999995",
   "nickname": "test21",
   "password": "123456783",
-  "mobile": "13876410945"
+  "mobile": "13821999995"
 }
 
 ###
@@ -15,7 +15,7 @@ POST {{host}}/wx/auth/login
 Content-Type: application/json
 
 {
-  "phoneNumber": "13876410945",
+  "phoneNumber": "13821999995",
   "password": "123456783",
   "type": "1",
   "code": "1212"
