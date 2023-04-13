@@ -241,6 +241,8 @@ response:
     - `picUrl`:string --店铺url
     - `addTime`: date。--店铺创建时间
     - `startTime`: time。--开店时间
+    - `address`: string。--店铺地址
+    - `flag`: Boolean。-- true:在22:00-6:00  false:....
     - `endTime`: time。--闭店时间
 
 5. 商品一览 分页(目前商品一览 只是单纯商品一览 没有覆盖某个商品的小料信息 后续可增加) 支持 商品id查询 商品名模糊查询
@@ -891,6 +893,8 @@ response:
    ```
 
 - `orderId`:long。 商品Id (选填)
+- `page`:long。 //1级分类(选填)
+- `limit`:long。 //1级分类(选填)
 
 某个订单的response:
 
