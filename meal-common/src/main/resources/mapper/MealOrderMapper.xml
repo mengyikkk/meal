@@ -936,7 +936,7 @@
         <if test="order.endTime != null">end_time = #{order.endTime},</if>
         update_time = NOW()
       </set>
-      WHERE id = #{order.id}
+      WHERE id = #{order.id};
     </foreach>
   </update>
 </mapper>

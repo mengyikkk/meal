@@ -409,7 +409,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             // 通过 mealOrderMapper 的 selectByExample 方法查询订单列表
             List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(example);
             if (mealOrders.isEmpty()){
-                return ResultUtils.successWithEntities(null,0L);
+                return ResultUtils.successWithEntities(Collections.emptyList(),0L);
             }
             var shopMap = MapperUtils.shopMapByIds(mealOrders.stream().map(MealOrder::getShopId).distinct().collect(Collectors.toList()), mealShopMapper);
             var ordersMap = mealOrders.stream().collect(Collectors.groupingBy(MealOrder::getOrderSn));
