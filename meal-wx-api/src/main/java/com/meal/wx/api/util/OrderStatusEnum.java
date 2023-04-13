@@ -11,8 +11,9 @@ public enum OrderStatusEnum implements StateMapping<Short> {
     UNPAID((short) 0, "未支付"),
     PAID((short) 1, "已支付"),
     COMPLETED((short) 3, "订单完成"),
-    CANCEL((short) 5, "订单取消"),
-    REFUNDED((short) 4, "订单退款");
+    REFUNDED_OK((short) 5, "订单退款完成"),
+    CANCEL((short) 6, "订单已取消"),
+    REFUNDED((short) 4, "订单退款申请中");
     private final short code;
     private final String message;
 
@@ -33,7 +34,8 @@ public enum OrderStatusEnum implements StateMapping<Short> {
     }
     public static boolean notPayed(MealOrder order) {
         return OrderStatusEnum.PAID.is(order.getOrderStatus()) ||OrderStatusEnum.COMPLETED.is(order.getOrderStatus())
-                ||OrderStatusEnum.CANCEL.is(order.getOrderStatus())|| OrderStatusEnum.REFUNDED.is(order.getOrderStatus());
+                ||OrderStatusEnum.CANCEL.is(order.getOrderStatus())|| OrderStatusEnum.REFUNDED.is(order.getOrderStatus())
+                || OrderStatusEnum.REFUNDED_OK.is(order.getOrderStatus());
     }
     public static boolean isCanceled(MealOrder order) {
         return OrderStatusEnum.PAID.is(order.getOrderStatus()) ||OrderStatusEnum.UNPAID.is(order.getOrderStatus());

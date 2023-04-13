@@ -8,9 +8,11 @@ import com.meal.common.utils.BeanCopyUtils;
 import com.meal.common.utils.ResultUtils;
 import com.meal.common.model.ShopRequestVo;
 import com.meal.wx.api.service.WxShopService;
+import com.meal.wx.api.util.OrderSnUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -39,7 +41,9 @@ public class WxShopServiceImpl implements WxShopService {
             offset =   ((long) (request.getPage() - 1) * limit);
         }
         var shopList= mealShopMapper.findMany(request, limit, offset);
-        return ResultUtils.successWithEntities(BeanCopyUtils.copyBeanList(shopList,ShopResponseVo.class),count);
+        List<ShopResponseVo> shopResponseVos = BeanCopyUtils.copyBeanList(shopList, ShopResponseVo.class);
+        shopResponseVos.forEach(e->e.setFlag(OrderSnUtils.isBetween2200And0600()));
+        return ResultUtils.successWithEntities(shopResponseVos,count);
     }
 
 }

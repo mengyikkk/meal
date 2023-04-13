@@ -11,6 +11,7 @@ public interface WxOrderService {
     Result<?> submit(WxOrderVo wxOrderVo, Long uid);
     Result<?> prepay(Long uid, String orderSn);
     Result<?> refund(Long uid,String orderSn);
-    Result<?> detail(Long uid,String orderSn);
+    Result<?> detail(Long uid,String orderSn,Integer page ,Integer limit);
     Object payNotify(HttpServletRequest request, HttpServletResponse response);
+    Object refundNotify(String xmlData);
 }

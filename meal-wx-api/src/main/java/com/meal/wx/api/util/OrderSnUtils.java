@@ -4,6 +4,7 @@ import com.meal.common.dto.MealOrderExample;
 import com.meal.common.mapper.MealOrderMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.time.LocalTime;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -41,5 +42,8 @@ public class OrderSnUtils {
     }
     public static Boolean orderSn(MealOrderMapper mealOrderMapper, String sn) {
         return mealOrderMapper.hasOrderByOrderSn(sn);
+    }
+    public static boolean isBetween2200And0600() {
+        return LocalTime.now().isAfter(LocalTime.of(22, 0)) || LocalTime.now().isBefore(LocalTime.of(6, 0));
     }
 }

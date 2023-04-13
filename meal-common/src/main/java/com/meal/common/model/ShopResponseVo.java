@@ -58,6 +58,11 @@ public class ShopResponseVo {
     @JsonFormat(pattern = "HH:mm:ss")
     private  LocalTime endTime;
 
+    private  String address;
+
+    private  Boolean flag;
+
+
     public Long getId() {
         return id;
     }
@@ -127,6 +132,24 @@ public class ShopResponseVo {
 
     public ShopResponseVo setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+        return this;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public ShopResponseVo setAddress(String address) {
+        this.address = address;
+        return this;
+    }
+
+    public Boolean getFlag() {
+        return flag;
+    }
+
+    public ShopResponseVo setFlag(Boolean flag) {
+        this.flag = flag;
         return this;
     }
 }

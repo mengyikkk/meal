@@ -2,6 +2,7 @@ package com.meal.wx.api.service.impl;
 
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.request.CombineTransactionsRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
@@ -21,6 +22,7 @@ import com.meal.common.utils.JsonUtils;
 import com.meal.common.utils.MapperUtils;
 import com.meal.common.utils.ResultUtils;
 import com.meal.common.utils.SecurityUtils;
+import com.meal.wx.api.config.WxProperties;
 import com.meal.wx.api.service.WxCartService;
 import com.meal.wx.api.service.WxOrderService;
 import com.meal.wx.api.util.*;
@@ -41,6 +43,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,6 +53,9 @@ public class WxOrderServiceImpl implements WxOrderService {
     private Validator validator;
     @Resource
     private MealGoodsMapper mealGoodsMapper;
+
+    @Resource
+    private WxProperties wxProperties;
 
     @Resource
     private MealOrderMapper mealOrderMapper;
@@ -153,7 +159,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     }
                 }
             }
-            var mealOrder = this.createOrder(order, user, wxOrderVo.getShopId(), wxOrderVo.getMessage(), orderSn,goodsPrice);
+            var mealOrder = this.createOrder(order, user, wxOrderVo.getShopId(), wxOrderVo.getMessage(), orderSn, goodsPrice);
             mealOrders.add(mealOrder);
             orderPrice = orderPrice.add(goodsPrice);
         }
@@ -179,7 +185,7 @@ public class WxOrderServiceImpl implements WxOrderService {
     }
 
 
-    private MealOrder createOrder(WxOrderSonVo wxOrderVo, MealUser user, Long shopId, String message, String orderSn,BigDecimal goodsPrice) {
+    private MealOrder createOrder(WxOrderSonVo wxOrderVo, MealUser user, Long shopId, String message, String orderSn, BigDecimal goodsPrice) {
         // 通过MyBatis mapper查询对应的用户对象
         // 如果查询到的用户对象不为null，则创建一个新的订单对象，并设置订单属性
         return Optional.ofNullable(user).map(u -> {
@@ -281,26 +287,22 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (!OrderStatusEnum.isCanceled(order)) {
             return ResultUtils.message(ResponseCode.ORDER_CONFIRM_NOT_ALLOWED, ResponseCode.ORDER_CONFIRM_NOT_ALLOWED.getMessage());
         }
-        var mealWx = new MealOrderWxWithBLOBs();
-        mealWx.setOrderSn(orderSn);
-        mealWx.setOrderType("REFUND");
-        if (OrderStatusEnum.PAID.is(order.getOrderStatus())) {
-            WxPayRefundResult wxPayRefundResult = doWxRefund(orderSn, orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add), mealWx);
-            if (wxPayRefundResult == null || wxPayRefundResult.getReturnCode().equals("SUCCESS") || !wxPayRefundResult.getResultCode().equals("SUCCESS")) {
-                return ResultUtils.message(ResponseCode.ORDER_REFUND_FAILED, ResponseCode.ORDER_REFUND_FAILED.getMessage());
-            }
-            mealWx.setResponseParam(JsonUtils.toJsonKeepNullValue(wxPayRefundResult));
-            orderNew.setRefundContent(wxPayRefundResult.getRefundId());
-        }
-        // 设置订单的退款信息
-        LocalDateTime now = LocalDateTime.now();
+//        var mealWx = new MealOrderWxWithBLOBs();
+//        mealWx.setOrderSn(orderSn);
+//        mealWx.setOrderType("REFUND");
+//        if (OrderStatusEnum.PAID.is(order.getOrderStatus())) {
+//            WxPayRefundResult wxPayRefundResult = doWxRefund(orderSn, orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add), mealWx);
+//            if (wxPayRefundResult == null || !wxPayRefundResult.getReturnCode().equals("SUCCESS") || !wxPayRefundResult.getResultCode().equals("SUCCESS")) {
+//                return ResultUtils.message(ResponseCode.ORDER_REFUND_FAILED, ResponseCode.ORDER_REFUND_FAILED.getMessage());
+//            }
+//            mealWx.setResponseParam(JsonUtils.toJsonKeepNullValue(wxPayRefundResult));
+//            orderNew.setRefundContent(wxPayRefundResult.getRefundId());
+//        }
         // 设置订单为已退款状态，设置相关时间和金额信息
         orderNew.setOrderStatus(OrderStatusEnum.REFUNDED.getMapping());
-        orderNew.setEndTime(now);
-        orderNew.setRefundAmount(order.getActualPrice());
-        orderNew.setRefundTime(now);
         orderNew.setOrderSn(orderSn);
-        this.mealOrderWxMapper.insert(mealWx);
+        orderNew.setRefundTime(LocalDateTime.now());
+//        this.mealOrderWxMapper.insertSelective(mealWx);
         // 更新订单信息
         if (this.mealOrderMapper.updateByOrderSn(orderNew) < orders.size()) {
             return ResultUtils.message(ResponseCode.ORDER_UPDATE_FAILED, ResponseCode.ORDER_UPDATE_FAILED.getMessage());
@@ -329,6 +331,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         WxPayRefundRequest wxPayRefundRequest = new WxPayRefundRequest();
         wxPayRefundRequest.setOutTradeNo(orderSn);
         wxPayRefundRequest.setOutRefundNo("refund_" + orderSn);
+        wxPayRefundRequest.setNotifyUrl(wxProperties.getRefundNotifyUrl());
         wxPayRefundRequest.setTotalFee(actualPrice.multiply(new BigDecimal(100)).intValue());
         wxPayRefundRequest.setRefundFee(wxPayRefundRequest.getTotalFee());
         mealOrderWx.setRequestParam(JsonUtils.toJsonKeepNullValue(wxPayRefundRequest));
@@ -341,7 +344,7 @@ public class WxOrderServiceImpl implements WxOrderService {
     }
 
     @Override
-    public Result<?> detail(Long uid, String orderSn) {
+    public Result<?> detail(Long uid, String orderSn, Integer page, Integer limitVo) {
         if (Objects.nonNull(orderSn)) { // 检查订单ID是否为空
             // 找到此笔订单的详细
             var validOrders = this.getValidOrder(uid, orderSn);
@@ -386,7 +389,8 @@ public class WxOrderServiceImpl implements WxOrderService {
                     if (ObjectUtils.isEmpty(calamities)) {
                         return goodsVo;
                     } else {
-                        goodsVo.setOrderDetailCalamityVos(calamities.stream().map(b -> new OrderDetailCalamityVo().setCalamityNumber(b.getNumber()).setCalamityName(b.getCalamityName()).setUnit(b.getUnit()).setCalamityMoney(b.getPrice())).collect(Collectors.toList()));
+                        goodsVo.setOrderDetailCalamityVos(calamities.stream()
+                                .map(b -> new OrderDetailCalamityVo().setCalamityNumber(b.getNumber()).setCalamityName(b.getCalamityName()).setUnit(b.getUnit()).setCalamityMoney(b.getPrice())).collect(Collectors.toList()));
                     }
                     return goodsVo;
                 }).collect(Collectors.toList()));
@@ -398,9 +402,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             }).collect(Collectors.toList()));
             return ResultUtils.success(vo);
         } else {
-            // 创建 MealOrderExample 对象
             var example = new MealOrderExample();
-            // 在 example 对象上创建查询条件：查询用户 id 等于 uid，且未被删除的订单
             example.createCriteria().andUserIdEqualTo(uid).andDeletedEqualTo(Boolean.FALSE);
             // 按订单添加时间倒序排序
             example.setOrderByClause("add_time DESC");
@@ -428,18 +430,27 @@ public class WxOrderServiceImpl implements WxOrderService {
                 vo.setShopName(shop.getName());
                 orders.forEach(a -> {
                     String shipSn = a.getShipSn();
-                    if (IsTimeSaleEnum.BREAKFAST.is(a.getIsTimeOnSale())) {
-                        vo.setShipSnByBreakFast(shipSn);
-                    } else if (IsTimeSaleEnum.LUNCH.is(a.getIsTimeOnSale())) {
-                        vo.setShipSnByLunch(shipSn);
-                    } else if (IsTimeSaleEnum.DINNER.is(a.getIsTimeOnSale())) {
-                        vo.setShipSnByDinner(shipSn);
-                    }
+                    Arrays.stream(IsTimeSaleEnum.values()).filter(isTimeSaleEnum -> isTimeSaleEnum.is(a.getIsTimeOnSale())).findFirst().ifPresent(isTimeSaleEnum -> {
+                        switch (isTimeSaleEnum) {
+                            case BREAKFAST:
+                                vo.setShipSnByBreakFast(shipSn);
+                                break;
+                            case LUNCH:
+                                vo.setShipSnByLunch(shipSn);
+                                break;
+                            case DINNER:
+                                vo.setShipSnByDinner(shipSn);
+                                break;
+                            default:
+                                break;
+                        }
+                    });
                 });
                 return vo;
-            }).sorted(Comparator.comparing(OrderRecordVo::getOrderDate).reversed()).collect(Collectors.toList());
-            // 将 OrderRecordVo 列表封装到 Result 对象中并返回
-            return ResultUtils.successWithEntities(listVo, (long) listVo.size());
+            }).sorted(Comparator.comparing(OrderRecordVo::getOrderDate).reversed())
+                    .skip(limitVo != null && page != null ? (long) limitVo * page : 0)
+                    .limit(limitVo != null ? limitVo : ordersMap.size()).collect(Collectors.toList());
+            return ResultUtils.successWithEntities(listVo, (long) ordersMap.size());
         }
     }
 
@@ -596,7 +607,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (OrderStatusEnum.notPayed(mealOrder)) {
             logger.warn("订单已经处理成功sn={}", orderSn);
             // 如果订单已经处理成功，则直接返回通知成功
-            return WxPayNotifyResponse.success("订单已经处理成功!");
+            return WxPayNotifyResponse.fail("订单不能支付!");
         }
         // 检查支付订单金额是否正确，如果不正确则返回通知失败
         if (!totalFee.equals(actualPrice.toString())) {
@@ -616,6 +627,41 @@ public class WxOrderServiceImpl implements WxOrderService {
         return WxPayNotifyResponse.success("处理成功!");
     }
 
+    @Override
+    public Object refundNotify(String xmlResult) {
+        WxPayRefundNotifyResult result;
+        try {
+            result = wxPayService.parseRefundNotifyResult(xmlResult);
+            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
+                throw new WxPayException("微信退款-通知失败！");
+            }
+            if (!WxPayConstants.RefundStatus.SUCCESS.equals(result.getReqInfo().getRefundStatus())) {
+                throw new WxPayException("微信退款-通知失败");
+            }
+        } catch (WxPayException e) {
+            logger.error("微信退款-通知失败:", e);
+            return WxPayNotifyResponse.fail(e.getMessage());
+        }
+        WxPayRefundNotifyResult.ReqInfo reqInfo = result.getReqInfo();
+        var orderSn = reqInfo.getOutTradeNo();
+        // 退款成功业务处理
+        var mealWx = new MealOrderWxWithBLOBs();
+        mealWx.setOrderSn(orderSn);
+        mealWx.setOrderType("REFUND_NOTIFY");
+        mealWx.setResponseParam(JsonUtils.toJson(result));
+        var orderNew = new MealOrder();
+        orderNew.setOrderStatus(OrderStatusEnum.REFUNDED_OK.getMapping());
+        orderNew.setOrderSn(orderSn);
+        orderNew.setEndTime(LocalDateTime.now());
+        orderNew.setRefundStatus((short) 1);
+        this.mealOrderWxMapper.insertSelective(mealWx);
+        // 更新订单信息
+        if (this.mealOrderMapper.updateByOrderSn(orderNew) < 1) {
+            return ResultUtils.message(ResponseCode.ORDER_UPDATE_FAILED, ResponseCode.ORDER_UPDATE_FAILED.getMessage());
+        }
+        return WxPayNotifyResponse.success("OK");
+    }
+
     private void shipProcess(List<MealOrder> orders, String payId) {
         orders.forEach(e -> {
             e.setPayId(payId);
@@ -631,9 +677,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         return this.mealOrderMapper.selectByExample(example);
     }
 
-    public boolean isBetween2200And0600() {
-        return LocalTime.now().isAfter(LocalTime.of(22, 0)) || LocalTime.now().isBefore(LocalTime.of(6, 0));
-    }
+
 
 }
 

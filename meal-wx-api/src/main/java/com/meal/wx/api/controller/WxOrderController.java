@@ -24,14 +24,14 @@ public class WxOrderController {
 
     @PostMapping("/prepay/{orderSn}")
     public Result<?> prepay(@PathVariable("orderSn") String orderSn) {
-        return this.wxOrderService.prepay(SecurityUtils.getUserId(),orderSn);
+        return this.wxOrderService.prepay(SecurityUtils.getUserId(), orderSn);
     }
 
 
     /**
      * 微信付款成功或失败回调接口
      * <p>
-     *  注意，这里pay-notify是示例地址，建议开发者应该设立一个隐蔽的回调地址
+     * 注意，这里pay-notify是示例地址，建议开发者应该设立一个隐蔽的回调地址
      *
      * @param request  请求内容
      * @param response 响应内容
@@ -41,12 +41,23 @@ public class WxOrderController {
     public Object payNotify(HttpServletRequest request, HttpServletResponse response) {
         return this.wxOrderService.payNotify(request, response);
     }
+
+
+    @PostMapping("/refund-notify")
+    public Object refundNotify(@RequestBody String xmlData) {
+        return this.wxOrderService.refundNotify(xmlData);
+    }
+
     @PostMapping("/refund/{orderSn}")
     public Object refund(@PathVariable("orderSn") String orderSn) {
         return this.wxOrderService.refund(SecurityUtils.getUserId(), orderSn);
     }
+
     @GetMapping("/detail")
-    public  Result<?> detail(@RequestParam(required = false) String orderSn) {
-        return wxOrderService.detail(SecurityUtils.getUserId(), orderSn);
+    public Result<?> detail(@RequestParam(required = false) String orderSn,
+                            @RequestParam(required = false) Integer page,
+                            @RequestParam(required = false) Integer limit) {
+        return wxOrderService.detail(SecurityUtils.getUserId(), orderSn,page,limit);
     }
+
 }

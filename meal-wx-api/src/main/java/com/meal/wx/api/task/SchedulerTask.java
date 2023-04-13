@@ -35,7 +35,7 @@ public class SchedulerTask {
         if (!ObjectUtils.isEmpty(mealOrders)){
             MealOrder mealOrder = new MealOrder();
             mealOrder.setEndTime(LocalDateTime.now());
-            mealOrder.setOrderStatus(OrderStatusEnum.REFUNDED.getMapping());
+            mealOrder.setOrderStatus(OrderStatusEnum.CANCEL.getMapping());
             this.mealOrderMapper.updateByExampleSelective(mealOrder,example);
         }
     }

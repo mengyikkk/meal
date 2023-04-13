@@ -21,6 +21,7 @@ meal:
         mch-id: "1640664276"
         mch-key: "ffiuq3hu34ufiuq4f3o4vi4r234fv425"
         notify-url: "https://yangyua.com/wx/order/pay-notify"
+        refund-notify-url: "https://yangyua.com/wx/order/refund-notify"
         api-v3-key: "fn2u4f5ty7huhf932hfhi4u3fh23rf3t"
         key-path: "classpath:/cert/apiclient_cert.p12"
         msgDataFormat: JSON

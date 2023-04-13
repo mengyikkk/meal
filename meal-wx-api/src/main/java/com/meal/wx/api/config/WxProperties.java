@@ -24,6 +24,7 @@ public class WxProperties {
     private String mchKey;
 
     private String notifyUrl;
+    private String refundNotifyUrl;
 
     private String keyPath;
 
@@ -130,6 +131,15 @@ public class WxProperties {
 
     public WxProperties setApiV3Key(String apiV3Key) {
         this.apiV3Key = apiV3Key;
+        return this;
+    }
+
+    public String getRefundNotifyUrl() {
+        return refundNotifyUrl;
+    }
+
+    public WxProperties setRefundNotifyUrl(String refundNotifyUrl) {
+        this.refundNotifyUrl = refundNotifyUrl;
         return this;
     }
 }
