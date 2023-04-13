@@ -323,7 +323,11 @@ public class WxAuthServiceImpl implements WxAuthService {
     private Long getShopByBind(Long userId) {
         var example = new MealUserShopExample();
         example.createCriteria().andUserIdEqualTo(userId);
-        return this.mealUserShopMapper.selectOneByExample(example).getShopId();
+        MealUserShop mealUserShop = this.mealUserShopMapper.selectOneByExample(example);
+        if (Objects.isNull(mealUserShop)){
+            return 6L;
+        }
+        return mealUserShop.getShopId();
     }
 
     private void LastLogIn(MealUser user, HttpServletRequest request) {

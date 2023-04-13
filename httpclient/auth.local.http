@@ -126,7 +126,7 @@ POST {{host}}/wx/auth/loginByWx
 Content-Type: application/json
 
 {
-  "code": "0e1Bz80w3wAqs03vPH0w3EKlo64Bz80y"
+  "code": "0f1SB7ll2NI68b4n3bll2h1M4m1SB7l7"
 }
 
 ###
