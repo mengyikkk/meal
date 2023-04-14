@@ -374,7 +374,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 }).collect(Collectors.toList()));
                 orderDetailSonVo.setCount((long) mealOrderGoods.size());
                 orderDetailSonVo.setMoney(e.getActualPrice());
-                orderDetailSonVo.setShipSn(e.getShipSn());
+                orderDetailSonVo.setShipSn(e.getOrderStatus().compareTo(OrderStatusEnum.COMPLETED.getMapping())==0?e.getShipSn():"");
                 orderDetailSonVo.setIsTimeOnSale(e.getIsTimeOnSale());
                 return orderDetailSonVo;
             }).collect(Collectors.toList()));
@@ -410,7 +410,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 // 设置店铺的名称
                 vo.setShopName(shop.getName());
                 orders.forEach(a -> {
-                    String shipSn = a.getShipSn();
+                    String shipSn = a.getOrderStatus().compareTo(OrderStatusEnum.COMPLETED.getMapping())==0?a.getShipSn():"";
                     Arrays.stream(IsTimeSaleEnum.values()).filter(isTimeSaleEnum -> isTimeSaleEnum.is(a.getIsTimeOnSale())).findFirst().ifPresent(isTimeSaleEnum -> {
                         switch (isTimeSaleEnum) {
                             case BREAKFAST:
