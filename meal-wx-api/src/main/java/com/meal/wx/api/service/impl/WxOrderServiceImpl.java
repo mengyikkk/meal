@@ -380,8 +380,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     if (ObjectUtils.isEmpty(calamities)) {
                         return goodsVo;
                     } else {
-                        goodsVo.setOrderDetailCalamityVos(calamities.stream()
-                                .map(b -> new OrderDetailCalamityVo().setCalamityNumber(b.getNumber()).setCalamityName(b.getCalamityName()).setUnit(b.getUnit()).setCalamityMoney(b.getPrice())).collect(Collectors.toList()));
+                        goodsVo.setOrderDetailCalamityVos(calamities.stream().map(b -> new OrderDetailCalamityVo().setCalamityNumber(b.getNumber()).setCalamityName(b.getCalamityName()).setUnit(b.getUnit()).setCalamityMoney(b.getPrice())).collect(Collectors.toList()));
                     }
                     return goodsVo;
                 }).collect(Collectors.toList()));
@@ -399,8 +398,8 @@ public class WxOrderServiceImpl implements WxOrderService {
             example.setOrderByClause("add_time DESC");
             // 通过 mealOrderMapper 的 selectByExample 方法查询订单列表
             List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(example);
-            if (mealOrders.isEmpty()){
-                return ResultUtils.successWithEntities(Collections.emptyList(),0L);
+            if (mealOrders.isEmpty()) {
+                return ResultUtils.successWithEntities(Collections.emptyList(), 0L);
             }
             var shopMap = MapperUtils.shopMapByIds(mealOrders.stream().map(MealOrder::getShopId).distinct().collect(Collectors.toList()), mealShopMapper);
             var ordersMap = mealOrders.stream().collect(Collectors.groupingBy(MealOrder::getOrderSn));
@@ -441,9 +440,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     });
                 });
                 return vo;
-            }).sorted(Comparator.comparing(OrderRecordVo::getOrderDate).reversed())
-                    .skip(limitVo != null && page != null ? (long) limitVo * (page-1) : 0)
-                    .limit(limitVo != null ? limitVo : ordersMap.size()).collect(Collectors.toList());
+            }).sorted(Comparator.comparing(OrderRecordVo::getOrderDate).reversed()).skip(limitVo != null && page != null ? (long) limitVo * (page - 1) : 0).limit(limitVo != null ? limitVo : ordersMap.size()).collect(Collectors.toList());
             return ResultUtils.successWithEntities(listVo, (long) ordersMap.size());
         }
     }
@@ -550,7 +547,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         // 从 request 中读取微信支付平台的支付通知
         this.logger.info("微信回调:{}", request.toString());
 
-        String xmlResult = null;
+        String xmlResult;
         try {
             xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
         } catch (IOException e) {
@@ -577,7 +574,7 @@ public class WxOrderServiceImpl implements WxOrderService {
 
         // 处理支付通知，更新订单状态
         String orderSn = result.getOutTradeNo(); // 获取订单号
-        this.logger.info("处理腾讯支付平台的订单支付 order:{}结果:{}", orderSn, result);
+        this.logger.info("处理腾讯支付平台的订单支付回调 order:{}结果:{}", orderSn, result);
         String payId = result.getTransactionId(); // 获取微信支付订单号
         // 将分转换为元
         String totalFee = BaseWxPayResult.fenToYuan(result.getTotalFee());
@@ -590,19 +587,19 @@ public class WxOrderServiceImpl implements WxOrderService {
         MealOrderWxWithBLOBs log = new MealOrderWxWithBLOBs();
         // 记录支付请求参数并输出日志
         if (ObjectUtils.isEmpty(mealOrders)) {
-
             this.logger.error("订单不存在 sn={}", orderSn);
             // 订单不存在，返回通知失败
             return WxPayNotifyResponse.fail("订单不存在 sn=" + orderSn);
         }
         log.setOrderType("ORDER_NOTIFY");
         log.setOrderSn(mealOrder.getOrderSn());
-        log.setRequestParam(JsonUtils.toJson(result));
+        log.setResponseParam(JsonUtils.toJson(result));
         if (OrderStatusEnum.notPayed(mealOrder)) {
             logger.warn("订单已经处理成功sn={}", orderSn);
             // 如果订单已经处理成功，则直接返回通知成功
             return WxPayNotifyResponse.fail("订单不能支付!");
         }
+        this.logger.info("微信订单回调接口 找到库里原始订单:{}", orderSn);
         // 检查支付订单金额是否正确，如果不正确则返回通知失败
         if (!totalFee.equals(actualPrice.toString())) {
             logger.error("sn={}支付金额不符合 totalFe e={}", orderSn, totalFee);
@@ -612,9 +609,8 @@ public class WxOrderServiceImpl implements WxOrderService {
         shipProcess(mealOrders, payId);
         // 更新订单信息到数据库
         LinkedList<Function<Void, Integer>> functions = new LinkedList<>();
-        mealOrders.forEach(e->{
-            functions.add(nothing ->
-                mealOrderMapper.updateByPrimaryKeySelective(e));
+        mealOrders.forEach(e -> {
+            functions.add(nothing -> mealOrderMapper.updateByPrimaryKeySelective(e));
         });
         if (this.transactionExecutor.transaction(functions)) {
             //清空购物车
@@ -675,7 +671,6 @@ public class WxOrderServiceImpl implements WxOrderService {
         example.createCriteria().andOrderSnEqualTo(orderSn).andDeletedEqualTo(Boolean.FALSE);
         return this.mealOrderMapper.selectByExample(example);
     }
-
 
 
 }
