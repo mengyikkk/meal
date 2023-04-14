@@ -59,6 +59,7 @@ public class WxGoodsServiceImp implements WxGoodsService {
                     SecurityUtils.getUserId(), vo);
             return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
         }
+        vo.setIsOnSale(Boolean.TRUE);
         var example = new MealGoodsExample();
         var criteria = example.createCriteria();
         criteria.andDeletedEqualTo(Boolean.FALSE);
@@ -111,6 +112,7 @@ public class WxGoodsServiceImp implements WxGoodsService {
                 return ResultUtils.message(ResponseCode.GOOD_FIND_ERR0, "");
             }
         }
+        vo.setIsOnSale(Boolean.TRUE);
         var example = new MealLittleCalamityExample();
         var criteria = example.createCriteria();
         criteria.andDeletedEqualTo(Boolean.FALSE);

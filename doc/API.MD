@@ -1340,3 +1340,12 @@ response:
 - `shipSnByLunch`:string。 午餐取餐码
 - `shipSnByDinner`:string。 晚餐取餐码
 
+17. 退款申请接口
+
+   ```http request
+   ###
+   POST  {{host}}/wx/order/refund/{orderSn}
+    Authorization: {{token}}
+   ```
+
+- `orderSn`:string。 商品编号 (必填)

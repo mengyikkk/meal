@@ -278,22 +278,10 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (!OrderStatusEnum.isCanceled(order)) {
             return ResultUtils.message(ResponseCode.ORDER_CONFIRM_NOT_ALLOWED, ResponseCode.ORDER_CONFIRM_NOT_ALLOWED.getMessage());
         }
-//        var mealWx = new MealOrderWxWithBLOBs();
-//        mealWx.setOrderSn(orderSn);
-//        mealWx.setOrderType("REFUND");
-//        if (OrderStatusEnum.PAID.is(order.getOrderStatus())) {
-//            WxPayRefundResult wxPayRefundResult = doWxRefund(orderSn, orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add), mealWx);
-//            if (wxPayRefundResult == null || !wxPayRefundResult.getReturnCode().equals("SUCCESS") || !wxPayRefundResult.getResultCode().equals("SUCCESS")) {
-//                return ResultUtils.message(ResponseCode.ORDER_REFUND_FAILED, ResponseCode.ORDER_REFUND_FAILED.getMessage());
-//            }
-//            mealWx.setResponseParam(JsonUtils.toJsonKeepNullValue(wxPayRefundResult));
-//            orderNew.setRefundContent(wxPayRefundResult.getRefundId());
-//        }
         // 设置订单为已退款状态，设置相关时间和金额信息
         orderNew.setOrderStatus(OrderStatusEnum.REFUNDED.getMapping());
         orderNew.setOrderSn(orderSn);
         orderNew.setRefundTime(LocalDateTime.now());
-//        this.mealOrderWxMapper.insertSelective(mealWx);
         // 更新订单信息
         if (this.mealOrderMapper.updateByOrderSn(orderNew) < orders.size()) {
             return ResultUtils.message(ResponseCode.ORDER_UPDATE_FAILED, ResponseCode.ORDER_UPDATE_FAILED.getMessage());
