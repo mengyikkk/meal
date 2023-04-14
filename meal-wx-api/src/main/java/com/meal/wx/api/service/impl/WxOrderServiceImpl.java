@@ -627,6 +627,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         WxPayRefundNotifyResult result;
         try {
             result = wxPayService.parseRefundNotifyResult(xmlResult);
+            this.logger.info("微信退款回调:{}",JsonUtils.toJson(result));
             if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
                 throw new WxPayException("微信退款-通知失败！");
             }
