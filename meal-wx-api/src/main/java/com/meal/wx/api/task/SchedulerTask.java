@@ -23,7 +23,7 @@ public class SchedulerTask {
     @Resource
     private MealOrderMapper mealOrderMapper;
 
-    @Scheduled(fixedDelayString = "300000")
+//    @Scheduled(fixedDelayString = "300000")
     public void cancelTimeoutOrders(){
         var example = new MealOrderExample();
         MealOrderExample.Criteria criteria = example.createCriteria();

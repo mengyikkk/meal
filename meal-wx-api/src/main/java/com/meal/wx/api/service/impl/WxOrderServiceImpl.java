@@ -595,7 +595,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         log.setOrderSn(mealOrder.getOrderSn());
         log.setResponseParam(JsonUtils.toJson(result));
         if (OrderStatusEnum.notPayed(mealOrder)) {
-            logger.warn("订单已经处理成功sn={}", orderSn);
+            this.logger.info("订单已经处理成功sn={}", orderSn);
             // 如果订单已经处理成功，则直接返回通知成功
             return WxPayNotifyResponse.fail("订单不能支付!");
         }
@@ -618,7 +618,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             this.mealOrderWxMapper.insertSelective(log);
             return WxPayNotifyResponse.success("处理成功!");
         }
-        // 返回通知成功
+        this.logger.info("订单号:{} 更新已支付状态失败",orderSn);
         return WxPayNotifyResponse.fail("订单更新失败!");
     }
 
@@ -655,6 +655,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (this.mealOrderMapper.updateByOrderSn(orderNew) < 1) {
             return ResultUtils.message(ResponseCode.ORDER_UPDATE_FAILED, ResponseCode.ORDER_UPDATE_FAILED.getMessage());
         }
+        this.logger.info("单号:{}微信退款回调成功",orderSn);
         return WxPayNotifyResponse.success("OK");
     }
 
