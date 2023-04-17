@@ -4,6 +4,7 @@ import com.meal.common.Result;
 import com.meal.common.model.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface WxAuthService {
      Result<WxRegisterReturnVo> register(WxRegisterVo vo, HttpServletRequest request);
@@ -15,5 +16,6 @@ public interface WxAuthService {
      Result<?> getShopId(Long userId);
      Result<?> update(UserDetailsVo vo, Long userId);
      Result<?> info(Long userId);
+     Result<?> send(List<Long> orderIds);
 
 }

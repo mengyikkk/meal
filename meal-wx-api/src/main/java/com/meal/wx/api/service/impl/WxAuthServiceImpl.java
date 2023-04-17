@@ -8,9 +8,7 @@ import com.meal.common.Result;
 import com.meal.common.config.MealProperties;
 import com.meal.common.dto.*;
 import com.meal.common.enums.LoginTypeEnum;
-import com.meal.common.mapper.MealShopMapper;
-import com.meal.common.mapper.MealUserMapper;
-import com.meal.common.mapper.MealUserShopMapper;
+import com.meal.common.mapper.*;
 import com.meal.common.model.*;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.*;
@@ -31,10 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class WxAuthServiceImpl implements WxAuthService {
@@ -47,6 +42,11 @@ public class WxAuthServiceImpl implements WxAuthService {
     @Resource
     private MealUserService mealUserService;
 
+    @Resource
+    private MealOrderMapper mealOrderMapper;
+
+    @Resource
+    private MealOrderGoodsMapper mealOrderGoodsMapper;
     //    @Resource
 //    private NotifyService notifyService;
     @Resource
@@ -344,6 +344,17 @@ public class WxAuthServiceImpl implements WxAuthService {
     public Result<?> info(Long userId) {
         MealUser mealUser = this.mealUserMapper.selectByPrimaryKey(userId);
         return ResultUtils.success(new UserInfo().setGender(mealUser.getGender()).setMobile(mealUser.getMobile()).setNickName(mealUser.getNickname()).setAvatarUrl(mealUser.getAvatar()).setBirthday(mealUser.getBirthday()));
+    }
+
+    @Override
+    public Result<?> send(List<Long> orderIds) {
+        var orderExample = new MealOrderExample();
+        orderExample.createCriteria().andIdIn(orderIds);
+        List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(orderExample);
+        var goodExample = new MealOrderGoodsExample();
+        goodExample.createCriteria().andOrderIdIn(orderIds);
+        List<MealOrderGoods> mealOrderGoods = this.mealOrderGoodsMapper.selectByExample(goodExample);
+        return null;
     }
 
 

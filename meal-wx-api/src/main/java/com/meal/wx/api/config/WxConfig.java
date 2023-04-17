@@ -57,4 +57,5 @@ public class WxConfig {
         wxPayService.setConfig(payConfig);
         return wxPayService;
     }
+
 }

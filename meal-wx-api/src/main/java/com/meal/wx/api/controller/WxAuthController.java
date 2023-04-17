@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/wx/auth")
@@ -65,5 +66,9 @@ public class WxAuthController {
     @GetMapping("/userInfo")
     public Result<?> info() {
         return this.wxAuthService.info(SecurityUtils.getUserId());
+    }
+    @PostMapping
+    public Result<?> send(List<Long> orderIds){
+        return this.wxAuthService.send(orderIds);
     }
 }

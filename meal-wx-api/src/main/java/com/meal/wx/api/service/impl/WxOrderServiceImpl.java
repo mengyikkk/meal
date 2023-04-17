@@ -100,8 +100,8 @@ public class WxOrderServiceImpl implements WxOrderService {
             return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
         }
         var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
-        if(Objects.isNull(user.getMobile())){
-            return ResultUtils.message(ResponseCode.AUTH_NOT_MOBILE,ResponseCode.AUTH_NOT_MOBILE.getMessage());
+        if (Objects.isNull(user.getMobile())) {
+            return ResultUtils.message(ResponseCode.AUTH_NOT_MOBILE, ResponseCode.AUTH_NOT_MOBILE.getMessage());
         }
         List<WxOrderSonVo> orders = wxOrderVo.getOrders();
         int size = orders.size();
@@ -379,7 +379,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 }).collect(Collectors.toList()));
                 orderDetailSonVo.setCount((long) mealOrderGoods.size());
                 orderDetailSonVo.setMoney(e.getActualPrice());
-                orderDetailSonVo.setShipSn(e.getOrderStatus().compareTo(OrderStatusEnum.COMPLETED.getMapping())==0?e.getShipSn():"");
+                orderDetailSonVo.setShipSn(e.getOrderStatus().compareTo(OrderStatusEnum.COMPLETED.getMapping()) == 0 ? e.getShipSn() : "");
                 orderDetailSonVo.setIsTimeOnSale(e.getIsTimeOnSale());
                 return orderDetailSonVo;
             }).collect(Collectors.toList()));
@@ -418,7 +418,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 // 设置店铺的名称
                 vo.setShopName(shop.getName());
                 orders.forEach(a -> {
-                    String shipSn = a.getOrderStatus().compareTo(OrderStatusEnum.COMPLETED.getMapping())==0?a.getShipSn():"";
+                    String shipSn = a.getOrderStatus().compareTo(OrderStatusEnum.COMPLETED.getMapping()) == 0 ? a.getShipSn() : "";
                     Arrays.stream(IsTimeSaleEnum.values()).filter(isTimeSaleEnum -> isTimeSaleEnum.is(a.getIsTimeOnSale())).findFirst().ifPresent(isTimeSaleEnum -> {
                         switch (isTimeSaleEnum) {
                             case BREAKFAST:
@@ -482,9 +482,9 @@ public class WxOrderServiceImpl implements WxOrderService {
         }
         var example = new MealOrderExample();
         example.createCriteria().andOrderSnEqualTo(orderSn);
-        var  order = new MealOrder();
+        var order = new MealOrder();
         order.setOrderStatus(OrderStatusEnum.PAYING.getMapping());
-        if (this.mealOrderMapper.updateByExample(order,example)<1){
+        if (this.mealOrderMapper.updateByExample(order, example) < 1) {
             return ResultUtils.message(ResponseCode.ORDER_PAY_FAIL, ResponseCode.ORDER_PAY_FAIL.getMessage());
         }
         // 记录支付响应结果并将记录对象存入数据库
@@ -620,7 +620,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             this.mealOrderWxMapper.insertSelective(log);
             return WxPayNotifyResponse.success("处理成功!");
         }
-        this.logger.info("订单号:{} 更新已支付状态失败",orderSn);
+        this.logger.info("订单号:{} 更新已支付状态失败", orderSn);
         return WxPayNotifyResponse.fail("订单更新失败!");
     }
 
@@ -629,7 +629,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         WxPayRefundNotifyResult result;
         try {
             result = wxPayService.parseRefundNotifyResult(xmlResult);
-            this.logger.info("微信退款回调:{}",JsonUtils.toJson(result));
+            this.logger.info("微信退款回调:{}", JsonUtils.toJson(result));
             if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
                 throw new WxPayException("微信退款-通知失败！");
             }
@@ -657,7 +657,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (this.mealOrderMapper.updateByOrderSn(orderNew) < 1) {
             return ResultUtils.message(ResponseCode.ORDER_UPDATE_FAILED, ResponseCode.ORDER_UPDATE_FAILED.getMessage());
         }
-        this.logger.info("单号:{}微信退款回调成功",orderSn);
+        this.logger.info("单号:{}微信退款回调成功", orderSn);
         return WxPayNotifyResponse.success("OK");
     }
 

@@ -38,3 +38,5 @@
 16:03:54.196 [main] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["http-nio-9001"]
 16:03:54.213 [main] INFO  c.m.w.a.Application - [logStarted,61] - Started Application in 6.977 seconds (JVM running for 7.464)
 16:03:54.559 [RMI TCP Connection(5)-192.168.100.79] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+16:24:27.341 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2032] - {dataSource-1} closing ...
+16:24:27.342 [SpringApplicationShutdownHook] INFO  c.a.d.p.DruidDataSource - [close,2104] - {dataSource-1} closed

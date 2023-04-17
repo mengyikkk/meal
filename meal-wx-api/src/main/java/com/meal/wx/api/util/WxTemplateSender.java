@@ -6,6 +6,7 @@ import cn.binarywang.wx.miniapp.bean.WxMaTemplateData;
 import com.meal.common.utils.JsonUtils;
 import com.meal.common.utils.RedisUtils;
 import com.meal.wx.api.config.WxProperties;
+import com.meal.wx.api.dto.WxSendMessageVo;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.json.JSONObject;
@@ -58,6 +59,31 @@ public class WxTemplateSender {
 			e.printStackTrace();
 		}
 	}
+
+//	public boolean sendQRCodeMsg(String roadName, TUser tUser) {
+//		boolean sendSuccess = false;
+//		WxMsgConfig requesData = getQRCodeMsgConfig(roadName, tUser);
+//		log.info("二维码扫描推送消息请求参数：{}", JSON.toJSONString(requesData));
+//
+//		String url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=" + wxUtils.getAccessToken();
+//		log.info("二维码扫描推送消息请求地址：{}", url);
+//		JSONObject responseData = postData(url, requesData);
+//		log.info("二维码扫描推送消息返回参数：{}", JSON.toJSONString(responseData));
+//
+//		Integer errorCode = responseData.getInteger("errcode");
+//		String errorMessage = responseData.getString("errmsg");
+//		if (errorCode == 0) {
+//			sendSuccess = true;
+//			log.info("二维码扫描推送消息发送成功");
+//		} else {
+//			log.info("二维码扫描推送消息发送失败,errcode：{},errorMessage：{}", errorCode, errorMessage);
+//			sendSuccess = false;
+//		}
+//		return sendSuccess;
+//	}
+
+	/*参数拼接*/
+
 
 
 	// 获取访问令牌
