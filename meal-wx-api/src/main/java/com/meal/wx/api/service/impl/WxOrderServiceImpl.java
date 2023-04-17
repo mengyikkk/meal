@@ -100,6 +100,9 @@ public class WxOrderServiceImpl implements WxOrderService {
             return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
         }
         var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
+        if(Objects.isNull(user.getMobile())){
+            return ResultUtils.message(ResponseCode.AUTH_NOT_MOBILE,ResponseCode.AUTH_NOT_MOBILE.getMessage());
+        }
         List<WxOrderSonVo> orders = wxOrderVo.getOrders();
         int size = orders.size();
         var shopId = wxOrderVo.getShopId();
@@ -324,6 +327,7 @@ public class WxOrderServiceImpl implements WxOrderService {
 
     @Override
     public Result<?> detail(Long uid, String orderSn, Integer page, Integer limitVo) {
+        var user = this.mealUserMapper.selectByPrimaryKey(uid);
         if (Objects.nonNull(orderSn)) { // 检查订单ID是否为空
             // 找到此笔订单的详细
             var validOrders = this.getValidOrder(uid, orderSn);
@@ -331,7 +335,6 @@ public class WxOrderServiceImpl implements WxOrderService {
                 return ResultUtils.message(ResponseCode.ORDER_NOT_FIND, ResponseCode.ORDER_NOT_FIND.getMessage());
             }
             // 获取订单相关的用户和商店信息
-            var user = this.mealUserMapper.selectByPrimaryKey(uid);
             var shop = this.mealShopMapper.selectByPrimaryKey(validOrders.get(0).getShopId());
             var orderIds = validOrders.stream().map(MealOrder::getId).collect(Collectors.toList());
 
@@ -348,6 +351,8 @@ public class WxOrderServiceImpl implements WxOrderService {
             var vo = new OrderDetailsVo();
             vo.setNickName(user.getNickname());
             vo.setCount(1L);
+            vo.setShipDate(validOrders.get(0).getShipTime().toLocalDate());
+            vo.setCustomerPhone(user.getMobile());
             vo.setOrderStatus(validOrders.get(0).getOrderStatus());
             vo.setOrderStatusMessage(OrderStatusEnum.find(validOrders.get(0).getOrderStatus()).get().getMessage());
             vo.setMoney(validOrders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
@@ -399,6 +404,9 @@ public class WxOrderServiceImpl implements WxOrderService {
                 var vo = new OrderRecordVo();
                 // 设置订单的实际价格
                 vo.setMoney(actualPrice);
+                vo.setShipDate(order.getShipTime().toLocalDate());
+                vo.setShopPhone(shop.getPhone());
+                vo.setCustomerPhone(user.getMobile());
                 // 设置订单的添加时间
                 vo.setOrderDate(order.getAddTime());
                 vo.setOrderStatus(order.getOrderStatus());
@@ -472,7 +480,13 @@ public class WxOrderServiceImpl implements WxOrderService {
             e.printStackTrace();
             return ResultUtils.message(ResponseCode.ORDER_PAY_FAIL, ResponseCode.ORDER_PAY_FAIL.getMessage());
         }
-
+        var example = new MealOrderExample();
+        example.createCriteria().andOrderSnEqualTo(orderSn);
+        var  order = new MealOrder();
+        order.setOrderStatus(OrderStatusEnum.PAYING.getMapping());
+        if (this.mealOrderMapper.updateByExample(order,example)<1){
+            return ResultUtils.message(ResponseCode.ORDER_PAY_FAIL, ResponseCode.ORDER_PAY_FAIL.getMessage());
+        }
         // 记录支付响应结果并将记录对象存入数据库
         log.setResponseParam(JsonUtils.toJsonKeepNullValue(result));
         this.mealOrderWxMapper.insertSelective(log);

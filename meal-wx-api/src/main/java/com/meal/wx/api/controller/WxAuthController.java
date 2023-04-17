@@ -1,10 +1,7 @@
 package com.meal.wx.api.controller;
 
 import com.meal.common.Result;
-import com.meal.common.model.LoginVo;
-import com.meal.common.model.WxLoginVo;
-import com.meal.common.model.WxRegisterReturnVo;
-import com.meal.common.model.WxRegisterVo;
+import com.meal.common.model.*;
 import com.meal.common.utils.SecurityUtils;
 import com.meal.wx.api.service.WxAuthService;
 import org.springframework.web.bind.annotation.*;
@@ -60,5 +57,13 @@ public class WxAuthController {
     @GetMapping("/bind")
     public Result<?> getShopId() {
         return this.wxAuthService.getShopId(SecurityUtils.getUserId());
+    }
+    @PostMapping("/update")
+    public Result<?> update(@RequestBody UserDetailsVo info) {
+        return this.wxAuthService.update(info, SecurityUtils.getUserId());
+    }
+    @GetMapping("/userInfo")
+    public Result<?> info() {
+        return this.wxAuthService.info(SecurityUtils.getUserId());
     }
 }

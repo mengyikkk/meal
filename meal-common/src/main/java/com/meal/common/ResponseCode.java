@@ -11,6 +11,7 @@ public enum ResponseCode implements StateMapping<Integer> {
     AUTH_CAPTCHA_NULL( 7031,"短信渠道获取失败"),
     AUTH_MOBILE_REGISTERED ( 705,"手机号已经注册"),
     AUTH_INVALID_MOBILE ( 707,"无效手机号"),
+    AUTH_NOT_MOBILE ( 747,"用户没有手机号"),
     AUTH_OPENID_UNACCESS ( 708,"小程序openId失效"),
     AUTH_OPENID_BINDED ( 709,"小程序openId 无效绑定"),
 

@@ -10,6 +10,7 @@ import java.util.Optional;
 public enum OrderStatusEnum implements StateMapping<Short> {
     UNPAID((short) 0, "未支付"),
     PAID((short) 1, "已支付"),
+    PAYING((short) 2, "支付中"),
     COMPLETED((short) 3, "订单完成"),
     REFUNDED_OK((short) 5, "订单退款完成"),
     CANCEL((short) 6, "订单已取消"),

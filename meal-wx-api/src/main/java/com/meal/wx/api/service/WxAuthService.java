@@ -1,10 +1,7 @@
 package com.meal.wx.api.service;
 
 import com.meal.common.Result;
-import com.meal.common.model.LoginVo;
-import com.meal.common.model.WxLoginVo;
-import com.meal.common.model.WxRegisterReturnVo;
-import com.meal.common.model.WxRegisterVo;
+import com.meal.common.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,5 +13,7 @@ public interface WxAuthService {
      Result<?> refresh(String token);
      Result<?> bind(Long shopId);
      Result<?> getShopId(Long userId);
+     Result<?> update(UserDetailsVo vo, Long userId);
+     Result<?> info(Long userId);
 
 }

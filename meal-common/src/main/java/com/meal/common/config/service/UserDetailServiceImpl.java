@@ -19,8 +19,6 @@ import java.util.List;
  * 实现UserDetailsService接口，实现自定义登陆逻辑
  * 重写loadUserByUsername方法
  *
- * @author ajie
- * @createTime 2021年07月30日 22:23:00
  */
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
@@ -56,7 +54,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 //获取父级菜单
                 List<MealMenu> menus = mealUserMapper.findMenus(null);
                 //获取子级菜单
-                menus.forEach(item -> item.setChildren(mealUserMapper.findChildrenMenu(item.getId(), null)));
+                menus.forEach(item -> item.setChildren(mealUserMapper
+                        .findChildrenMenu(item.getId(), null)));
                 user.setMenus(menus);
             } else {
                 //非管理员需要查询角色信息
@@ -65,7 +64,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 //获取父级菜单
                 List<MealMenu> menus = mealUserMapper.findMenus(user.getId());
                 //获取子级菜单
-                menus.forEach(item -> item.setChildren(mealUserMapper.findChildrenMenu(item.getId(), user.getId())));
+                menus.forEach(item -> item.setChildren(mealUserMapper
+                        .findChildrenMenu(item.getId(), user.getId())));
                 user.setMenus(menus);
             }
             redisUtils.setValueTime("userInfo_" + username, user, expiration);

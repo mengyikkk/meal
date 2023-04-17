@@ -3,6 +3,7 @@ package com.meal.common.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class OrderRecordVo {
@@ -19,6 +20,11 @@ public class OrderRecordVo {
     private String shipSnByBreakFast;
     private String shipSnByLunch;
     private String shipSnByDinner;
+    private String shopPhone;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private LocalDate shipDate;
+
+    private  String customerPhone;
 
     public String getOrderSn() {
         return orderSn;
@@ -107,6 +113,33 @@ public class OrderRecordVo {
 
     public OrderRecordVo setShipSnByDinner(String shipSnByDinner) {
         this.shipSnByDinner = shipSnByDinner;
+        return this;
+    }
+
+    public String getShopPhone() {
+        return shopPhone;
+    }
+
+    public OrderRecordVo setShopPhone(String shopPhone) {
+        this.shopPhone = shopPhone;
+        return this;
+    }
+
+    public LocalDate getShipDate() {
+        return shipDate;
+    }
+
+    public OrderRecordVo setShipDate(LocalDate shipDate) {
+        this.shipDate = shipDate;
+        return this;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public OrderRecordVo setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
         return this;
     }
 }

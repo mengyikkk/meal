@@ -199,3 +199,20 @@ Content-Type: application/json
 POST  {{host}}/wx/order/refund/meal0PnsADf
 Authorization: {{token}}
 Content-Type: application/json
+
+###
+POST  {{host}}/wx/auth/update
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+    "nickName": "John",
+    "gender":  1 ,
+    "birthday": "1990-05-15",
+    "mobile": "18888888888"
+}
+
+###
+
+GET {{host}}/wx/auth/userInfo
+Authorization: {{token}}

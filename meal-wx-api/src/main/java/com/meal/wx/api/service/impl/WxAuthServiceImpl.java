@@ -2,7 +2,6 @@ package com.meal.wx.api.service.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
-import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
@@ -12,12 +11,9 @@ import com.meal.common.enums.LoginTypeEnum;
 import com.meal.common.mapper.MealShopMapper;
 import com.meal.common.mapper.MealUserMapper;
 import com.meal.common.mapper.MealUserShopMapper;
-import com.meal.common.model.WxLoginVo;
+import com.meal.common.model.*;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.*;
-import com.meal.common.model.LoginVo;
-import com.meal.common.model.WxRegisterReturnVo;
-import com.meal.common.model.WxRegisterVo;
 import com.meal.wx.api.service.WxAuthService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -36,6 +32,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -207,6 +204,8 @@ public class WxAuthServiceImpl implements WxAuthService {
         UserInfo userInfo = new UserInfo();
         userInfo.setNickName(user.getNickname());
         userInfo.setAvatarUrl(user.getAvatar());
+        userInfo.setGender(user.getGender());
+        userInfo.setMobile(user.getMobile());
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
         result.setShopId(this.getShopByBind(user.getId()));
@@ -255,6 +254,9 @@ public class WxAuthServiceImpl implements WxAuthService {
         UserInfo userInfo = new UserInfo();
         userInfo.setNickName(user.getNickname());
         userInfo.setAvatarUrl(user.getAvatar());
+        userInfo.setBirthday(user.getBirthday());
+        userInfo.setGender(user.getGender());
+        userInfo.setMobile(user.getMobile());
         result.setToken(tokenUtils.generateToken(user));
         result.setUserInfo(userInfo);
         result.setShopId(this.getShopByBind(user.getId()));
@@ -320,11 +322,36 @@ public class WxAuthServiceImpl implements WxAuthService {
         return ResultUtils.success(getShopByBind(userId));
     }
 
+    @Override
+    public Result<?> update(UserDetailsVo vo, Long userId) {
+        var user = mealUserMapper.selectByPrimaryKey(userId);
+        Optional.ofNullable(vo.getBirthday()).ifPresent(user::setBirthday);
+        Optional.ofNullable(vo.getGender()).ifPresent(user::setGender);
+        if (StringUtils.isNotEmpty(vo.getMobile())) {
+            if (!RegexUtil.isMobileSimple(vo.getMobile())) {
+                return ResultUtils.code(ResponseCode.AUTH_INVALID_MOBILE);
+            }
+            user.setMobile(vo.getMobile());
+        }
+        Optional.ofNullable(vo.getNickName()).ifPresent(user::setNickname);
+        if (mealUserMapper.updateByPrimaryKeySelective(user) < 1) {
+            return ResultUtils.unknown();
+        }
+        return ResultUtils.success();
+    }
+
+    @Override
+    public Result<?> info(Long userId) {
+        MealUser mealUser = this.mealUserMapper.selectByPrimaryKey(userId);
+        return ResultUtils.success(new UserInfo().setGender(mealUser.getGender()).setMobile(mealUser.getMobile()).setNickName(mealUser.getNickname()).setAvatarUrl(mealUser.getAvatar()).setBirthday(mealUser.getBirthday()));
+    }
+
+
     private Long getShopByBind(Long userId) {
         var example = new MealUserShopExample();
         example.createCriteria().andUserIdEqualTo(userId);
         MealUserShop mealUserShop = this.mealUserShopMapper.selectOneByExample(example);
-        if (Objects.isNull(mealUserShop)){
+        if (Objects.isNull(mealUserShop)) {
             return 6L;
         }
         return mealUserShop.getShopId();

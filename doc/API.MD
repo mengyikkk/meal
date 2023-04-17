@@ -1349,3 +1349,44 @@ response:
    ```
 
 - `orderSn`:string。 商品编号 (必填)
+
+18. 更新用户信息
+
+   ```http request
+   POST  {{host}}/wx/auth/update
+   Authorization: {{token}}
+   Content-Type: application/json
+   ```
+request:
+
+ ```json
+{
+   "nickName": "John",
+   "gender":  1 ,
+   "birthday": "1990-05-15",
+   "mobile": "18888888888"
+}
+```
+
+19. 获取用户信息
+
+   ```http request
+   GET {{host}}/wx/auth/userInfo
+   Authorization: {{token}}
+   ```
+response:
+
+ ```json
+{
+   "code": 200,
+   "description": null,
+   "result": {
+      "nickName": "John",
+      "avatarUrl": "https://yanxuan.nosdn.127.net/80841d741d7fa3073e0ae27bf487339f.jpg?imageView&quality=90&thumbnail=64x64",
+      "birthday": "1990-05-15",
+      "mobile": "18888888888",
+      "gender": 1
+   },
+   "records": null
+}
+```
