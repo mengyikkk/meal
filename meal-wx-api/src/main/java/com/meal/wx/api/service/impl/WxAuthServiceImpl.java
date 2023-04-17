@@ -12,7 +12,10 @@ import com.meal.common.mapper.*;
 import com.meal.common.model.*;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.*;
+import com.meal.wx.api.dto.WxSendMessageVo;
 import com.meal.wx.api.service.WxAuthService;
+import com.meal.wx.api.util.OrderStatusEnum;
+import com.meal.wx.api.util.WxTemplateSender;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class WxAuthServiceImpl implements WxAuthService {
@@ -73,6 +77,9 @@ public class WxAuthServiceImpl implements WxAuthService {
 
     @Resource
     private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private WxTemplateSender wxTemplateSender;
 
     @Override
     @Transactional
@@ -347,14 +354,40 @@ public class WxAuthServiceImpl implements WxAuthService {
     }
 
     @Override
-    public Result<?> send(List<Long> orderIds) {
+    public Result<?> send(LocalDateTime shipTime, Integer isTimeOnSale) {
+        String id = "z3WB96pX2ASunRRQRcaBhwzXuh0_V6cFqBkpUEPekLY";
         var orderExample = new MealOrderExample();
-        orderExample.createCriteria().andIdIn(orderIds);
+        orderExample.createCriteria().andShipTimeLessThan(shipTime.plusDays(1)).andShipTimeGreaterThanOrEqualTo(shipTime)
+                .andIsTimeOnSaleEqualTo(isTimeOnSale).andOrderStatusEqualTo(OrderStatusEnum.PAID.getMapping());
         List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(orderExample);
+        var userIds = mealOrders.stream().map(MealOrder::getUserId).collect(Collectors.toList());
+        var example = new MealUserExample();
+        example.createCriteria().andIdIn(userIds);
+        var openIdMap = this.mealUserMapper.selectByExample(example).stream().collect(Collectors.toMap(MealUser::getId, MealUser::getWxOpenid));
+        var orderIds = mealOrders.stream().map(MealOrder::getId).collect(Collectors.toList());
         var goodExample = new MealOrderGoodsExample();
         goodExample.createCriteria().andOrderIdIn(orderIds);
         List<MealOrderGoods> mealOrderGoods = this.mealOrderGoodsMapper.selectByExample(goodExample);
-        return null;
+        Map<Long, List<MealOrderGoods>> goodsByOrder =
+                mealOrderGoods.stream().collect(Collectors.groupingBy(MealOrderGoods::getOrderId));
+            mealOrders.forEach(
+                e -> {
+                    WxSendMessageVo wxSendMessageVo = new WxSendMessageVo();
+                    Map<String, String> map = new HashMap<>();
+                    map.put("character_string12", e.getShipSn());
+                    map.put("thing6", goodsByOrder.get(e.getId()).stream().map(MealOrderGoods::getGoodsName).collect(Collectors.joining(",")));
+                    map.put("thing20", "您的餐点已为您准备好 请前往取餐区取餐。");
+                    map.put("phone_number", "15988888888");
+                    wxSendMessageVo.setData(map);
+                    wxSendMessageVo.setTemplate_id(id);
+                    wxSendMessageVo.setTouser(openIdMap.get(e.getUserId()));
+                    if (wxTemplateSender.sendMessage(wxSendMessageVo)){
+                        e.setOrderStatus(OrderStatusEnum.COMPLETED.getMapping());
+                        this.mealOrderMapper.updateByPrimaryKeySelective(e);
+                    }
+                }
+        );
+        return ResultUtils.success();
     }
 
 

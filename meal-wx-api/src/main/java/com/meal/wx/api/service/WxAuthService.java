@@ -4,6 +4,7 @@ import com.meal.common.Result;
 import com.meal.common.model.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface WxAuthService {
@@ -16,6 +17,6 @@ public interface WxAuthService {
      Result<?> getShopId(Long userId);
      Result<?> update(UserDetailsVo vo, Long userId);
      Result<?> info(Long userId);
-     Result<?> send(List<Long> orderIds);
+     Result<?> send(LocalDateTime shipTime , Integer isTimeOnSale);
 
 }

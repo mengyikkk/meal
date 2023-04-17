@@ -2,18 +2,19 @@ package com.meal.wx.api.util;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaSubscribeMessage;
-import cn.binarywang.wx.miniapp.bean.WxMaTemplateData;
 import com.meal.common.utils.JsonUtils;
-import com.meal.common.utils.RedisUtils;
 import com.meal.wx.api.config.WxProperties;
 import com.meal.wx.api.dto.WxSendMessageVo;
 import me.chanjar.weixin.common.error.WxErrorException;
-import org.apache.commons.lang3.ObjectUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
@@ -21,10 +22,12 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 微信模版消息通知
  */
+@Service
 public class WxTemplateSender {
 	private final Logger logger =  LoggerFactory.getLogger(WxTemplateSender.class);
 	private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential";
@@ -60,27 +63,32 @@ public class WxTemplateSender {
 		}
 	}
 
-//	public boolean sendQRCodeMsg(String roadName, TUser tUser) {
-//		boolean sendSuccess = false;
-//		WxMsgConfig requesData = getQRCodeMsgConfig(roadName, tUser);
-//		log.info("二维码扫描推送消息请求参数：{}", JSON.toJSONString(requesData));
-//
-//		String url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=" + wxUtils.getAccessToken();
-//		log.info("二维码扫描推送消息请求地址：{}", url);
-//		JSONObject responseData = postData(url, requesData);
-//		log.info("二维码扫描推送消息返回参数：{}", JSON.toJSONString(responseData));
-//
-//		Integer errorCode = responseData.getInteger("errcode");
-//		String errorMessage = responseData.getString("errmsg");
-//		if (errorCode == 0) {
-//			sendSuccess = true;
-//			log.info("二维码扫描推送消息发送成功");
-//		} else {
-//			log.info("二维码扫描推送消息发送失败,errcode：{},errorMessage：{}", errorCode, errorMessage);
-//			sendSuccess = false;
-//		}
-//		return sendSuccess;
-//	}
+	public boolean sendMessage(WxSendMessageVo vo) {
+		this.logger.info("推送消息请求参数：{}", JsonUtils.toJson(vo));
+		String url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=" + getAccessToken();
+		this.logger.info("推送消息请求地址：{}", url);
+		return webClient.post()
+				.uri(url)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(vo)
+				.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+				.retrieve()
+				.bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
+				.map(responseData -> {
+					int errorCode = Integer.parseInt(responseData.get("errcode"));
+					String errorMessage = responseData.get("errmsg");
+					if (errorCode == 0) {
+						logger.info("二维码扫描推送消息发送成功");
+						return true;
+					} else {
+						logger.info("二维码扫描推送消息发送失败,errcode：{},errorMessage：{}", errorCode, errorMessage);
+						return false;
+					}
+				})
+				.blockOptional()
+				.orElse(false);
+	}
+
 
 	/*参数拼接*/
 
