@@ -484,7 +484,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         example.createCriteria().andOrderSnEqualTo(orderSn);
         var order = new MealOrder();
         order.setOrderStatus(OrderStatusEnum.PAYING.getMapping());
-        if (this.mealOrderMapper.updateByExample(order, example) < 1) {
+        if (this.mealOrderMapper.updateByExampleSelective(order, example) < 1) {
             return ResultUtils.message(ResponseCode.ORDER_PAY_FAIL, ResponseCode.ORDER_PAY_FAIL.getMessage());
         }
         // 记录支付响应结果并将记录对象存入数据库
