@@ -16,6 +16,7 @@ import com.meal.wx.api.dto.WxSendMessageVo;
 import com.meal.wx.api.service.WxAuthService;
 import com.meal.wx.api.util.OrderStatusEnum;
 import com.meal.wx.api.util.WxTemplateSender;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -358,8 +359,12 @@ public class WxAuthServiceImpl implements WxAuthService {
         String id = "z3WB96pX2ASunRRQRcaBhwzXuh0_V6cFqBkpUEPekLY";
         var orderExample = new MealOrderExample();
         orderExample.createCriteria().andShipTimeLessThan(shipTime.plusDays(1)).andShipTimeGreaterThanOrEqualTo(shipTime)
-                .andIsTimeOnSaleEqualTo(isTimeOnSale).andOrderStatusEqualTo(OrderStatusEnum.PAID.getMapping());
+                .andIsTimeOnSaleEqualTo(isTimeOnSale);
+//        .andOrderStatusEqualTo(OrderStatusEnum.PAID.getMapping())
         List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(orderExample);
+        if (ObjectUtils.isEmpty(mealOrders)){
+            return ResultUtils.success();
+        }
         var userIds = mealOrders.stream().map(MealOrder::getUserId).collect(Collectors.toList());
         var example = new MealUserExample();
         example.createCriteria().andIdIn(userIds);

@@ -3,6 +3,7 @@ package com.meal.wx.api.controller;
 import com.meal.common.Result;
 import com.meal.common.model.*;
 import com.meal.common.utils.SecurityUtils;
+import com.meal.wx.api.dto.WxSendVo;
 import com.meal.wx.api.service.WxAuthService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -70,8 +71,8 @@ public class WxAuthController {
     public Result<?> info() {
         return this.wxAuthService.info(SecurityUtils.getUserId());
     }
-    @GetMapping("/send")
-    public Result<?> send(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime shipTime ,Integer isTimeOnSale){
-        return this.wxAuthService.send(shipTime,isTimeOnSale);
+    @PostMapping("/send")
+    public Result<?> send(@RequestBody WxSendVo vo){
+        return this.wxAuthService.send(vo.getShipTime(),vo.getIsTimeOnSale());
     }
 }

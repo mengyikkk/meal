@@ -216,3 +216,12 @@ Content-Type: application/json
 
 GET {{host}}/wx/auth/userInfo
 Authorization: {{token}}
+###
+POST {{host}}/wx/auth/send
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "shipTime": "2023-04-15 00:00:00",
+  "isTimeOnSale": 1
+}

@@ -107,7 +107,7 @@ public class WxTemplateSender {
 					logger.info("获取 access_token 成功, Send Success");
 
 					// 获取并设置令牌的过期时间
-					Optional.ofNullable((String) responseMap.get("expires_in"))
+					Optional.ofNullable( responseMap.get("expires_in").toString())
 							.ifPresent(timeout -> {
 								long timeoutMillis = TimeUnit.SECONDS.toMillis(Long.parseLong(timeout)) - 10L;
 								redisTemplate.opsForValue().set("access_token", accessToken, timeoutMillis, TimeUnit.MILLISECONDS);

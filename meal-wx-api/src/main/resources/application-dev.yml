@@ -25,5 +25,8 @@ meal:
         api-v3-key: "fn2u4f5ty7huhf932hfhi4u3fh23rf3t"
         key-path: "classpath:/cert/apiclient_cert.p12"
         msgDataFormat: JSON
+  webclient:
+    enable: true
+    load-balance: true
 server:
   port: 9001
