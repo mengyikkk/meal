@@ -85,6 +85,7 @@ public class WxGoodsServiceImp implements WxGoodsService {
                                 .setAddTime(e.getAddTime()).setIsOnSale(e.getIsOnSale()).setIsTimeOnSale(e.getIsTimeOnSale()).setPicUrl(e.getPicUrl()).setSortOrder(e.getSortOrder())
                                 .setUnit(e.getUnit()).setPrice(e.getRetailPrice()).setDetail(e
                                         .getDetail()).setCategoryId(e.getCategoryId())
+                                .setBrief(e.getBrief())
                 )
                 .collect(Collectors.toList());
     }

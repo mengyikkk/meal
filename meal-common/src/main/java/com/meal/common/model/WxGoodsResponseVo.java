@@ -15,6 +15,7 @@ public class WxGoodsResponseVo {
 
     private Integer isTimeOnSale;
 
+    private String brief;
     private String picUrl;
     private Long sortOrder;
     private Long categoryId;
@@ -132,6 +133,24 @@ public class WxGoodsResponseVo {
 
     public WxGoodsResponseVo setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+        return this;
+    }
+
+    public Boolean getOnSale() {
+        return isOnSale;
+    }
+
+    public WxGoodsResponseVo setOnSale(Boolean onSale) {
+        isOnSale = onSale;
+        return this;
+    }
+
+    public String getBrief() {
+        return brief;
+    }
+
+    public WxGoodsResponseVo setBrief(String brief) {
+        this.brief = brief;
         return this;
     }
 }

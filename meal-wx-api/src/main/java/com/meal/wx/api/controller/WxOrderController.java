@@ -22,9 +22,9 @@ public class WxOrderController {
         return this.wxOrderService.submit(wxOrder, SecurityUtils.getUserId());
     }
 
-    @PostMapping("/prepay/{orderSn}")
-    public Result<?> prepay(@PathVariable("orderSn") String orderSn) {
-        return this.wxOrderService.prepay(SecurityUtils.getUserId(), orderSn);
+    @PostMapping("/prepay")
+    public Result<?> prepay(@RequestParam String orderSn,@RequestParam(required = false) String message) {
+        return this.wxOrderService.prepay(SecurityUtils.getUserId(), orderSn,message);
     }
 
 

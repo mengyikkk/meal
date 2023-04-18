@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface WxOrderService {
     Result<?> submit(WxOrderVo wxOrderVo, Long uid);
-    Result<?> prepay(Long uid, String orderSn);
+    Result<?> prepay(Long uid, String orderSn ,String message);
     Result<?> refund(Long uid,String orderSn);
     Result<?> detail(Long uid,String orderSn,Integer page ,Integer limit);
     Object payNotify(HttpServletRequest request, HttpServletResponse response);

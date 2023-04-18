@@ -248,7 +248,7 @@ public class WxOrderServiceImpl implements WxOrderService {
     }
 
     @Override
-    public Result<?> prepay(Long uid, String orderSn) {
+    public Result<?> prepay(Long uid, String orderSn,String message) {
         if (Objects.isNull(orderSn)) {
             return ResultUtils.message(ResponseCode.PARAMETER_ERROR, ResponseCode.PARAMETER_ERROR.getMessage());
         }
@@ -260,7 +260,8 @@ public class WxOrderServiceImpl implements WxOrderService {
             return ResultUtils.message(ResponseCode.ORDER_STATUS_FAIL, ResponseCode.ORDER_STATUS_FAIL.getMessage());
         }
         var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
-        return this.prepaySon(user, orderSn, orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+        return this.prepaySon(user, orderSn, orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO,
+                BigDecimal::add),message);
     }
 
     @Override
@@ -448,7 +449,7 @@ public class WxOrderServiceImpl implements WxOrderService {
      * @param user 餐品订单的用户
      * @return 支付结果
      */
-    private Result<?> prepaySon(MealUser user, String orderSn, BigDecimal actualPrice) {
+    private Result<?> prepaySon(MealUser user, String orderSn, BigDecimal actualPrice,String message) {
         // 创建支付记录对象并设置初始值
         MealOrderWxWithBLOBs log = new MealOrderWxWithBLOBs();
         log.setOrderType("ORDER");
@@ -484,6 +485,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         example.createCriteria().andOrderSnEqualTo(orderSn);
         var order = new MealOrder();
         order.setOrderStatus(OrderStatusEnum.PAYING.getMapping());
+        order.setMessage(message);
         if (this.mealOrderMapper.updateByExampleSelective(order, example) < 1) {
             return ResultUtils.message(ResponseCode.ORDER_PAY_FAIL, ResponseCode.ORDER_PAY_FAIL.getMessage());
         }

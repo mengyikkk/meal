@@ -190,7 +190,7 @@ Content-Type: application/json
 Authorization: {{token}}
 
 ###
-POST  {{host}}/wx/order/prepay/mealnkAa5A4Mgff0GP
+POST  {{host}}/wx/order/prepay?orderSn=mealnkAa5A4Mgff0GP&message="12133"
 Authorization: {{token}}
 Content-Type: application/json
 

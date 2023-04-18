@@ -272,6 +272,7 @@ response:
     - `isOnSale`: boolean。 --是否贩卖 单独查询时可用(选填)
     - `categoryId`: integer。 --分类id 单独查询时可用(选填)
     - `goodsName`: string。--商品名 单独查询时可用(选填) 支持模糊查询
+    - `brief`: string。--详细
     - `goodsId`: int。--商品id 单独查询时可用(选填)
     - `goodsSn`: string。--商品编号 单独查询时可用(选填)
     - `isTimeOnSale`: int。--时间段贩卖标识位. 1,早餐2,午餐 3,晚餐 0,全时段供应
@@ -875,12 +876,13 @@ response:
 15. 提交再支付订单
 
    ```http request
-   ###
-   POST  {{host}}/wx/order/prepay/mealnkAa5A4Mgff0GP
+    ###
+    POST  {{host}}/wx/order/prepay?orderSn=mealnkAa5A4Mgff0GP&message="12133"
     Authorization: {{token}}
    ```
 
 - `orderSn`:long。 商品编号 (必填)
+- `message`:string。 留言 (选填)
 - 返回值和14.提交订单相同
 
 
