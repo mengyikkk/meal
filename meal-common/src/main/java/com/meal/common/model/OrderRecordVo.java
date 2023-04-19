@@ -21,6 +21,7 @@ public class OrderRecordVo {
     private String shipSnByLunch;
     private String shipSnByDinner;
     private String shopPhone;
+    private  String message;
     @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate shipDate;
 
@@ -140,6 +141,15 @@ public class OrderRecordVo {
 
     public OrderRecordVo setCustomerPhone(String customerPhone) {
         this.customerPhone = customerPhone;
+        return this;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public OrderRecordVo setMessage(String message) {
+        this.message = message;
         return this;
     }
 }

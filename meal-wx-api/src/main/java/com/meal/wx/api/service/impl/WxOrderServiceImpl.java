@@ -4,7 +4,6 @@ import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
-import com.github.binarywang.wxpay.bean.request.CombineTransactionsRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
@@ -28,6 +27,7 @@ import com.meal.wx.api.service.WxOrderService;
 import com.meal.wx.api.util.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -100,7 +100,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             return ResultUtils.message(ResponseCode.SHOP_FIND_ERR0, "店铺不可用");
         }
         var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
-        if (Objects.isNull(user.getMobile())) {
+        if (StringUtils.isBlank(user.getMobile())) {
             return ResultUtils.message(ResponseCode.AUTH_NOT_MOBILE, ResponseCode.AUTH_NOT_MOBILE.getMessage());
         }
         List<WxOrderSonVo> orders = wxOrderVo.getOrders();
@@ -115,7 +115,11 @@ public class WxOrderServiceImpl implements WxOrderService {
         //check 提供订单的商品是否属于某个时间段
         for (WxOrderSonVo order : orders) {
             List<MealGoods> mealGoods = mapByIsTimeOnSale.get(order.getIsTimeOnSale());
+            if (mealGoods.isEmpty()){
+                return ResultUtils.message(ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL, "商品时间段:{" + order.getIsTimeOnSale() + "}" + ResponseCode.ORDER_GOODSISTIME_CHECKOUT_FAIL.getMessage());
+            }
             Set<Long> goods = mealGoods.stream().map(MealGoods::getId).collect(Collectors.toSet());
+
             List<Long> orderGoodIds = order.getGoods().stream().map(OrderCartVo::getGoodsId).collect(Collectors.toList());
             if (goods.containsAll(orderGoodIds)) {
                 goodsByAllOrder.addAll(mealGoods);
@@ -382,6 +386,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 orderDetailSonVo.setMoney(e.getActualPrice());
                 orderDetailSonVo.setShipSn(e.getOrderStatus().compareTo(OrderStatusEnum.COMPLETED.getMapping()) == 0 ? e.getShipSn() : "");
                 orderDetailSonVo.setIsTimeOnSale(e.getIsTimeOnSale());
+                orderDetailSonVo.setMessage(e.getMessage());
                 return orderDetailSonVo;
             }).collect(Collectors.toList()));
             return ResultUtils.success(vo);
@@ -414,6 +419,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 vo.setOrderStatusMessage(OrderStatusEnum.find(order.getOrderStatus()).get().getMessage());
                 // 设置订单的 id
                 vo.setOrderSn(e);
+                vo.setMessage(order.getMessage());
                 // 设置店铺的头像 URL
                 vo.setShopAvatar(shop.getPicUrl());
                 // 设置店铺的名称
@@ -458,7 +464,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         this.logger.info("用户:{},订单编号:{},正在调取微信支付", JsonUtils.toJson(user), orderSn);
         // 获取用户的微信OpenID
         String wxOpenid = user.getWxOpenid();
-        if (Objects.isNull(wxOpenid)) {
+        if (StringUtils.isBlank(wxOpenid)) {
             // 如果OpenID为空，返回错误结果
             return ResultUtils.message(ResponseCode.AUTH_OPENID_UNACCESS, ResponseCode.AUTH_OPENID_UNACCESS.getMessage());
         }

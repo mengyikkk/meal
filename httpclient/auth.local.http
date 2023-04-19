@@ -3,10 +3,10 @@ Content-Type: application/json
 
 {
   "code": "123456",
-  "username": "13821999995",
+  "username": "13288888887",
   "nickname": "test21",
   "password": "123456783",
-  "mobile": "13821999995"
+  "mobile": "13288888887"
 }
 
 ###
@@ -15,7 +15,7 @@ POST {{host}}/wx/auth/login
 Content-Type: application/json
 
 {
-  "phoneNumber": "13821999995",
+  "phoneNumber": "13288888887",
   "password": "123456783",
   "type": "1",
   "code": "1212"
@@ -141,46 +141,15 @@ Authorization: {{token}}
     {
       "goods": [
         {
-          "goodsId": 1181007,
-          "number": 2,
-          "calamityVos": [
-            {
-              "calamityId": 299,
-              "calamityNumber": 1
-            }
-          ]
-        },
-        {
-          "goodsId": 1181011,
-          "number": 1,
-          "calamityVos": [
-            {
-              "calamityId": 298,
-              "calamityNumber": 2
-            }
-          ]
+          "goodsId": 1181013,
+          "number": 1
         }
       ],
       "isTimeOnSale": 2
-    },
-    {
-      "goods": [
-        {
-          "goodsId": 1181102,
-          "number": 2,
-          "calamityVos": [
-            {
-              "calamityId": 257,
-              "calamityNumber": 1
-            }
-          ]
-        }
-      ],
-      "isTimeOnSale": 1
     }
   ],
-  "orderPrice": 44.00,
-  "actualPrice": 44.00
+  "orderPrice": 16.00,
+  "actualPrice": 16.00
 }
 
 ###

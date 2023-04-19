@@ -143,7 +143,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         user.setStatus((byte) 0);
         this.LastLogIn(user, request);
         var example = new MealUserExample();
-        example.createCriteria().andWxOpenidEqualTo(openId);
+        example.createCriteria().andUsernameEqualTo(user.getUsername());
         var oldUser = this.mealUserMapper.selectOneByExample(example);
         if (Objects.nonNull(oldUser)) {
             if (this.mealUserMapper.updateByExampleSelective(user, example) < 1) {
@@ -203,8 +203,6 @@ public class WxAuthServiceImpl implements WxAuthService {
             user.setUsername(openId);
             user.setSessionKey(sessionKey);
             user.setWxOpenid(openId);
-            user.setMobile("");
-            user.setAvatar("");
             this.LastLogIn(user, request);
             if (this.mealUserMapper.insertSelective(user) < 1) {
                 return ResultUtils.unknown();
