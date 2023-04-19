@@ -13,7 +13,6 @@ public class OrderDetailSonVo {
     private String shipSn;
 
     private Integer  isTimeOnSale;
-    private String message;
 
     public List<OrderDetailGoodsVo> getOrderDetailGoodsVos() {
         return orderDetailGoodsVos;
@@ -60,12 +59,5 @@ public class OrderDetailSonVo {
         return this;
     }
 
-    public String getMessage() {
-        return message;
-    }
 
-    public OrderDetailSonVo setMessage(String message) {
-        this.message = message;
-        return this;
-    }
 }

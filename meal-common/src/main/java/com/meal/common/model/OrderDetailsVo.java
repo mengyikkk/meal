@@ -29,6 +29,8 @@ public class OrderDetailsVo {
     private String customerPhone;
     private  Short orderStatus;
     private String orderStatusMessage;
+    private String message;
+
 
 
     public String getShopName() {
@@ -136,6 +138,15 @@ public class OrderDetailsVo {
 
     public OrderDetailsVo setCustomerPhone(String customerPhone) {
         this.customerPhone = customerPhone;
+        return this;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public OrderDetailsVo setMessage(String message) {
+        this.message = message;
         return this;
     }
 }

@@ -8,7 +8,6 @@
     <modules>
         <module>meal-wx-api</module>
         <module>meal-common</module>
-        <module>meal-admin-api</module>
     </modules>
 
     <groupId>com.meal</groupId>

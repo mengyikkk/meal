@@ -153,8 +153,8 @@ Authorization: {{token}}
 }
 
 ###
-#GET {{host}}/wx/order/detail?orderSn=mealnkAa5A4Mgff0GP
-GET {{host}}/wx/order/detail?limit=10&page=1
+GET {{host}}/wx/order/detail?orderSn=mealcToEzZUsDqy3aH
+#GET {{host}}/wx/order/detail?limit=10&page=1
 Content-Type: application/json
 Authorization: {{token}}
 

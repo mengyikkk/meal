@@ -357,6 +357,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             vo.setNickName(user.getNickname());
             vo.setCount(1L);
             vo.setShipDate(validOrders.get(0).getShipTime().toLocalDate());
+            vo.setMessage(validOrders.get(0).getMessage());
             vo.setCustomerPhone(user.getMobile());
             vo.setOrderStatus(validOrders.get(0).getOrderStatus());
             vo.setOrderStatusMessage(OrderStatusEnum.find(validOrders.get(0).getOrderStatus()).get().getMessage());
@@ -386,7 +387,6 @@ public class WxOrderServiceImpl implements WxOrderService {
                 orderDetailSonVo.setMoney(e.getActualPrice());
                 orderDetailSonVo.setShipSn(e.getOrderStatus().compareTo(OrderStatusEnum.COMPLETED.getMapping()) == 0 ? e.getShipSn() : "");
                 orderDetailSonVo.setIsTimeOnSale(e.getIsTimeOnSale());
-                orderDetailSonVo.setMessage(e.getMessage());
                 return orderDetailSonVo;
             }).collect(Collectors.toList()));
             return ResultUtils.success(vo);
