@@ -3,16 +3,20 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.meal</groupId>
-    <artifactId>meal-web</artifactId>
-    <version>1.0.0</version>
+    <packaging>pom</packaging>
 
     <modules>
         <module>meal-wx-api</module>
         <module>meal-common</module>
+        <module>meal-admin-api</module>
     </modules>
-    <packaging>pom</packaging>
+
+    <groupId>com.meal</groupId>
+    <artifactId>meal-web</artifactId>
+    <version>1.0.0</version>
+    <name>meal</name>
+    <description>外卖</description>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -64,29 +68,6 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
-            <!-- DB驱动支持 -->
-
-            <!-- Servlet支持 -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${servlet.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <!-- firebase admin sdk -->
-            <dependency>
-                <groupId>com.google.firebase</groupId>
-                <artifactId>firebase-admin</artifactId>
-                <version>${firebase-admin.version}</version>
-            </dependency>
-
-            <!-- aws ses邮件发送服务 -->
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-ses</artifactId>
-                <version>${awssdk.ses.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-pay</artifactId>
@@ -102,7 +83,6 @@
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>1.2.5</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
             <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
@@ -143,7 +123,6 @@
                 <artifactId>jjwt</artifactId>
                 <version>0.9.1</version>
             </dependency>
-
             <!-- aliyun短信服务 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
@@ -170,11 +149,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
                 <version>2.9.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

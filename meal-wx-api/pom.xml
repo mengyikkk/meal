@@ -8,7 +8,10 @@
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
     <artifactId>meal-wx-api</artifactId>
+    <name>meal-wx-api</name>
+    <description>wx-api接口</description>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -56,17 +59,10 @@
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-miniapp</artifactId>
         </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>dysmsapi20170525</artifactId>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>

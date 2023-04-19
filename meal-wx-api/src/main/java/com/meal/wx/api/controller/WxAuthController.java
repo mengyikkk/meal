@@ -5,14 +5,11 @@ import com.meal.common.model.*;
 import com.meal.common.utils.SecurityUtils;
 import com.meal.wx.api.dto.WxSendVo;
 import com.meal.wx.api.service.WxAuthService;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/wx/auth")
