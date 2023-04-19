@@ -27,6 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class WxAuthServiceImpl implements WxAuthService {
@@ -356,37 +358,36 @@ public class WxAuthServiceImpl implements WxAuthService {
 
     @Override
     public Result<?> send(LocalDateTime shipTime, Integer isTimeOnSale) {
-        String id = "z3WB96pX2ASunRRQRcaBhwzXuh0_V6cFqBkpUEPekLY";
+        String id = "z3WB96pX2ASunRRQRcaBhwioVCiKrjCDritU6VW0yQ4";
         var orderExample = new MealOrderExample();
         orderExample.createCriteria().andShipTimeLessThan(shipTime.plusDays(1)).andShipTimeGreaterThanOrEqualTo(shipTime)
                 .andIsTimeOnSaleEqualTo(isTimeOnSale);
-//        .andOrderStatusEqualTo(OrderStatusEnum.PAID.getMapping())
         List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(orderExample);
-        if (ObjectUtils.isEmpty(mealOrders)){
+        if (CollectionUtils.isEmpty(mealOrders)) {
             return ResultUtils.success();
         }
         var userIds = mealOrders.stream().map(MealOrder::getUserId).collect(Collectors.toList());
         var example = new MealUserExample();
         example.createCriteria().andIdIn(userIds);
         var openIdMap = this.mealUserMapper.selectByExample(example).stream().collect(Collectors.toMap(MealUser::getId, MealUser::getWxOpenid));
-        var orderIds = mealOrders.stream().map(MealOrder::getId).collect(Collectors.toList());
-        var goodExample = new MealOrderGoodsExample();
-        goodExample.createCriteria().andOrderIdIn(orderIds);
-        List<MealOrderGoods> mealOrderGoods = this.mealOrderGoodsMapper.selectByExample(goodExample);
-        Map<Long, List<MealOrderGoods>> goodsByOrder =
-                mealOrderGoods.stream().collect(Collectors.groupingBy(MealOrderGoods::getOrderId));
-            mealOrders.forEach(
+        var shopIds = mealOrders.stream().map(MealOrder::getShopId).collect(Collectors.toList());
+        var shopExample = new MealShopExample();
+        shopExample.createCriteria().andIdIn(shopIds);
+        var shopMap =this.mealShopMapper.selectByExample(shopExample).stream().collect(Collectors.toMap(MealShop::getId,
+                MealShop::getName));
+        mealOrders.parallelStream().forEach(
                 e -> {
                     WxSendMessageVo wxSendMessageVo = new WxSendMessageVo();
-                    Map<String, String> map = new HashMap<>();
-                    map.put("character_string12", e.getShipSn());
-                    map.put("thing6", goodsByOrder.get(e.getId()).stream().map(MealOrderGoods::getGoodsName).collect(Collectors.joining(",")));
-                    map.put("thing20", "您的餐点已为您准备好 请前往取餐区取餐。");
-                    map.put("phone_number", "15988888888");
-                    wxSendMessageVo.setData(map);
+                    Map<String, Object> data = Stream.of(
+                                    new AbstractMap.SimpleEntry<>("thing23", shopMap.get(e.getId())),
+                                    new AbstractMap.SimpleEntry<>("character_string19", e.getShipSn()),
+                                    new AbstractMap.SimpleEntry<>("thing20", "您的餐点已为您准备好 请前往取餐区取餐。"),
+                                    new AbstractMap.SimpleEntry<>("phone_number32", "15988888888"))
+                            .collect(Collectors.toMap(Map.Entry::getKey, this::mapValueToMap));
+                    wxSendMessageVo.setData(data);
                     wxSendMessageVo.setTemplate_id(id);
                     wxSendMessageVo.setTouser(openIdMap.get(e.getUserId()));
-                    if (wxTemplateSender.sendMessage(wxSendMessageVo)){
+                    if (wxTemplateSender.sendMessage(wxSendMessageVo)) {
                         e.setOrderStatus(OrderStatusEnum.COMPLETED.getMapping());
                         this.mealOrderMapper.updateByPrimaryKeySelective(e);
                     }
@@ -396,6 +397,11 @@ public class WxAuthServiceImpl implements WxAuthService {
     }
 
 
+    private Map<String, String> mapValueToMap(Object value) {
+        Map<String, String> map = new HashMap<>();
+        map.put("value",  value.toString());
+        return map;
+    }
     private Long getShopByBind(Long userId) {
         var example = new MealUserShopExample();
         example.createCriteria().andUserIdEqualTo(userId);
