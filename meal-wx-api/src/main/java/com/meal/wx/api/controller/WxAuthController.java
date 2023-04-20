@@ -72,4 +72,8 @@ public class WxAuthController {
     public Result<?> send(@RequestBody WxSendVo vo){
         return this.wxAuthService.send(vo.getShipTime(),vo.getIsTimeOnSale());
     }
+    @GetMapping("/bindPhone/{code}")
+    public Result<?> bindPhone(@PathVariable("code") String code) {
+        return this.wxAuthService.bindPhone(SecurityUtils.getUserId(),code);
+    }
 }

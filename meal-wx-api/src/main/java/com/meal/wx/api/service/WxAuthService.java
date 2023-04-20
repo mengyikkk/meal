@@ -17,6 +17,7 @@ public interface WxAuthService {
      Result<?> getShopId(Long userId);
      Result<?> update(UserDetailsVo vo, Long userId);
      Result<?> info(Long userId);
+     Result<?> bindPhone(Long userId,String code);
      Result<?> send(LocalDateTime shipTime , Integer isTimeOnSale);
 
 }

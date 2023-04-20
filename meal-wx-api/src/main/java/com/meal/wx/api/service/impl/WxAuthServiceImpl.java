@@ -3,6 +3,7 @@ package com.meal.wx.api.service.impl;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.meal.common.ResponseCode;
 import com.meal.common.Result;
 import com.meal.common.config.MealProperties;
@@ -16,11 +17,12 @@ import com.meal.wx.api.dto.WxSendMessageVo;
 import com.meal.wx.api.service.WxAuthService;
 import com.meal.wx.api.util.OrderStatusEnum;
 import com.meal.wx.api.util.WxTemplateSender;
-import org.apache.commons.lang3.ObjectUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +30,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +53,8 @@ public class WxAuthServiceImpl implements WxAuthService {
     private String tokenHead;
     @Resource
     private MealUserService mealUserService;
-
+    @Resource
+    private WebClient webClient;
     @Resource
     private MealOrderMapper mealOrderMapper;
 
@@ -335,12 +341,6 @@ public class WxAuthServiceImpl implements WxAuthService {
         var user = mealUserMapper.selectByPrimaryKey(userId);
         Optional.ofNullable(vo.getBirthday()).ifPresent(user::setBirthday);
         Optional.ofNullable(vo.getGender()).ifPresent(user::setGender);
-        if (StringUtils.isNotEmpty(vo.getMobile())) {
-            if (!RegexUtil.isMobileSimple(vo.getMobile())) {
-                return ResultUtils.code(ResponseCode.AUTH_INVALID_MOBILE);
-            }
-            user.setMobile(vo.getMobile());
-        }
         Optional.ofNullable(vo.getNickName()).ifPresent(user::setNickname);
         if (mealUserMapper.updateByPrimaryKeySelective(user) < 1) {
             return ResultUtils.unknown();
@@ -353,6 +353,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         MealUser mealUser = this.mealUserMapper.selectByPrimaryKey(userId);
         return ResultUtils.success(new UserInfo().setGender(mealUser.getGender()).setMobile(mealUser.getMobile()).setNickName(mealUser.getNickname()).setAvatarUrl(mealUser.getAvatar()).setBirthday(mealUser.getBirthday()));
     }
+
 
     @Override
     public Result<?> send(LocalDateTime shipTime, Integer isTimeOnSale) {
@@ -371,7 +372,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         var shopIds = mealOrders.stream().map(MealOrder::getShopId).collect(Collectors.toList());
         var shopExample = new MealShopExample();
         shopExample.createCriteria().andIdIn(shopIds);
-        var shopMap =this.mealShopMapper.selectByExample(shopExample).stream().collect(Collectors.toMap(MealShop::getId,
+        var shopMap = this.mealShopMapper.selectByExample(shopExample).stream().collect(Collectors.toMap(MealShop::getId,
                 MealShop::getName));
         mealOrders.parallelStream().forEach(
                 e -> {
@@ -397,9 +398,10 @@ public class WxAuthServiceImpl implements WxAuthService {
 
     private Map<String, String> mapValueToMap(Object value) {
         Map<String, String> map = new HashMap<>();
-        map.put("value",  value.toString());
+        map.put("value", value.toString());
         return map;
     }
+
     private Long getShopByBind(Long userId) {
         var example = new MealUserShopExample();
         example.createCriteria().andUserIdEqualTo(userId);
@@ -419,4 +421,53 @@ public class WxAuthServiceImpl implements WxAuthService {
         user.setNickname(userInfo.getNickName());
         user.setAvatar(userInfo.getAvatarUrl());
     }
+
+    public Result<?> bindPhone(Long userId, String code) {
+        String accessToken = wxTemplateSender.getAccessToken();
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.weixin.qq.com/wxa/business/getuserphonenumber")
+                .queryParam("access_token", accessToken);
+        HashMap<String, Object> requestParam = new HashMap<>();
+        requestParam.put("code", code);
+        String jsonStr = JsonUtils.toJson(requestParam);
+        return this.webClient.post()
+                .uri(uriBuilder.build().toUri())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(jsonStr)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().is2xxSuccessful()) {
+                        return response.bodyToMono(String.class)
+                                .map(responseBody -> {
+                                    var map = JsonUtils.toGeneric(responseBody,new TypeReference<Map<String, Object>>() {});
+                                    String errcode = map.get("errcode").toString();
+                                    if("0".equals(errcode)){
+                                        String phoneNumber = JsonUtils.toMap(map.get("phone_info")).get("phoneNumber").toString();
+                                        MealUser mealUser = new MealUser();
+                                        mealUser.setId(userId);
+                                        mealUser.setMobile(phoneNumber);
+                                        if (this.mealUserMapper.updateByPrimaryKeySelective(mealUser)<1){
+                                            return ResultUtils.unknown();
+                                        }
+                                        return ResultUtils.success();
+                                    } else if ("-1".equals(errcode)){
+                                        logger.error("userID:{}微信小程序获取手机号错误：{}", userId,map.get("errmsg"));
+                                        return ResultUtils.unknown();
+                                    }else if ("40029".equals(errcode)){
+                                        logger.error("userID:{}微信小程序获取手机号code无效：{}", userId,map.get("errmsg"));
+                                        return ResultUtils.unknown();
+                                    }
+                                    return ResultUtils.success();
+                                });
+                    } else {
+                        logger.error("Failed to get phone number, status code: {}", response.statusCode());
+                        return Mono.just(ResultUtils.unknown());
+                    }
+                })
+                .onErrorResume(e -> {
+                    logger.error("微信小程序获取AccessToken异常，Exception：{}", e.getMessage());
+                    return Mono.just(ResultUtils.unknown());
+                })
+                .block();
+    }
+
 }

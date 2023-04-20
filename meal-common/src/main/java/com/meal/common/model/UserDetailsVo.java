@@ -12,7 +12,6 @@ public class UserDetailsVo {
     @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate birthday;
 
-    private String mobile;
 
     public String getNickName() {
         return nickName;
@@ -41,12 +40,5 @@ public class UserDetailsVo {
         return this;
     }
 
-    public String getMobile() {
-        return mobile;
-    }
 
-    public UserDetailsVo setMobile(String mobile) {
-        this.mobile = mobile;
-        return this;
-    }
 }

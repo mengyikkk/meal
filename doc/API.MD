@@ -1392,3 +1392,10 @@ response:
    "records": null
 }
 ```
+20. 获取用户信息
+
+   ```http request
+   GET {{host}}/wx/auth/bindPhone/15d90199a8901724d667d48d9eb139e73e8ae5b6ae72cbb2cb47b3f25d1c2fdb
+   Authorization: {{token}}
+   ```
+- `code`:string。 获取手机号 (必填)
