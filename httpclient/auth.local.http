@@ -65,32 +65,18 @@ Content-Type: application/json
   "shopId": 6,
   "goods": [
     {
-      "goodsId": "1181007",
-      "goodsSn": "1181007",
+      "goodsId": "1181101",
+      "goodsSn": "1181101",
       "goodsName": "辣椒炒肉饭",
       "checked": "true",
       "number": "2",
       "cartCalamityVos": [
         {
-          "calamityId": 299,
+          "calamityId": 256,
           "calamityName": "酸梅汁",
           "calamityNumber": 2
         }
       ]
-    },
-    {
-      "goodsId": "1181011",
-      "goodsSn": "1181011",
-      "goodsName": "烧鸭饭",
-      "checked": "true",
-      "number": "1"
-    },
-    {
-      "goodsId": "1181102",
-      "goodsSn": "1181102",
-      "goodsName": "蛋肠粉",
-      "checked": "true",
-      "number": "1"
     }
   ]
 }

@@ -94,6 +94,14 @@ public class WxCartServiceImpl implements WxCartService {
             mealCartMapper.deleteByExample(example);
             return 1;
         });
+        var exampleCalamity = new MealCartCalamityExample();
+        List<Long> cartIds = this.mealCartMapper.selectByExample(example).stream().map(MealCart::getId).collect(Collectors.toList());
+        if (ObjectUtils.isNotEmpty(cartIds)) {
+            functions.add(nothing -> {
+                mealCartCalamityMapper.deleteByExample(exampleCalamity);
+                return 1;
+            });
+        }
         var products = shoppingCartVo.getGoods();
         Collections.reverse(products);
         for (ShoppingCartVo product : products) {
