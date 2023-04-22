@@ -16,7 +16,7 @@ public class WxBannerController {
     private WxBannerService wxBannerService;
 
     @GetMapping
-    public Result<?> banner(@RequestParam(required = false) Long shortId) {
-        return this.wxBannerService.list(shortId);
+    public Result<?> banner(@RequestParam(required = false) Long shopId) {
+        return this.wxBannerService.list(shopId);
     }
 }
