@@ -17,7 +17,7 @@ public class ShoppingCartVo {
     @Positive
     private  Long number;
 
-    private List<CartCalamityVo> cartCalamityVos;
+    private List<CartCalamityVo> calamityVos;
 
     /**
      *
@@ -83,12 +83,12 @@ public class ShoppingCartVo {
         return this;
     }
 
-    public List<CartCalamityVo> getCartCalamityVos() {
-        return cartCalamityVos;
+    public List<CartCalamityVo> getCalamityVos() {
+        return calamityVos;
     }
 
-    public ShoppingCartVo setCartCalamityVos(List<CartCalamityVo> cartCalamityVos) {
-        this.cartCalamityVos = cartCalamityVos;
+    public ShoppingCartVo setCalamityVos(List<CartCalamityVo> calamityVos) {
+        this.calamityVos = calamityVos;
         return this;
     }
 }

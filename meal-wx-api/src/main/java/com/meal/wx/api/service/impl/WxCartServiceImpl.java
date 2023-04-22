@@ -120,8 +120,8 @@ public class WxCartServiceImpl implements WxCartService {
             cart.setAddTime(LocalDateTime.now());
             cart.setUpdateTime(LocalDateTime.now());
             functions.add(nothing -> mealCartMapper.insertSelective(cart));
-            if (ObjectUtils.isNotEmpty(product.getCartCalamityVos())) {
-                for (CartCalamityVo cartCalamityVo : product.getCartCalamityVos()) {
+            if (ObjectUtils.isNotEmpty(product.getCalamityVos())) {
+                for (CartCalamityVo cartCalamityVo : product.getCalamityVos()) {
                     MealLittleCalamity littleCalamity = goodsByCalamity.getOrDefault(cartCalamityVo.getCalamityId(), null);
                     if (Objects.isNull(littleCalamity)) {
                         return ResultUtils.entityMessage(ResponseCode.CALAMITY_IS_INVALID, ResponseCode.CALAMITY_IS_INVALID.getMessage(), cartCalamityVo.getCalamityId());
