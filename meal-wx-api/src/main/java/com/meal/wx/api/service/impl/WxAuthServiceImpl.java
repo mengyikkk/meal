@@ -361,7 +361,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         String id = "z3WB96pX2ASunRRQRcaBhwioVCiKrjCDritU6VW0yQ4";
         var orderExample = new MealOrderExample();
         orderExample.createCriteria().andShipTimeLessThan(shipTime.plusDays(1)).andShipTimeGreaterThanOrEqualTo(shipTime)
-                .andIsTimeOnSaleEqualTo(isTimeOnSale);
+                .andIsTimeOnSaleEqualTo(isTimeOnSale).andOrderStatusEqualTo(OrderStatusEnum.PAID.getMapping());
         List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(orderExample);
         if (CollectionUtils.isEmpty(mealOrders)) {
             return ResultUtils.success();
@@ -379,11 +379,11 @@ public class WxAuthServiceImpl implements WxAuthService {
                 e -> {
                     WxSendMessageVo wxSendMessageVo = new WxSendMessageVo();
                     Map<String, Object> data = Stream.of(
-                                    new AbstractMap.SimpleEntry<>("thing23", shopMap.get(e.getId())),
+                                    new AbstractMap.SimpleEntry<>("thing23", shopMap.get(e.getShopId())),
                                     new AbstractMap.SimpleEntry<>("character_string19", e.getShipSn()),
                                     new AbstractMap.SimpleEntry<>("thing20", "您的餐点已为您准备好 请前往取餐区取餐。"),
                                     new AbstractMap.SimpleEntry<>("phone_number32", "15988888888"))
-                            .collect(Collectors.toMap(Map.Entry::getKey, this::mapValueToMap));
+                            .collect(Collectors.toMap(Map.Entry::getKey, a->a.getValue() == null ? null :mapValueToMap(a.getValue())));
                     wxSendMessageVo.setData(data);
                     wxSendMessageVo.setTemplate_id(id);
                     wxSendMessageVo.setTouser(openIdMap.get(e.getUserId()));

@@ -78,10 +78,10 @@ public class WxTemplateSender {
 					int errorCode = Integer.parseInt(responseData.get("errcode"));
 					String errorMessage = responseData.get("errmsg");
 					if (errorCode == 0) {
-						logger.info("二维码扫描推送消息发送成功");
+						logger.info("推送消息发送成功");
 						return true;
 					} else {
-						logger.info("二维码扫描推送消息发送失败,errcode：{},errorMessage：{}", errorCode, errorMessage);
+						logger.info("推送消息发送失败,errcode：{},errorMessage：{}", errorCode, errorMessage);
 						return false;
 					}
 				})

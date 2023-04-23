@@ -139,8 +139,8 @@ Authorization: {{token}}
 }
 
 ###
-GET {{host}}/wx/order/detail?orderSn=mealcToEzZUsDqy3aH
-#GET {{host}}/wx/order/detail?limit=10&page=1
+#GET {{host}}/wx/order/detail?orderSn=mealcToEzZUsDqy3aH
+GET {{host}}/wx/order/detail?limit=10&page=1
 Content-Type: application/json
 Authorization: {{token}}
 
@@ -177,7 +177,7 @@ Authorization: {{token}}
 Content-Type: application/json
 
 {
-  "shipTime": "2023-04-15 00:00:00",
+  "shipTime": "2023-04-24 00:00:00",
   "isTimeOnSale": 1
 }
 

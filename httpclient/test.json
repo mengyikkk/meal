@@ -1,0 +1,21 @@
+{
+  "touser": "o03PK4lhFjJArv5ljIqrNpVHDinY",
+  "template_id": "z3WB96pX2ASunRRQRcaBhwioVCiKrjCDritU6VW0yQ4",
+  "page": null,
+  "miniprogram_state": "developer",
+  "lang": "zh_CN",
+  "data": {
+    "character_string19": {
+      "value": "character_string19=1950"
+    },
+    "phone_number32": {
+      "value": "phone_number32=15988888888"
+    },
+    "thing23": {
+      "value": "thing23=null"
+    },
+    "thing20": {
+      "value": "thing20=您的餐点已为您准备好 请前往取餐区取餐。"
+    }
+  }
+}
