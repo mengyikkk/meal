@@ -39,8 +39,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -357,7 +359,7 @@ public class WxAuthServiceImpl implements WxAuthService {
 
 
     @Override
-    public Result<?> send(LocalDateTime shipTime, Integer isTimeOnSale) {
+    public Result<?> send(LocalDate shipTime, Integer isTimeOnSale) {
         String id = "z3WB96pX2ASunRRQRcaBhwioVCiKrjCDritU6VW0yQ4";
         var orderExample = new MealOrderExample();
         orderExample.createCriteria().andShipTimeLessThan(shipTime.plusDays(1)).andShipTimeGreaterThanOrEqualTo(shipTime)
@@ -374,15 +376,16 @@ public class WxAuthServiceImpl implements WxAuthService {
         var shopExample = new MealShopExample();
         shopExample.createCriteria().andIdIn(shopIds);
         var shopMap = this.mealShopMapper.selectByExample(shopExample).stream().collect(Collectors.toMap(MealShop::getId,
-                MealShop::getName));
+                Function.identity()));
         mealOrders.parallelStream().forEach(
                 e -> {
                     WxSendMessageVo wxSendMessageVo = new WxSendMessageVo();
                     Map<String, Object> data = Stream.of(
-                                    new AbstractMap.SimpleEntry<>("thing23", shopMap.get(e.getShopId())),
+                                    new AbstractMap.SimpleEntry<>("thing23", shopMap.get(e.getShopId()).getName()),
                                     new AbstractMap.SimpleEntry<>("character_string19", e.getShipSn()),
                                     new AbstractMap.SimpleEntry<>("thing20", "您的餐点已为您准备好 请前往取餐区取餐。"),
-                                    new AbstractMap.SimpleEntry<>("phone_number32", "15988888888"))
+                                    new AbstractMap.SimpleEntry<>("phone_number32",
+                                            shopMap.get(e.getShopId()).getPhone()))
                             .collect(Collectors.toMap(Map.Entry::getKey, a->a.getValue() == null ? null :mapValueToMap(a.getValue())));
                     wxSendMessageVo.setData(data);
                     wxSendMessageVo.setTemplate_id(id);

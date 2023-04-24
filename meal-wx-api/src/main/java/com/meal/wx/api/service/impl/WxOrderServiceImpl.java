@@ -138,7 +138,7 @@ public class WxOrderServiceImpl implements WxOrderService {
         List<MealOrderGoodsCalamity> mealOrderCalamityList = new ArrayList<>();
         BigDecimal orderPrice = BigDecimal.ZERO;
         // 遍历购物车中的商品
-        var orderSn = OrderSnUtils.generateOrderSn("meal", mealOrderMapper);
+        var orderSn = OrderSnUtils.generateOrderSn("00", mealOrderMapper);
         for (WxOrderSonVo order : orders) {
             BigDecimal goodsPrice = BigDecimal.ZERO;
             for (OrderCartVo shoppingCartVo : order.getGoods()) {
@@ -201,7 +201,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                     mealOrder.setUserId(user.getId()); // 用户ID
                     mealOrder.setShopId(shopId); // 商铺ID
                     //设置 发货日期为明天
-                    mealOrder.setShipTime(LocalDateTime.now().plusDays(1));
+                    mealOrder.setShipTime(LocalDate.now().plusDays(1));
                     mealOrder.setOrderSn(orderSn); // 订单号
                     mealOrder.setOrderStatus(OrderStatusEnum.UNPAID.getMapping()); // 订单状态：待支付
                     mealOrder.setShipStatus(ShipStatusEnum.NOT_SHIP.getMapping()); // 发货状态：未发货
@@ -356,7 +356,7 @@ public class WxOrderServiceImpl implements WxOrderService {
             var vo = new OrderDetailsVo();
             vo.setNickName(user.getNickname());
             vo.setCount(1L);
-            vo.setShipDate(validOrders.get(0).getShipTime().toLocalDate());
+            vo.setShipDate(validOrders.get(0).getShipTime());
             vo.setMessage(validOrders.get(0).getMessage());
             vo.setCustomerPhone(user.getMobile());
             vo.setOrderStatus(validOrders.get(0).getOrderStatus());
@@ -410,7 +410,7 @@ public class WxOrderServiceImpl implements WxOrderService {
                 var vo = new OrderRecordVo();
                 // 设置订单的实际价格
                 vo.setMoney(actualPrice);
-                vo.setShipDate(order.getShipTime().toLocalDate());
+                vo.setShipDate(order.getShipTime());
                 vo.setShopPhone(shop.getPhone());
                 vo.setCustomerPhone(user.getMobile());
                 // 设置订单的添加时间

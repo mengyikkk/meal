@@ -3,18 +3,19 @@ package com.meal.wx.api.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class WxSendVo {
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime shipTime;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate shipTime;
     Integer isTimeOnSale;
 
-    public LocalDateTime getShipTime() {
+    public LocalDate getShipTime() {
         return shipTime;
     }
 
-    public WxSendVo setShipTime(LocalDateTime shipTime) {
+    public WxSendVo setShipTime(LocalDate shipTime) {
         this.shipTime = shipTime;
         return this;
     }

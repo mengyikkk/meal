@@ -50,8 +50,9 @@ public class WxPublicServiceImpl implements WxPublicService {
         example.createCriteria().andShopIdEqualTo(vo.getShopId())
                 .andOrderStatusEqualTo(OrderStatusEnum.PAID.getMapping())
                 .andIsTimeOnSaleEqualTo(vo.getIsTimeOnSale())
-                .andShipTimeBetween(vo.getShipDate().atStartOfDay().minusSeconds(1),
-                        vo.getShipDate().plusDays(1).atStartOfDay());
+                .andShipTimeLessThan(vo.getShipDate().plusDays(1))
+                .andShipTimeGreaterThanOrEqualTo(vo.getShipDate()
+                        );
         var userMap =
                 this.mealOrderMapper.selectByExample(example).stream().collect(Collectors.groupingBy(MealOrder::getUserId));
         var exampleUser = new MealUserExample();

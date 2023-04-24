@@ -1,6 +1,7 @@
 package com.meal.common.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -2738,7 +2739,7 @@ public class MealOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeEqualTo(LocalDateTime value) {
+        public Criteria andShipTimeEqualTo(LocalDate value) {
             addCriterion("ship_time =", value, "shipTime");
             return (Criteria) this;
         }
@@ -2754,7 +2755,7 @@ public class MealOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeNotEqualTo(LocalDateTime value) {
+        public Criteria andShipTimeNotEqualTo(LocalDate value) {
             addCriterion("ship_time <>", value, "shipTime");
             return (Criteria) this;
         }
@@ -2770,7 +2771,7 @@ public class MealOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeGreaterThan(LocalDateTime value) {
+        public Criteria andShipTimeGreaterThan(LocalDate value) {
             addCriterion("ship_time >", value, "shipTime");
             return (Criteria) this;
         }
@@ -2786,7 +2787,7 @@ public class MealOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeGreaterThanOrEqualTo(LocalDateTime value) {
+        public Criteria andShipTimeGreaterThanOrEqualTo(LocalDate value) {
             addCriterion("ship_time >=", value, "shipTime");
             return (Criteria) this;
         }
@@ -2802,7 +2803,7 @@ public class MealOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeLessThan(LocalDateTime value) {
+        public Criteria andShipTimeLessThan(LocalDate value) {
             addCriterion("ship_time <", value, "shipTime");
             return (Criteria) this;
         }
@@ -2818,7 +2819,7 @@ public class MealOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeLessThanOrEqualTo(LocalDateTime value) {
+        public Criteria andShipTimeLessThanOrEqualTo(LocalDate value) {
             addCriterion("ship_time <=", value, "shipTime");
             return (Criteria) this;
         }
@@ -2834,22 +2835,22 @@ public class MealOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeIn(List<LocalDateTime> values) {
+        public Criteria andShipTimeIn(List<LocalDate> values) {
             addCriterion("ship_time in", values, "shipTime");
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeNotIn(List<LocalDateTime> values) {
+        public Criteria andShipTimeNotIn(List<LocalDate> values) {
             addCriterion("ship_time not in", values, "shipTime");
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeBetween(LocalDateTime value1, LocalDateTime value2) {
+        public Criteria andShipTimeBetween(LocalDate value1, LocalDate value2) {
             addCriterion("ship_time between", value1, value2, "shipTime");
             return (Criteria) this;
         }
 
-        public Criteria andShipTimeNotBetween(LocalDateTime value1, LocalDateTime value2) {
+        public Criteria andShipTimeNotBetween(LocalDate value1, LocalDate value2) {
             addCriterion("ship_time not between", value1, value2, "shipTime");
             return (Criteria) this;
         }

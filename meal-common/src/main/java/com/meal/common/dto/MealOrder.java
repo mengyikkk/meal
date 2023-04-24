@@ -1,6 +1,7 @@
 package com.meal.common.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -200,7 +201,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    private LocalDateTime shipTime;
+    private LocalDate shipTime;
 
     /**
      *
@@ -756,7 +757,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    public LocalDateTime getShipTime() {
+    public LocalDate getShipTime() {
         return shipTime;
     }
 
@@ -768,7 +769,7 @@ public class MealOrder {
      *
      * @mbg.generated
      */
-    public void setShipTime(LocalDateTime shipTime) {
+    public void setShipTime(LocalDate shipTime) {
         this.shipTime = shipTime;
     }
 
@@ -1257,7 +1258,7 @@ public class MealOrder {
         payId("pay_id", "payId", "VARCHAR", false),
         payTime("pay_time", "payTime", "TIMESTAMP", false),
         shipSn("ship_sn", "shipSn", "VARCHAR", false),
-        shipTime("ship_time", "shipTime", "TIMESTAMP", false),
+        shipTime("ship_time", "shipTime", "DATE", false),
         isTimeOnSale("is_time_on_sale", "isTimeOnSale", "INTEGER", false),
         refundAmount("refund_amount", "refundAmount", "DECIMAL", false),
         refundContent("refund_content", "refundContent", "VARCHAR", false),

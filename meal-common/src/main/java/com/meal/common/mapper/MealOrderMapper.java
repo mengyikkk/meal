@@ -3,8 +3,6 @@ package com.meal.common.mapper;
 import com.meal.common.dto.MealOrder;
 import com.meal.common.dto.MealOrderExample;
 import java.util.List;
-
-import com.meal.common.dto.MealOrderGoods;
 import org.apache.ibatis.annotations.Param;
 
 public interface MealOrderMapper {
