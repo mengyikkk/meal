@@ -23,8 +23,6 @@ public enum OrderStatusEnum implements StateMapping<Short> {
         this.message = message;
     }
 
-
-
     @Override
     public Short getMapping() {
         return this.code;

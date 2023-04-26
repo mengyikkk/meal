@@ -260,9 +260,9 @@ public class WxOrderServiceImpl implements WxOrderService {
         if (ObjectUtils.isEmpty(orders)) {
             return ResultUtils.message(ResponseCode.ORDER_CHECKOUT_FAIL, ResponseCode.ORDER_CHECKOUT_FAIL.getMessage());
         }
-        if (OrderStatusEnum.UNPAID.not(orders.get(0).getOrderStatus())) {
-            return ResultUtils.message(ResponseCode.ORDER_STATUS_FAIL, ResponseCode.ORDER_STATUS_FAIL.getMessage());
-        }
+//        if (OrderStatusEnum.UNPAID.not(orders.get(0).getOrderStatus())) {
+//            return ResultUtils.message(ResponseCode.ORDER_STATUS_FAIL, ResponseCode.ORDER_STATUS_FAIL.getMessage());
+//        }
         var user = this.mealUserMapper.selectByPrimaryKeyWithLogicalDelete(uid, Boolean.FALSE);
         return this.prepaySon(user, orderSn, orders.stream().map(MealOrder::getActualPrice).reduce(BigDecimal.ZERO,
                 BigDecimal::add),message);
