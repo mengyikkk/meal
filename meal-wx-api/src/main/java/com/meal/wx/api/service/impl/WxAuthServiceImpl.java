@@ -266,7 +266,7 @@ public class WxAuthServiceImpl implements WxAuthService {
         if (!userDetails.isEnabled()) {
             return ResultUtils.message(ResponseCode.TOKEN_ILLEGAL, ("该账号未启用，请联系管理员！"));
         }
-        var user = this.mealUserService.queryByMobile(vo.getPhoneNumber());
+        var user = this.mealUserService.queryByUserName(vo.getPhoneNumber());
         this.LastLogIn(user, request);
         if (this.mealUserMapper.updateByPrimaryKey(user) < 1) {
             return ResultUtils.unknown();
