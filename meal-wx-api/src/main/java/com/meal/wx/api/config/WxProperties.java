@@ -44,6 +44,38 @@ public class WxProperties {
      */
     private String msgDataFormat;
 
+    private String breakfastId;
+    private String lunchId;
+    private String dinnerId;
+
+
+    public String getBreakfastId() {
+        return breakfastId;
+    }
+
+    public WxProperties setBreakfastId(String breakfastId) {
+        this.breakfastId = breakfastId;
+        return this;
+    }
+
+    public String getLunchId() {
+        return lunchId;
+    }
+
+    public WxProperties setLunchId(String lunchId) {
+        this.lunchId = lunchId;
+        return this;
+    }
+
+    public String getDinnerId() {
+        return dinnerId;
+    }
+
+    public WxProperties setDinnerId(String dinnerId) {
+        this.dinnerId = dinnerId;
+        return this;
+    }
+
     public String getAppId() {
         return appId;
     }

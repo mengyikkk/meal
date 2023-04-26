@@ -25,6 +25,9 @@ meal:
         api-v3-key: "fn2u4f5ty7huhf932hfhi4u3fh23rf3t"
         key-path: "classpath:/cert/apiclient_cert.p12"
         msgDataFormat: JSON
+        breakfast_id: "z3WB96pX2ASunRRQRcaBh7ccDNwa2E2NU4R4Gp5mYXg"
+        lunch_id: "z3WB96pX2ASunRRQRcaBhz8hR8ewwtURe1D2JbQkvKk"
+        dinner_id: "z3WB96pX2ASunRRQRcaBhyDYxInZafMObx1M-cPbKTQ"
   webclient:
     enable: true
     load-balance: true

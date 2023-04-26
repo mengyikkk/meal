@@ -17,7 +17,7 @@ public class OrderSnUtils {
         do {
             int length = 18;
             // 随机字符串
-            String randomStr = RandomStringUtils.randomAlphanumeric(length - prefix.length());
+            String randomStr = RandomStringUtils.randomNumeric(length - prefix.length());
             String orderSn = prefix + IntStream.range(0, length - prefix.length())
                     .mapToObj(i -> String.valueOf(randomStr.charAt(i)))
                     .collect(Collectors.joining());

@@ -13,8 +13,10 @@ import com.meal.common.mapper.*;
 import com.meal.common.model.*;
 import com.meal.common.service.MealUserService;
 import com.meal.common.utils.*;
+import com.meal.wx.api.config.WxProperties;
 import com.meal.wx.api.dto.WxSendMessageVo;
 import com.meal.wx.api.service.WxAuthService;
+import com.meal.wx.api.util.IsTimeSaleEnum;
 import com.meal.wx.api.util.OrderStatusEnum;
 import com.meal.wx.api.util.WxTemplateSender;
 
@@ -60,6 +62,8 @@ public class WxAuthServiceImpl implements WxAuthService {
     private WebClient webClient;
     @Resource
     private MealOrderMapper mealOrderMapper;
+    @Resource
+    private WxProperties wxProperties;
 
     @Resource
     private MealOrderGoodsMapper mealOrderGoodsMapper;
@@ -360,10 +364,9 @@ public class WxAuthServiceImpl implements WxAuthService {
 
     @Override
     public Result<?> send(LocalDate shipTime, Integer isTimeOnSale) {
-        String id = "z3WB96pX2ASunRRQRcaBhwioVCiKrjCDritU6VW0yQ4";
+        String id = "z3WB96pX2ASunRRQRcaBh7ccDNwa2E2NU4R4Gp5mYXg";
         var orderExample = new MealOrderExample();
-        orderExample.createCriteria().andShipTimeLessThan(shipTime.plusDays(1)).andShipTimeGreaterThanOrEqualTo(shipTime)
-                .andIsTimeOnSaleEqualTo(isTimeOnSale).andOrderStatusEqualTo(OrderStatusEnum.PAID.getMapping());
+        orderExample.createCriteria().andShipTimeLessThan(shipTime.plusDays(1)).andShipTimeGreaterThanOrEqualTo(shipTime).andIsTimeOnSaleEqualTo(isTimeOnSale).andOrderStatusEqualTo(OrderStatusEnum.PAID.getMapping());
         List<MealOrder> mealOrders = this.mealOrderMapper.selectByExample(orderExample);
         if (CollectionUtils.isEmpty(mealOrders)) {
             return ResultUtils.success();
@@ -375,30 +378,63 @@ public class WxAuthServiceImpl implements WxAuthService {
         var shopIds = mealOrders.stream().map(MealOrder::getShopId).collect(Collectors.toList());
         var shopExample = new MealShopExample();
         shopExample.createCriteria().andIdIn(shopIds);
-        var shopMap = this.mealShopMapper.selectByExample(shopExample).stream().collect(Collectors.toMap(MealShop::getId,
-                Function.identity()));
-        mealOrders.parallelStream().forEach(
-                e -> {
-                    WxSendMessageVo wxSendMessageVo = new WxSendMessageVo();
-                    Map<String, Object> data = Stream.of(
-                                    new AbstractMap.SimpleEntry<>("thing23", shopMap.get(e.getShopId()).getName()),
-                                    new AbstractMap.SimpleEntry<>("character_string19", e.getShipSn()),
-                                    new AbstractMap.SimpleEntry<>("thing20", "您的餐点已为您准备好 请前往取餐区取餐。"),
-                                    new AbstractMap.SimpleEntry<>("phone_number32",
-                                            shopMap.get(e.getShopId()).getPhone()))
-                            .collect(Collectors.toMap(Map.Entry::getKey, a->a.getValue() == null ? null :mapValueToMap(a.getValue())));
-                    wxSendMessageVo.setData(data);
-                    wxSendMessageVo.setTemplate_id(id);
-                    wxSendMessageVo.setTouser(openIdMap.get(e.getUserId()));
-                    if (wxTemplateSender.sendMessage(wxSendMessageVo)) {
-                        e.setOrderStatus(OrderStatusEnum.COMPLETED.getMapping());
-                        this.mealOrderMapper.updateByPrimaryKeySelective(e);
-                    }
-                }
-        );
-        return ResultUtils.success();
+        var shopMap = this.mealShopMapper.selectByExample(shopExample).stream().collect(Collectors.toMap(MealShop::getId, Function.identity()));
+        boolean result = mealOrders.parallelStream().map(e -> {
+            WxSendMessageVo wxSendMessageVo = new WxSendMessageVo();
+            Map<String, Object> data = null;
+            if (IsTimeSaleEnum.DINNER.is(isTimeOnSale)){
+                wxSendMessageVo.setTemplate_id(wxProperties.getDinnerId());
+                data = convertDinnerFast(e,shopMap);
+            }else if (IsTimeSaleEnum.LUNCH.is(isTimeOnSale)){
+                wxSendMessageVo.setTemplate_id(wxProperties.getLunchId());
+                data = convertLunchFast(e,shopMap);
+            }else if (IsTimeSaleEnum.BREAKFAST.is(isTimeOnSale)){
+                wxSendMessageVo.setTemplate_id(wxProperties.getBreakfastId());
+                data = convertBreakFast(e,shopMap);
+            }
+            wxSendMessageVo.setData(data);
+            wxSendMessageVo.setTouser(openIdMap.get(e.getUserId()));
+            if (wxTemplateSender.sendMessage(wxSendMessageVo)) {
+                e.setOrderStatus(OrderStatusEnum.COMPLETED.getMapping());
+                this.mealOrderMapper.updateByPrimaryKeySelective(e);
+                return ResultUtils.success();
+            }
+            return ResultUtils.unknown();
+        }).anyMatch(Result::success);
+        if (result) {
+            return ResultUtils.success();
+        }
+        return ResultUtils.unknown();
     }
 
+    private Map<String, Object> convertBreakFast(MealOrder order,Map<Long,MealShop> shopMap) {
+        return Stream.of(new AbstractMap.SimpleEntry<>("thing23", shopMap.get(order.getShopId()).getName()),
+                new AbstractMap.SimpleEntry<>("phrase30", IsTimeSaleEnum.find(order.getIsTimeOnSale()).get().getMessage()),
+                new AbstractMap.SimpleEntry<>("character_string19", order.getShipSn()),
+                new AbstractMap.SimpleEntry<>("character_string22", order.getOrderSn()),
+                new AbstractMap.SimpleEntry<>("phone_number32", shopMap.get(order.getShopId()).getPhone()))
+                .collect(Collectors.toMap(Map.Entry::getKey, a ->  mapValueToMap(a.getValue())));
+    }
+    private Map<String, Object> convertLunchFast(MealOrder order,Map<Long,MealShop> shopMap) {
+        return Stream.of(new AbstractMap.SimpleEntry<>("thing23", shopMap.get(order.getShopId()).getName()),
+                        new AbstractMap.SimpleEntry<>("phrase30", IsTimeSaleEnum.find(order.getIsTimeOnSale()).get().getMessage()),
+                        new AbstractMap.SimpleEntry<>("character_string19", order.getShipSn()),
+                        new AbstractMap.SimpleEntry<>("character_string22", order.getOrderSn()),
+                        new AbstractMap.SimpleEntry<>("phone_number32", shopMap.get(order.getShopId()).getPhone()),
+                        new AbstractMap.SimpleEntry<>("thing20", shopMap.get(order.getShopId()).getPhone())
+                )
+                .collect(Collectors.toMap(Map.Entry::getKey, a ->  mapValueToMap(a.getValue())));
+    }
+    private Map<String, Object> convertDinnerFast(MealOrder order,Map<Long,MealShop> shopMap) {
+        return Stream.of(new AbstractMap.SimpleEntry<>("thing23", shopMap.get(order.getShopId()).getName()),
+                        new AbstractMap.SimpleEntry<>("phrase30", IsTimeSaleEnum.find(order.getIsTimeOnSale()).get().getMessage()),
+                        new AbstractMap.SimpleEntry<>("character_string19", order.getShipSn()),
+                        new AbstractMap.SimpleEntry<>("character_string22", order.getOrderSn()),
+                        new AbstractMap.SimpleEntry<>("phone_number32", shopMap.get(order.getShopId()).getPhone()),
+                        new AbstractMap.SimpleEntry<>("thing7", shopMap.get(order.getShopId()).getPhone())
+                        )
+                .collect(Collectors.toMap(Map.Entry::getKey, a ->  mapValueToMap(a.getValue())));
+    }
 
     private Map<String, String> mapValueToMap(Object value) {
         Map<String, String> map = new HashMap<>();
@@ -428,50 +464,42 @@ public class WxAuthServiceImpl implements WxAuthService {
 
     public Result<?> bindPhone(Long userId, String code) {
         String accessToken = wxTemplateSender.getAccessToken();
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.weixin.qq.com/wxa/business/getuserphonenumber")
-                .queryParam("access_token", accessToken);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("https://api.weixin.qq.com/wxa/business/getuserphonenumber").queryParam("access_token", accessToken);
         HashMap<String, Object> requestParam = new HashMap<>();
         requestParam.put("code", code);
         String jsonStr = JsonUtils.toJson(requestParam);
-        return this.webClient.post()
-                .uri(uriBuilder.build().toUri())
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(jsonStr)
-                .exchange()
-                .flatMap(response -> {
-                    if (response.statusCode().is2xxSuccessful()) {
-                        return response.bodyToMono(String.class)
-                                .map(responseBody -> {
-                                    var map = JsonUtils.toGeneric(responseBody,new TypeReference<Map<String, Object>>() {});
-                                    String errcode = map.get("errcode").toString();
-                                    if("0".equals(errcode)){
-                                        String phoneNumber = JsonUtils.toMap(map.get("phone_info")).get("phoneNumber").toString();
-                                        MealUser mealUser = new MealUser();
-                                        mealUser.setId(userId);
-                                        mealUser.setMobile(phoneNumber);
-                                        if (this.mealUserMapper.updateByPrimaryKeySelective(mealUser)<1){
-                                            return ResultUtils.unknown();
-                                        }
-                                        return ResultUtils.success();
-                                    } else if ("-1".equals(errcode)){
-                                        logger.error("userID:{}微信小程序获取手机号错误：{}", userId,map.get("errmsg"));
-                                        return ResultUtils.unknown();
-                                    }else if ("40029".equals(errcode)){
-                                        logger.error("userID:{}微信小程序获取手机号code无效：{}", userId,map.get("errmsg"));
-                                        return ResultUtils.unknown();
-                                    }
-                                    return ResultUtils.success();
-                                });
-                    } else {
-                        logger.error("Failed to get phone number, status code: {}", response.statusCode());
-                        return Mono.just(ResultUtils.unknown());
+        return this.webClient.post().uri(uriBuilder.build().toUri()).contentType(MediaType.APPLICATION_JSON).bodyValue(jsonStr).exchange().flatMap(response -> {
+            if (response.statusCode().is2xxSuccessful()) {
+                return response.bodyToMono(String.class).map(responseBody -> {
+                    var map = JsonUtils.toGeneric(responseBody, new TypeReference<Map<String, Object>>() {
+                    });
+                    String errcode = map.get("errcode").toString();
+                    if ("0".equals(errcode)) {
+                        String phoneNumber = JsonUtils.toMap(map.get("phone_info")).get("phoneNumber").toString();
+                        MealUser mealUser = new MealUser();
+                        mealUser.setId(userId);
+                        mealUser.setMobile(phoneNumber);
+                        if (this.mealUserMapper.updateByPrimaryKeySelective(mealUser) < 1) {
+                            return ResultUtils.unknown();
+                        }
+                        return ResultUtils.success();
+                    } else if ("-1".equals(errcode)) {
+                        logger.error("userID:{}微信小程序获取手机号错误：{}", userId, map.get("errmsg"));
+                        return ResultUtils.unknown();
+                    } else if ("40029".equals(errcode)) {
+                        logger.error("userID:{}微信小程序获取手机号code无效：{}", userId, map.get("errmsg"));
+                        return ResultUtils.unknown();
                     }
-                })
-                .onErrorResume(e -> {
-                    logger.error("微信小程序获取AccessToken异常，Exception：{}", e.getMessage());
-                    return Mono.just(ResultUtils.unknown());
-                })
-                .block();
+                    return ResultUtils.success();
+                });
+            } else {
+                logger.error("Failed to get phone number, status code: {}", response.statusCode());
+                return Mono.just(ResultUtils.unknown());
+            }
+        }).onErrorResume(e -> {
+            logger.error("微信小程序获取AccessToken异常，Exception：{}", e.getMessage());
+            return Mono.just(ResultUtils.unknown());
+        }).block();
     }
 
 }
