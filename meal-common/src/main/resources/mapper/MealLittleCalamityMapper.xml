@@ -732,6 +732,6 @@
             </if>
             ) as lim using(id)
         </if>
-        WHERE deleted = 0
+        WHERE deleted = 0 order by sort_order asc
     </select>
 </mapper>
